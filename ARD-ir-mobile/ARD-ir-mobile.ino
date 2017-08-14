@@ -124,7 +124,7 @@ void storeCode(decode_results *results) {
   }
   else {
     if (codeType == NEC) {
-      Serial.print("Received::NEC:");
+      Serial.print("rcvd::NEC:");
       if (results->value == REPEAT) {
         // Don't record a NEC repeat value as that's useless.
         Serial.println("repeat; ignoring.");
@@ -132,29 +132,31 @@ void storeCode(decode_results *results) {
       }
     } 
     else if (codeType == SONY) {
-      Serial.print("Received::SONY:");
+      Serial.print("rcvd::SONY:");
     } 
     else if (codeType == PANASONIC) {
-      Serial.print("Received::PANASONIC:");
+      Serial.print("rcvd::PANASONIC:");
     }
     else if (codeType == JVC) {
-      Serial.print("Received::JVC:");
+      Serial.print("rcvd::JVC:");
     }
     else if (codeType == RC5) {
-      Serial.print("Received::RC5:");
+      Serial.print("rcvd::RC5:");
     } 
     else if (codeType == RC6) {
-      Serial.print("Received::RC6:");
+      Serial.print("rcvd::RC6:");
     } 
     else {
-      Serial.print("Received::Unexpected codeType:");
+      Serial.print("rcvd::Unexpected codeType:");
       Serial.print(codeType, DEC);
     }
-    Serial.println(results->value, HEX);
     codeValue = results->value;
     codeLen = results->bits;
-    //Serial.print(":length:");
-    //Serial.println(codeLen);
+    Serial.print("::len:");
+    Serial.print(codeLen);
+    Serial.print("::val:");
+    Serial.println(codeValue, HEX);
+
 
   }
 }

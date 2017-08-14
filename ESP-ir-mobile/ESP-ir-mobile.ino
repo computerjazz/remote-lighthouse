@@ -52,9 +52,6 @@ void endRecord() {
 
 void checkIRCode() {
   server.send(200, "text/plain", "IRCode::" + lastIRCodeRead);
-  if (lastIRCodeRead.length() > 0) {
-      serialEndReached = false;
-    }
   lastIRCodeRead = "";
   
 }
@@ -97,8 +94,9 @@ void readSerialData() {
       index = 0;
       String payload = String(receivedChars);
       payload.trim();
-      if ((payload.indexOf("Received") >= 0) && (payload.indexOf("repeat") == -1)) {
+      if ((payload.indexOf("rcvd") >= 0) && (payload.indexOf("repeat") == -1)) {
         lastIRCodeRead = payload;
+        serialEndReached = false;
       } else {
         serialEndReached = false;
       } 
