@@ -3,13 +3,16 @@
 int STATUS_PIN = 13;
 int RECV_PIN = 11;
 
+String START_REC = "startRecord";
+String STOP_REC = "stopRecord";
+
 boolean recording = false;
 
 IRrecv irrecv(RECV_PIN);
 IRsend irsend;
 decode_results results;
 
-const byte numChars = 32;
+const byte numChars = 64;
 char receivedChars[numChars]; // an array to store the received data
 boolean newData = false;
 
@@ -20,12 +23,12 @@ void setup() {
 }
 
 void loop() {
- recvWithEndMarker();
- showNewData();
+ readSerialData();
+ processSerialData();
  processIR();
 }
 
-void recvWithEndMarker() {
+void readSerialData() {
  static byte index = 0;
  char endMarker = '\n';
  char rc;
@@ -48,17 +51,28 @@ void recvWithEndMarker() {
    }
 }
 
-void showNewData() {
+void processSerialData() {
  if (newData == true) {
    newData = false;
    String payload = String(receivedChars);
    payload.trim();
-   if (payload == "type:rec,") {
+   if (payload == START_REC) {
     recording = true;
-   } else if (payload == "type:send,") {
-    sendCode(false);
+   } else if (payload == STOP_REC) {
+    recording = false;
+   } else if (payload.indexOf("send::") >= 0) {
+      int beginIRTypeIndex = payload.indexOf("send::type:") + 1;
+      int endIRTypeIndex = payload.indexOf(",", beginIRTypeIndex);
+
+      int beginIRCodeValueIndex = payload.indexOf("value:") + 1;
+      int endIRCodeValueIndex = payload.indexOf(",", beginIRCodeValueIndex);
+
+      String irCodeType  = payload.substring(beginIRTypeIndex, endIRTypeIndex);
+      String irCodeValStr  = payload.substring(beginIRCodeValueIndex, endIRCodeValueIndex);
+      unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
+      sendCode(false);
     }
- }
+  }
 }
 
 
@@ -110,7 +124,7 @@ void storeCode(decode_results *results) {
   }
   else {
     if (codeType == NEC) {
-      Serial.print("Received NEC: ");
+      Serial.print("Received::NEC:");
       if (results->value == REPEAT) {
         // Don't record a NEC repeat value as that's useless.
         Serial.println("repeat; ignoring.");
@@ -118,46 +132,42 @@ void storeCode(decode_results *results) {
       }
     } 
     else if (codeType == SONY) {
-      Serial.print("Received SONY: ");
+      Serial.print("Received::SONY:");
     } 
     else if (codeType == PANASONIC) {
-      Serial.print("Received PANASONIC: ");
+      Serial.print("Received::PANASONIC:");
     }
     else if (codeType == JVC) {
-      Serial.print("Received JVC: ");
+      Serial.print("Received::JVC:");
     }
     else if (codeType == RC5) {
-      Serial.print("Received RC5: ");
+      Serial.print("Received::RC5:");
     } 
     else if (codeType == RC6) {
-      Serial.print("Received RC6: ");
+      Serial.print("Received::RC6:");
     } 
     else {
-      Serial.print("Unexpected codeType ");
+      Serial.print("Received::Unexpected codeType:");
       Serial.print(codeType, DEC);
-      Serial.println("");
     }
     Serial.println(results->value, HEX);
     codeValue = results->value;
     codeLen = results->bits;
+    //Serial.print(":length:");
+    //Serial.println(codeLen);
+
   }
 }
 
-void sendCode(int repeat) {
+void sendCode(boolean repeat) {
   if (codeType == NEC) {
-    if (repeat) {
-      irsend.sendNEC(REPEAT, codeLen);
-      Serial.println("Sent NEC repeat");
-    } 
-    else {
       irsend.sendNEC(codeValue, codeLen);
-      Serial.print("Sent NEC ");
+      Serial.print("Sent NEC:");
       Serial.println(codeValue, HEX);
-    }
   } 
   else if (codeType == SONY) {
     irsend.sendSony(codeValue, codeLen);
-    Serial.print("Sent Sony ");
+    Serial.print("Sent Sony:");
     Serial.println(codeValue, HEX);
   } 
   else if (codeType == PANASONIC) {
