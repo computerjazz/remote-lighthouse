@@ -56,7 +56,7 @@ void checkIRCode() {
   
 }
 
-// esxpects query string of `?type=PEM&value=1234ABC`
+// esxpects query string of `?type=PEM&val=1234ABC&len=32`
 void sendIRCode() {
   String message = "";
   for (int i = 0; i < server.args(); i++) {
