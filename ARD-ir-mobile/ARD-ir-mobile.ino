@@ -6,6 +6,13 @@ int RECV_PIN = 11;
 String START_REC = "startRecord";
 String STOP_REC = "stopRecord";
 
+String SEND = "send::";
+
+// Query string key constants
+String TYPE = "type:"; 
+String VAL = "val:";
+String LEN = "len:";
+
 boolean recording = false;
 
 IRrecv irrecv(RECV_PIN);
@@ -15,6 +22,8 @@ decode_results results;
 const byte numChars = 64;
 char receivedChars[numChars]; // an array to store the received data
 boolean newData = false;
+
+
 
 void setup() {
   Serial.begin(115200);
@@ -60,30 +69,38 @@ void processSerialData() {
     recording = true;
    } else if (payload == STOP_REC) {
     recording = false;
-   } else if (payload.indexOf("send::") >= 0) {
-      int beginIRTypeIndex = payload.indexOf("send::type:") + 1;
+   } else if (payload.indexOf(SEND) >= 0) {
+
+      int beginIRTypeIndex = payload.indexOf(TYPE) + TYPE.length();
       int endIRTypeIndex = payload.indexOf(",", beginIRTypeIndex);
 
-      int beginIRCodeValueIndex = payload.indexOf("value:") + 1;
+      int beginIRCodeValueIndex = payload.indexOf(VAL) + VAL.length();
       int endIRCodeValueIndex = payload.indexOf(",", beginIRCodeValueIndex);
 
+      int beginLengthIndex = payload.indexOf(LEN) + LEN.length();
+      int endLengthIndex = payload.indexOf(",", beginLengthIndex);
+
+      String irCodeLengthStr = payload.substring(beginLengthIndex, endLengthIndex);
+      int irCodeLength = irCodeLengthStr.toInt();
       String irCodeType  = payload.substring(beginIRTypeIndex, endIRTypeIndex);
       String irCodeValStr  = payload.substring(beginIRCodeValueIndex, endIRCodeValueIndex);
+ 
       unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
-      sendCode(false);
+      sendCode(irCodeType, irCodeValue, irCodeLength);
     }
   }
 }
 
 
 void processIR() {
-
-  if (recording && irrecv.decode(&results)) {
+  if (irrecv.decode(&results)) {
     digitalWrite(STATUS_PIN, HIGH);
-    storeCode(&results);
+    if (recording) {
+      storeCode(&results);
+      recording = false;
+     }
     irrecv.resume(); // resume receiver
     digitalWrite(STATUS_PIN, LOW);
-    recording = false;
   }
 }
 
@@ -101,7 +118,7 @@ void storeCode(decode_results *results) {
   codeType = results->decode_type;
   int count = results->rawlen;
   if (codeType == UNKNOWN) {
-    Serial.println("Received unknown code, saving as raw");
+    Serial.print("rcvd::UNKNOWN");
     codeLen = results->rawlen - 1;
     // To store raw codes:
     // Drop first value (gap)
@@ -120,7 +137,6 @@ void storeCode(decode_results *results) {
       }
       Serial.print(rawCodes[i - 1], DEC);
     }
-    Serial.println("");
   }
   else {
     if (codeType == NEC) {
@@ -152,45 +168,42 @@ void storeCode(decode_results *results) {
     }
     codeValue = results->value;
     codeLen = results->bits;
-    Serial.print("::len:");
+    Serial.print("&len:");
     Serial.print(codeLen);
-    Serial.print("::val:");
+    Serial.print("&val:");
     Serial.println(codeValue, HEX);
-
-
   }
 }
 
-void sendCode(boolean repeat) {
-  if (codeType == NEC) {
+void sendCode(String codeType, unsigned long codeValue, int codeLen) {
+  if (codeType == "NEC") {
       irsend.sendNEC(codeValue, codeLen);
       Serial.print("Sent NEC:");
       Serial.println(codeValue, HEX);
   } 
-  else if (codeType == SONY) {
+  else if (codeType == "SONY") {
     irsend.sendSony(codeValue, codeLen);
     Serial.print("Sent Sony:");
     Serial.println(codeValue, HEX);
   } 
-  else if (codeType == PANASONIC) {
+  else if (codeType == "PANASONIC") {
     irsend.sendPanasonic(codeValue, codeLen);
     Serial.print("Sent Panasonic");
     Serial.println(codeValue, HEX);
   }
-  else if (codeType == JVC) {
+  else if (codeType == "JVC") {
     irsend.sendPanasonic(codeValue, codeLen);
     Serial.print("Sent JVC");
     Serial.println(codeValue, HEX);
   }
-  else if (codeType == RC5 || codeType == RC6) {
-    if (!repeat) {
-      // Flip the toggle bit for a new button press
-      toggle = 1 - toggle;
-    }
+  else if (codeType == "RC5" || codeType == "RC6") {
+   
+    toggle = 1 - toggle;
+
     // Put the toggle bit into the code to send
     codeValue = codeValue & ~(1 << (codeLen - 1));
     codeValue = codeValue | (toggle << (codeLen - 1));
-    if (codeType == RC5) {
+    if (codeType == "RC5") {
       Serial.print("Sent RC5 ");
       Serial.println(codeValue, HEX);
       irsend.sendRC5(codeValue, codeLen);
@@ -201,7 +214,7 @@ void sendCode(boolean repeat) {
       Serial.println(codeValue, HEX);
     }
   } 
-  else if (codeType == UNKNOWN /* i.e. raw */) {
+  else if (codeType == "UNKNOWN" /* i.e. raw */) {
     // Assume 38 KHz
     irsend.sendRaw(rawCodes, codeLen, 38);
     Serial.println("Sent raw");
