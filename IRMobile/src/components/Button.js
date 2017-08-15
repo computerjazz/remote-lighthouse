@@ -5,6 +5,8 @@ import {
   Text,
 }  from 'react-native'
 
+import { connect } from 'react-redux'
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const codes = {
@@ -17,6 +19,7 @@ class Button extends Component {
   async sendCode(code) {
     console.log('FETCHING!')
     try {
+      console.log('PROPS', this.props)
       const response = await fetch(`http://192.168.86.99/test?name=dan`)
       const data = await response.text()
       console.log(data)
@@ -47,7 +50,7 @@ class Button extends Component {
   }
 }
 
-export default Button
+export default connect()(Button)
 
 const styles = StyleSheet.create({
   button: {

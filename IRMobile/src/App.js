@@ -1,11 +1,21 @@
+import React, { Component } from 'react'
 import { StackNavigator } from 'react-navigation'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 
-import ButtonPanel from './screens/ButtonPanel'
+import Navigator from './navigation'
+import reducers from './reducers'
 
-const App = StackNavigator({
-  Home: { screen: ButtonPanel },
-}, {
-  initialRouteName: 'Home',
-})
+let store = createStore(reducers)
+
+
+class App extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Navigator />
+      </Provider>)
+  }
+}
 
 export default App
