@@ -1,0 +1,2 @@
+export const CREATE_BUTTON = 'CREATE_BUTTON'
+export const EDIT_BUTTON = 'EDIT_BUTTON'

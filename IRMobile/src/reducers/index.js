@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
 
-import codes from './codes'
+import buttons from './buttons'
+import network from './network'
 
 const reducers = {
-  codes
+  buttons,
+  network,
 }
 
 export default combineReducers(reducers)
