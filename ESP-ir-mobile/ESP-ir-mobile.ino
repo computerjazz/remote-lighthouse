@@ -42,16 +42,16 @@ void loop() {
 
 void beginRecord() {
   Serial.println(START_REC);
-  server.send(200, "text/plain", "starting record mode...");
+  server.send(200, "application/json", "{\"message\": \"starting record mode...\"}");
 }
 
 void endRecord() {
   Serial.println(STOP_REC);
-  server.send(200, "text/plain", "stopping record mode...");
+  server.send(200, "application/json", "{\"message\": \"stopping record mode...\"}");
 }
 
 void checkIRCode() {
-  server.send(200, "text/plain", "IRCode::" + lastIRCodeRead);
+  server.send(200, "application/json", "IRCode::" + lastIRCodeRead);
   lastIRCodeRead = "";
   
 }
