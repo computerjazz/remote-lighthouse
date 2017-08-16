@@ -4,10 +4,11 @@ import {
   TouchableOpacity,
   Text,
 }  from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { connect } from 'react-redux'
+import { createButton } from '../actions'
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const codes = {
   power: '8166817E',
@@ -16,14 +17,17 @@ const codes = {
 }
 
 class Button extends Component {
+
   async sendCode(code) {
+    const { baseUrl } = this.props
     console.log('FETCHING!')
+    this.props.createButton({code: 123, type: 'NEC', length: 32})
     try {
       console.log('PROPS', this.props)
-      const response = await fetch(`http://192.168.86.99/test?name=dan`)
+      const response = await fetch(`${baseUrl}/test?name=dan`)
       const data = await response.text()
       console.log(data)
-      const string = `http://192.168.86.99/send?type=NEC&val=${code}&len=32`
+      const string = `${baseUrl}/send?type=NEC&val=${code}&len=32`
       console.log('fetching' + string)
       const res = await fetch(string)
       const txt = await res.text()
@@ -35,13 +39,14 @@ class Button extends Component {
   }
 
   render() {
-    const { irCode, style, text, iconName } = this.props
+    const { irCode, style, text, iconName, onPress, color } = this.props
+    console.log('PROPS', this.props)
     return (
       <TouchableOpacity
-        onPress={() => this.sendCode(irCode)}
+        onPress={() => onPress ? onPress() : this.sendCode(irCode)}
         style={[styles.button, style]}
-        >
-        <Icon name={iconName} size={30} color="#fff" />
+      >
+        <Icon name={iconName} size={30} color={color || "#fff"} />
         {text && <Text style={styles.text}>
           {text}
         </Text>}
@@ -50,7 +55,12 @@ class Button extends Component {
   }
 }
 
-export default connect()(Button)
+export default connect(state => ({
+  baseUrl: state.network.baseUrl,
+  buttons: state.buttons,
+}), dispatch => ({
+  createButton: (button) => dispatch(createButton(button)),
+}))(Button)
 
 const styles = StyleSheet.create({
   button: {
