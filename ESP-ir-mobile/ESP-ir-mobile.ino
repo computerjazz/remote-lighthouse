@@ -3,12 +3,13 @@
 
 String START_REC = "startRecord";
 String STOP_REC = "stopRecord";
+String RCVD = "rcvd::";
 
 // Web server object. Will be listening in port 80 (default for HTTP)
 ESP8266WebServer server(80);
 
-String lastIRCodeRead = "";
-const byte numChars = 32;
+String lastIRCodeReceived = "";
+const byte numChars = 64;
 char receivedChars[numChars]; 
 boolean serialEndReached = false;
 
@@ -51,8 +52,8 @@ void endRecord() {
 }
 
 void checkIRCode() {
-  server.send(200, "application/json", "IRCode::" + lastIRCodeRead);
-  lastIRCodeRead = "";
+  server.send(200, "application/json", "{" + lastIRCodeReceived + "}");
+  lastIRCodeReceived = "";
   
 }
 
@@ -71,7 +72,7 @@ void test() {
   for (int i = 0; i < server.args(); i++) {
     message += server.argName(i) + ":" + server.arg(i) + ",";
   }
-  server.send(200, "text/plain", message + "lastCodeRead: " + lastIRCodeRead);
+  server.send(200, "application/json", "{\"args\":" + message + ", \"ircode\":" + lastIRCodeReceived + "}");
 }
 
 void readSerialData() {
@@ -94,8 +95,8 @@ void readSerialData() {
       index = 0;
       String payload = String(receivedChars);
       payload.trim();
-      if ((payload.indexOf("rcvd") >= 0) && (payload.indexOf("repeat") == -1)) {
-        lastIRCodeRead = payload;
+      if ((payload.indexOf(RCVD) >= 0) && (payload.indexOf("repeat") == -1)) {
+        lastIRCodeReceived = payload.substring(RCVD.length());
         serialEndReached = false;
       } else {
         serialEndReached = false;

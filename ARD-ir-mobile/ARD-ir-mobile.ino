@@ -7,6 +7,7 @@ String START_REC = "startRecord";
 String STOP_REC = "stopRecord";
 
 String SEND = "send::";
+String RCVD = "rcvd::";
 
 // Query string key constants
 String TYPE = "type:"; 
@@ -37,6 +38,7 @@ void loop() {
  processIR();
 }
 
+
 void readSerialData() {
  static byte index = 0;
  char endMarker = '\n';
@@ -59,6 +61,7 @@ void readSerialData() {
      }
    }
 }
+
 
 void processSerialData() {
  if (newData == true) {
@@ -91,7 +94,7 @@ void processSerialData() {
   }
 }
 
-
+// && results.value != UNKNOWN && results.value != REPEAT
 void processIR() {
   if (irrecv.decode(&results)) {
     digitalWrite(STATUS_PIN, HIGH);
@@ -107,97 +110,68 @@ void processIR() {
 
 // Storage for the recorded code
 int codeType = -1; // The type of code
-unsigned long codeValue; // The code value if not raw
-unsigned int rawCodes[RAWBUF]; // The durations if raw
+unsigned long codeValue; 
 int codeLen; // The length of the code
 int toggle = 0; // The RC5/6 toggle state
 
-// Stores the code for later playback
-// Most of this code is just logging
 void storeCode(decode_results *results) {
   codeType = results->decode_type;
   int count = results->rawlen;
-  if (codeType == UNKNOWN) {
-    Serial.print("rcvd::UNKNOWN");
-    codeLen = results->rawlen - 1;
-    // To store raw codes:
-    // Drop first value (gap)
-    // Convert from ticks to microseconds
-    // Tweak marks shorter, and spaces longer to cancel out IR receiver distortion
-    for (int i = 1; i <= codeLen; i++) {
-      if (i % 2) {
-        // Mark
-        rawCodes[i - 1] = results->rawbuf[i]*USECPERTICK - MARK_EXCESS;
-        Serial.print(" m");
-      } 
-      else {
-        // Space
-        rawCodes[i - 1] = results->rawbuf[i]*USECPERTICK + MARK_EXCESS;
-        Serial.print(" s");
-      }
-      Serial.print(rawCodes[i - 1], DEC);
-    }
-  }
-  else {
-    if (codeType == NEC) {
-      Serial.print("rcvd::NEC:");
-      if (results->value == REPEAT) {
-        // Don't record a NEC repeat value as that's useless.
-        Serial.println("repeat; ignoring.");
+
+   switch(codeType) {
+      case NEC:     
+        if (results->value == REPEAT) {
+          return;
+        }
+        Serial.print(RCVD + "\"type\":\"NEC\"");
+        break;
+      case SONY:
+        Serial.print(RCVD + "\"type\":\"SONY\"");
+        break;
+      case PANASONIC:
+        Serial.print(RCVD + "\"type\":\"PANASONIC\"");
+        break;
+      case JVC:
+        Serial.print(RCVD + "\"type\":\"JVC\"");
+        break;
+      case RC5:
+        Serial.print(RCVD + "\"type\":\"RC5\"");
+        break;
+      case RC6:
+        Serial.print(RCVD + "\"type\":\"RC6\"");
+        break;
+      default:
         return;
-      }
-    } 
-    else if (codeType == SONY) {
-      Serial.print("rcvd::SONY:");
-    } 
-    else if (codeType == PANASONIC) {
-      Serial.print("rcvd::PANASONIC:");
     }
-    else if (codeType == JVC) {
-      Serial.print("rcvd::JVC:");
-    }
-    else if (codeType == RC5) {
-      Serial.print("rcvd::RC5:");
-    } 
-    else if (codeType == RC6) {
-      Serial.print("rcvd::RC6:");
-    } 
-    else {
-      Serial.print("rcvd::Unexpected codeType:");
-      Serial.print(codeType, DEC);
-    }
+    
     codeValue = results->value;
     codeLen = results->bits;
-    Serial.print("&len:");
+    Serial.print(",\"length\":");
     Serial.print(codeLen);
-    Serial.print("&val:");
-    Serial.println(codeValue, HEX);
-  }
+    Serial.print(",\"value\":\"");
+    Serial.print(codeValue, HEX);
+    Serial.print("\"");
+    Serial.println();
 }
 
 void sendCode(String codeType, unsigned long codeValue, int codeLen) {
   if (codeType == "NEC") {
-      irsend.sendNEC(codeValue, codeLen);
-      Serial.print("Sent NEC:");
-      Serial.println(codeValue, HEX);
-  } 
-  else if (codeType == "SONY") {
+    irsend.sendNEC(codeValue, codeLen);
+    Serial.print("Sent NEC:");
+    Serial.println(codeValue, HEX);
+  } else if (codeType == "SONY") {
     irsend.sendSony(codeValue, codeLen);
     Serial.print("Sent Sony:");
     Serial.println(codeValue, HEX);
-  } 
-  else if (codeType == "PANASONIC") {
+  } else if (codeType == "PANASONIC") {
     irsend.sendPanasonic(codeValue, codeLen);
     Serial.print("Sent Panasonic");
     Serial.println(codeValue, HEX);
-  }
-  else if (codeType == "JVC") {
+  } else if (codeType == "JVC") {
     irsend.sendPanasonic(codeValue, codeLen);
     Serial.print("Sent JVC");
     Serial.println(codeValue, HEX);
-  }
-  else if (codeType == "RC5" || codeType == "RC6") {
-   
+  } else if (codeType == "RC5" || codeType == "RC6") {
     toggle = 1 - toggle;
 
     // Put the toggle bit into the code to send
@@ -213,13 +187,10 @@ void sendCode(String codeType, unsigned long codeValue, int codeLen) {
       Serial.print("Sent RC6 ");
       Serial.println(codeValue, HEX);
     }
-  } 
-  else if (codeType == "UNKNOWN" /* i.e. raw */) {
-    // Assume 38 KHz
-    irsend.sendRaw(rawCodes, codeLen, 38);
-    Serial.println("Sent raw");
   }
   irrecv.enableIRIn(); // Re-enable receiver
 }
+
+
 
 
