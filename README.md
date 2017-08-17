@@ -24,14 +24,11 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 - GET `ESP_IP_ADDRESS/check`: returns value of any IR codes heard
 
 ```javascript 
-  // Returns the following shape, where 
-  // type is oneof 'NEC', 'JVC', 'PANASONIC', 'RC5', 'RC6',
-  // value is a hex string representing an unsigned long
-  // length is the length of the code in bits
+  // Returns the following shape 
   {
-      type: TYPE,
-      value: VALUE,
-      length: LENGTH
+      type: oneof 'NEC', 'JVC', 'PANASONIC', 'RC5', 'RC6',
+      value: hex string representing an unsigned long,
+      length: length of the IR code in bits
   }
 ``` 
 
