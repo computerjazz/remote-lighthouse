@@ -4,6 +4,16 @@
 
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
+### Hardware
+- Arduino Uno
+- ESP8266 WiFi Module
+- 3.3v USB to TTL adapter (for providing correct voltage to ESP8266)
+- 4 1kΩ resistors
+- 2 2kΩ resistors
+- IR Transmitter LED
+- IR receiver component
+
+
 ### You will need to install
 - [ESP8266 library](https://github.com/esp8266/Arduino#installing-with-boards-manager)
 - [Arduino IRemote library](https://github.com/z3t0/Arduino-IRremote#irremote-arduino-library)
