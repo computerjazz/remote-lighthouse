@@ -28,6 +28,6 @@ You'll select the USB module on the left of the Upload schematic as your board/s
 Note that the previous images depict only ESP8266 <=> Arduino connection, not the IR components.
 
 ### Other references used:
-- https://github.com/z3t0/Arduino-IRremote/blob/master/examples/IRrecord/IRrecord.ino
-- https://tttapa.github.io/ESP8266/Chap10%20-%20Simple%20Web%20Server.html
-- https://techtutorialsx.com/2016/10/22/esp8266-webserver-getting-query-parameters/
+- Reading IR codes: https://github.com/z3t0/Arduino-IRremote/blob/master/examples/IRrecord/IRrecord.ino
+- Setting up server on ESP8266: https://tttapa.github.io/ESP8266/Chap10%20-%20Simple%20Web%20Server.html
+- Reading query params: https://techtutorialsx.com/2016/10/22/esp8266-webserver-getting-query-parameters/
