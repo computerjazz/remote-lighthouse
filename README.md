@@ -4,6 +4,10 @@
 
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
+### You will need to install
+- [ESP8266 library](https://github.com/esp8266/Arduino#installing-with-boards-manager)
+- [Arduino IRemote library](https://github.com/z3t0/Arduino-IRremote#irremote-arduino-library)
+
 ### API
 
 - GET `ESP_IP_ADDRESS/rec`: puts hardware in 'listening' mode for IR codes
@@ -22,3 +26,8 @@ You'll select the USB module on the left of the Upload schematic as your board/s
 ![run schematic](http://i.imgur.com/kK3IYOr.jpg)
 
 Note that the previous images depict only ESP8266 <=> Arduino connection, not the IR components.
+
+### Other references used:
+- https://github.com/z3t0/Arduino-IRremote/blob/master/examples/IRrecord/IRrecord.ino
+- https://tttapa.github.io/ESP8266/Chap10%20-%20Simple%20Web%20Server.html
+- https://techtutorialsx.com/2016/10/22/esp8266-webserver-getting-query-parameters/
