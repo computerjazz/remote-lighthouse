@@ -1,10 +1,13 @@
 # ir-mobile
 
-## A mobile app to replace all of your remotes 
+## React Native App + Arduino Uno + ESP8266 WiFi module. 
 
-Create an IR listener/transmitter using an Arduino Uno and an ESP8266 WiFi module. Sending a GET req to `ESP_IP_ADDRESS/rec` will put the Arduino in to record mode. Once it senses a valid IR code, visit `ESP_IP_ADDRESS/check` to retrieve it.
+### API
 
-Codes can be transmitted via `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`
+- GET `ESP_IP_ADDRESS/rec`: puts hardware in 'listening' mode for IR codes
+- GET `ESP_IP_ADDRESS/stop`: stops record mode
+- GET `ESP_IP_ADDRESS/check`: returns value of any IR codes heard
+- GET `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`: transmit code via IR
 
 I had to use two slightly different wiring configurations: one for uploading code and one for running my sketch (the upload config _will_ work to run, but the ESP8266 won't reload your code after reboot, meaning you'll need to re-upload your sketch every time it boots. [Check the Boot Mode docs for wiring](https://arduino-esp8266.readthedocs.io/en/latest/boards.html#boot-messages-and-modes)). 
 
