@@ -99,8 +99,8 @@ void processIR() {
   if (irrecv.decode(&results)) {
     digitalWrite(STATUS_PIN, HIGH);
     if (recording) {
-      storeCode(&results);
       recording = false;
+      storeCode(&results);
      }
     irrecv.resume(); // resume receiver
     digitalWrite(STATUS_PIN, LOW);
@@ -117,7 +117,7 @@ int toggle = 0; // The RC5/6 toggle state
 void storeCode(decode_results *results) {
   codeType = results->decode_type;
   int count = results->rawlen;
-
+   // TODO: add LED green blink feedback on successful storage of supported code
    switch(codeType) {
       case NEC:     
         if (results->value == REPEAT) {
@@ -141,6 +141,8 @@ void storeCode(decode_results *results) {
         Serial.print(RCVD + "\"type\":\"RC6\"");
         break;
       default:
+        // we didn't get a supported code, restart recording
+        recording = true;
         return;
     }
     
