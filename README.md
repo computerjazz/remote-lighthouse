@@ -10,11 +10,14 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 
 ### API
 
+Where `ESP_IP_ADDRESS` is the ESP8266, for example `192.168.86.99/rec`
+
 - GET `ESP_IP_ADDRESS/rec`: puts hardware in 'listening' mode for IR codes
 - GET `ESP_IP_ADDRESS/stop`: stops record mode
 - GET `ESP_IP_ADDRESS/check`: returns value of any IR codes heard
 - GET `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`: transmit code via IR
 
+### Wiring
 I had to use two slightly different wiring configurations: one for uploading code and one for running my sketch. The 'upload' config _will_ work to run, but the ESP8266 won't reload your code after reboot, meaning you'll need to re-upload your sketch every time it boots. [Check the Boot Mode docs for wiring](https://arduino-esp8266.readthedocs.io/en/latest/boards.html#boot-messages-and-modes). 
 
 You'll select the USB module on the left of the Upload schematic as your board/serial port in the Arduino IDE (I used [this one](https://www.amazon.com/gp/product/B01HXT8DZ4/ref=oh_aui_detailpage_o04_s00?ie=UTF8&psc=1))
