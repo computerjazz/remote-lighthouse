@@ -24,7 +24,7 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 - GET `ESP_IP_ADDRESS/check`: returns value of any IR codes heard
 - GET `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`: transmit code via IR
 
-Where `ESP_IP_ADDRESS` is the ESP8266, for example `192.168.86.99/rec`
+Where `ESP_IP_ADDRESS` is the address of the ESP8266 on your network, for example `192.168.86.99`
 
 ### Wiring
 I had to use two slightly different wiring configurations: one for uploading code and one for running my sketch. The 'upload' configuration _can_ run your code if you remove the Tx Rx connections to your USB to TTL adapter, but the ESP8266 won't reload your code after reboot, meaning you'll need to re-upload your sketch every time it boots. [Check the Boot Mode docs for wiring](https://arduino-esp8266.readthedocs.io/en/latest/boards.html#boot-messages-and-modes). Plug both the arduino and the USB to TTL adapter into my laptop via USB, and select the appropriate port in the Arduino IDE to upload.
