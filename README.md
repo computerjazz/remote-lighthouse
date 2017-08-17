@@ -1,6 +1,6 @@
 # ir-mobile
 
-## React Native App + Arduino Uno + ESP8266 WiFi module. 
+## React Native App + Arduino Uno + ESP8266 WiFi module
 
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
