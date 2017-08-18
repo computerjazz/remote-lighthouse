@@ -1,6 +1,9 @@
 #include <IRremote.h>
 
-int STATUS_PIN = 13;
+int RED_PIN = 5;
+int GREEN_PIN = 6;
+int BLUE_PIN = 10;
+
 int RECV_PIN = 11;
 
 String START_REC = "startRecord";
@@ -15,6 +18,8 @@ String VAL = "val:";
 String LEN = "len:";
 
 boolean recording = false;
+boolean redBlinkState = HIGH;
+unsigned long milliCounter = 0;
 
 IRrecv irrecv(RECV_PIN);
 IRsend irsend;
@@ -29,15 +34,34 @@ boolean newData = false;
 void setup() {
   Serial.begin(115200);
   irrecv.enableIRIn(); // Start the receiver
-  pinMode(STATUS_PIN, OUTPUT);
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  analogWrite(RED_PIN, 255);
+  analogWrite(GREEN_PIN, 255);
+  analogWrite(BLUE_PIN, 255);
 }
 
 void loop() {
  readSerialData();
  processSerialData();
  processIR();
+ blinkCheck();
 }
 
+void blinkCheck() {
+   if (recording) {
+    if (millis() > milliCounter) {
+       redBlinkState = !redBlinkState;
+       milliCounter += 750;
+      }
+    if (redBlinkState) analogWrite(RED_PIN, 0);
+    else analogWrite(RED_PIN, 255);
+
+  } else {
+    analogWrite(RED_PIN, 255);
+  }   
+}
 
 void readSerialData() {
  static byte index = 0;
@@ -97,13 +121,17 @@ void processSerialData() {
 // && results.value != UNKNOWN && results.value != REPEAT
 void processIR() {
   if (irrecv.decode(&results)) {
-    digitalWrite(STATUS_PIN, HIGH);
     if (recording) {
-      recording = false;
-      storeCode(&results);
+      boolean successful = storeCode(&results);
+      if (successful) {
+        recording = false;
+        analogWrite(RED_PIN, 255);
+        analogWrite(GREEN_PIN, 0);
+        delay(250);
+        analogWrite(GREEN_PIN, 255);
+      } 
      }
     irrecv.resume(); // resume receiver
-    digitalWrite(STATUS_PIN, LOW);
   }
 }
 
@@ -114,14 +142,14 @@ unsigned long codeValue;
 int codeLen; // The length of the code
 int toggle = 0; // The RC5/6 toggle state
 
-void storeCode(decode_results *results) {
+int storeCode(decode_results *results) {
   codeType = results->decode_type;
   int count = results->rawlen;
    // TODO: add LED green blink feedback on successful storage of supported code
    switch(codeType) {
       case NEC:     
         if (results->value == REPEAT) {
-          return;
+          return false;
         }
         Serial.print(RCVD + "\"type\":\"NEC\"");
         break;
@@ -143,7 +171,7 @@ void storeCode(decode_results *results) {
       default:
         // we didn't get a supported code, restart recording
         recording = true;
-        return;
+        return false;
     }
     
     codeValue = results->value;
@@ -154,6 +182,7 @@ void storeCode(decode_results *results) {
     Serial.print(codeValue, HEX);
     Serial.print("\"");
     Serial.println();
+    return true;
 }
 
 void sendCode(String codeType, unsigned long codeValue, int codeLen) {
@@ -191,6 +220,23 @@ void sendCode(String codeType, unsigned long codeValue, int codeLen) {
     }
   }
   irrecv.enableIRIn(); // Re-enable receiver
+
+  // TODO: Write non-blocking blink method
+  analogWrite(BLUE_PIN, 0);
+  analogWrite(RED_PIN, 0);
+
+  delay(50);
+  analogWrite(BLUE_PIN, 255);
+  analogWrite(RED_PIN, 255);
+
+  delay(50);
+  analogWrite(BLUE_PIN, 0);
+  analogWrite(RED_PIN, 0);
+
+  delay(50);
+  analogWrite(BLUE_PIN, 255);
+  analogWrite(RED_PIN, 0);
+
 }
 
 
