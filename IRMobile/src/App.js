@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
-import { StackNavigator } from 'react-navigation'
+import {AsyncStorage} from 'react-native'
+import { compose, applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { persistStore, autoRehydrate } from 'redux-persist'
+
 
 import Navigator from './navigation'
 import reducers from './reducers'
 
-let store = createStore(reducers)
+const store = createStore(
+  reducers,
+  undefined,
+  compose(
+    applyMiddleware(),
+    autoRehydrate()
+  )
+)
 
+persistStore(store, { storage: AsyncStorage })
 
 class App extends Component {
   render() {

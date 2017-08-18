@@ -25,12 +25,12 @@ class Button extends Component {
     try {
       console.log('PROPS', this.props)
       const response = await fetch(`${baseUrl}/test?name=dan`)
-      const data = await response.text()
-      console.log(data)
+      const data = await response.json()
+      console.log('resonpse', data)
       const string = `${baseUrl}/send?type=NEC&val=${code}&len=32`
       console.log('fetching' + string)
       const res = await fetch(string)
-      const txt = await res.text()
+      const txt = await res.json()
       console.log(txt)
 
     } catch (err) {
@@ -40,7 +40,6 @@ class Button extends Component {
 
   render() {
     const { irCode, style, text, iconName, onPress, color } = this.props
-    console.log('PROPS', this.props)
     return (
       <TouchableOpacity
         onPress={() => onPress ? onPress() : this.sendCode(irCode)}
@@ -71,9 +70,9 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 15,
     borderRadius: 3,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: 'transparent',
+    // borderWidth: 1,
+    // borderColor: '#ddd',
+    backgroundColor: '#534bae',
   },
   text: {
     color: '#ddd',
