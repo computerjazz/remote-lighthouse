@@ -21,9 +21,10 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 ### API
 - GET `ESP_IP_ADDRESS/rec`: puts hardware in 'listening' mode for IR codes
 - GET `ESP_IP_ADDRESS/stop`: stops record mode
+- GET `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`: transmit code via IR
 - GET `ESP_IP_ADDRESS/check`: returns value of any IR codes heard
 ``` 
-  // Returns the following JSON object 
+  // Successful call to /check returns the following JSON object 
   {
       type: oneof 'NEC', 'JVC', 'PANASONIC', 'RC5', 'RC6',
       value: hex string representing an unsigned long,
@@ -31,7 +32,6 @@ Replace every remote control in your house with a single app. ir-mobile will lis
   }
 ``` 
 
-- GET `ESP_IP_ADDRESS/send?type=CODE_TYPE&value=CODE_VALUE&length=CODE_LENGTH`: transmit code via IR
 
 Where `ESP_IP_ADDRESS` is the address of the ESP8266 on your network, for example `192.168.86.99`
 
