@@ -1,12 +1,12 @@
 import { StackNavigator } from 'react-navigation'
 
-import ButtonPanel from '../screens/ButtonPanel'
+import Remote from '../screens/Remote'
 
 
-const navigator = StackNavigator({
-  Home: { screen: ButtonPanel },
+const Navigator = StackNavigator({
+  Remote: { screen: Remote },
   }, {
-  initialRouteName: 'Home',
+  initialRouteName: 'Remote',
 })
 
-export default navigator
+export default Navigator

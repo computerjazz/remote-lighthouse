@@ -1,4 +1,4 @@
-#include <ESP8266WiFi.h>            
+#include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
 String START_REC = "startRecord";
@@ -10,13 +10,13 @@ ESP8266WebServer server(80);
 
 String lastIRCodeReceived = "";
 const byte numChars = 64;
-char receivedChars[numChars]; 
+char receivedChars[numChars];
 boolean serialEndReached = false;
 
 void setup() {
   Serial.begin(115200);
   WiFi.begin("2MuchFun", "burgerbelly"); //Connect to the WiFi network
-  
+
   while (WiFi.status() != WL_CONNECTED) { //Wait for connection
     delay(500);
     Serial.println("Waiting to connect…");
@@ -28,12 +28,13 @@ void setup() {
   server.on("/rec", beginRecord);
   server.on("/stop", endRecord);
   server.on("/check", checkIRCode);
+  server.on("/clear", clearState);
   server.on("/send", sendIRCode);
   server.on("/test", test);
 
-    
+
   server.begin();
-  Serial.println("Server listening");   
+  Serial.println("Server listening");
 }
 
 void loop() {
@@ -54,7 +55,11 @@ void endRecord() {
 void checkIRCode() {
   server.send(200, "application/json", "{" + lastIRCodeReceived + "}");
   lastIRCodeReceived = "";
-  
+}
+
+void clearState() {
+  lastIRCodeReceived = "";
+  server.send(200, "application/json", "{\"message\": \"state cleared.\"}");
 }
 
 // esxpects query string of `?type=PEM&val=1234ABC&len=32`
@@ -63,7 +68,7 @@ void sendIRCode() {
   for (int i = 0; i < server.args(); i++) {
     message += server.argName(i) + ":" + server.arg(i) + ",";
   }
-  Serial.println("send::" + message); 
+  Serial.println("send::" + message);
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
 
@@ -79,10 +84,10 @@ void readSerialData() {
  static byte index = 0;
  char endMarker = '\n';
  char rc;
- 
+
  while (Serial.available() > 0 && serialEndReached == false) {
    rc = Serial.read();
-  
+
    if (rc != endMarker) {
      receivedChars[index] = rc;
      index++;
@@ -100,7 +105,7 @@ void readSerialData() {
         serialEndReached = false;
       } else {
         serialEndReached = false;
-      } 
+      }
     }
   }
 }

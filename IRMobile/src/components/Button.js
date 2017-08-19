@@ -4,62 +4,27 @@ import {
   TouchableOpacity,
   Text,
 }  from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { connect } from 'react-redux'
-import { createButton } from '../actions'
+import { PRIMARY_LIGHT } from '../constants/colors'
 
-
-const codes = {
-  power: '8166817E',
-  tempUp: '8166A15E',
-  tempDown: '816651AE',
-}
-
-class Button extends Component {
-
-  async sendCode(code) {
-    const { baseUrl } = this.props
-    console.log('FETCHING!')
-    this.props.createButton({code: 123, type: 'NEC', length: 32})
-    try {
-      console.log('PROPS', this.props)
-      const response = await fetch(`${baseUrl}/test?name=dan`)
-      const data = await response.json()
-      console.log('resonpse', data)
-      const string = `${baseUrl}/send?type=NEC&val=${code}&len=32`
-      console.log('fetching' + string)
-      const res = await fetch(string)
-      const txt = await res.json()
-      console.log(txt)
-
-    } catch (err) {
-      console.log('#error', err)
-    }
-  }
-
-  render() {
-    const { irCode, style, text, iconName, onPress, color } = this.props
-    return (
-      <TouchableOpacity
-        onPress={() => onPress ? onPress() : this.sendCode(irCode)}
-        style={[styles.button, style]}
-      >
-        <Icon name={iconName} size={30} color={color || "#fff"} />
-        {text && <Text style={styles.text}>
+const Button = ({ irCode, style, text, iconName, onPress, color }) => {
+  return (
+    <TouchableOpacity
+      onPress={() => onPress && onPress(irCode)}
+      style={[styles.button, style]}
+    >
+      <Icon name={iconName} size={30} color={color || "#fff"} />
+      { text &&
+        <Text style={styles.text}>
           {text}
-        </Text>}
-      </TouchableOpacity>
-    )
-  }
+        </Text>
+      }
+    </TouchableOpacity>
+  )
 }
 
-export default connect(state => ({
-  baseUrl: state.network.baseUrl,
-  buttons: state.buttons,
-}), dispatch => ({
-  createButton: (button) => dispatch(createButton(button)),
-}))(Button)
+export default Button
 
 const styles = StyleSheet.create({
   button: {
@@ -70,9 +35,7 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 15,
     borderRadius: 3,
-    // borderWidth: 1,
-    // borderColor: '#ddd',
-    backgroundColor: '#534bae',
+    backgroundColor: PRIMARY_LIGHT,
   },
   text: {
     color: '#ddd',

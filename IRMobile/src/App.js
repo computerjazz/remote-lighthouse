@@ -3,7 +3,7 @@ import {AsyncStorage} from 'react-native'
 import { compose, applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-
+import thunk from 'redux-thunk'
 
 import Navigator from './navigation'
 import reducers from './reducers'
@@ -12,7 +12,7 @@ const store = createStore(
   reducers,
   undefined,
   compose(
-    applyMiddleware(),
+    applyMiddleware(thunk),
     autoRehydrate()
   )
 )
