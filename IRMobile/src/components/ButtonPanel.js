@@ -5,43 +5,67 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { captureIRCode, createButton } from '../actions'
-import Button from './Button'
+import { captureIRCode, createButton, transmitIRCode } from '../actions'
+import RemoteButton from './RemoteButton'
 
 class ButtonPanel extends Component {
 
-  static PropTypes = {
-    navigation: PropTypes.object,
-    createButton: PropTypes.func,
+  static propTypes = {
+    captureIRCode: PropTypes.func,
+    editing: PropTypes.bool,
+    transmitIRCode: PropTypes.func,
   }
 
+  state = {
+    recording: null,
+    status: null,
+  }
+
+  onPress = buttonId => {
+    if (this.props.editing) {
+      this.setRecordButtonId(buttonId)
+      this.props.captureIRCode(buttonId, this.setRecordButtonId, this.onStatusChanged)
+    }
+    else this.props.transmitIRCode(buttonId)
+    this.props.onPress && this.props.onPress()
+  }
+
+  setRecordButtonId = buttonId => {
+      const recording = !!buttonId
+      this.props.setParams({ recording })
+      this.setState({ recording: buttonId })
+  }
+
+  onStatusChanged = status => {
+    console.log('ON RECORD STATUS', status)
+    this.setState({ status })
+  }
+
+  onStatusChangeEnd = () => {
+    this.setState({ status: null })
+  }
 
   render() {
-    console.log('PANEL PROPS', this.props)
-
     return (
       <View style={styles.container}>
-        <Button
-          irCode="8166817E"
-          iconName="power"
+        <RemoteButton
+          iconName="arrow-down"
+          style={styles.upDownButton}
+          onPress={this.onPress}
+          recording={this.props.editing && this.state.recording}
+          status={this.state.status}
+          onStatusChangeEnd={this.onStatusChangeEnd}
+          id="4534"
         />
-        <View style={styles.upDownContainer}>
-          <Button
-            irCode="8166A15E"
-            style={styles.upDownButton}
-            iconName="arrow-up"
-          />
-          <Button
-            irCode="816651AE"
-            iconName="arrow-down"
-            style={styles.upDownButton}
-          />
-        </View>
-        <Button
-          iconName="adjust"
-          style={{width: 75}}
-          onPress={this.props.captureIRCode}
-          color="#c0392b"
+        <RemoteButton
+          style={styles.upDownButton}
+          iconName="arrow-up"
+          onPress={this.onPress}
+          recording={this.props.editing && this.state.recording}
+          status={this.state.status}
+          onSetCode={this.onSetCode}
+          onStatusChangeEnd={this.onStatusChangeEnd}
+          id="qwe"
         />
       </View>
     )
@@ -53,11 +77,16 @@ export default connect(state => ({
   baseUrl: state.network.baseUrl
   }), dispatch => ({
   createButton: button => dispatch(createButton(button)),
-  captureIRCode: () => dispatch(captureIRCode())
+  captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
+  transmitIRCode: buttonId => dispatch(transmitIRCode(buttonId))
 }))(ButtonPanel)
 
 const styles = StyleSheet.create({
-
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   upDownContainer: {
     flexDirection: 'row',
   },

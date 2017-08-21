@@ -1,3 +1,4 @@
+export const ASSIGN_IR_CODE = 'ASSIGN_IR_CODE'
 export const CREATE_BUTTON = 'CREATE_BUTTON'
 export const EDIT_BUTTON = 'EDIT_BUTTON'
 export const SET_BASE_URL = 'SET_BASE_URL'

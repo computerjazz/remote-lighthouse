@@ -13,12 +13,13 @@ String SEND = "send::";
 String RCVD = "rcvd::";
 
 // Query string key constants
-String TYPE = "type:"; 
+String TYPE = "type:";
 String VAL = "val:";
 String LEN = "len:";
 
 boolean recording = false;
 boolean redBlinkState = HIGH;
+int redBlinkRate = 750;
 unsigned long milliCounter = 0;
 
 IRrecv irrecv(RECV_PIN);
@@ -53,24 +54,24 @@ void blinkCheck() {
    if (recording) {
     if (millis() > milliCounter) {
        redBlinkState = !redBlinkState;
-       milliCounter += 750;
+       milliCounter += redBlinkRate;
       }
     if (redBlinkState) analogWrite(RED_PIN, 0);
     else analogWrite(RED_PIN, 255);
 
   } else {
     analogWrite(RED_PIN, 255);
-  }   
+  }
 }
 
 void readSerialData() {
  static byte index = 0;
  char endMarker = '\n';
  char rc;
- 
+
  while (Serial.available() > 0 && newData == false) {
    rc = Serial.read();
-  
+
    if (rc != endMarker) {
      receivedChars[index] = rc;
      index++;
@@ -111,7 +112,7 @@ void processSerialData() {
       int irCodeLength = irCodeLengthStr.toInt();
       String irCodeType  = payload.substring(beginIRTypeIndex, endIRTypeIndex);
       String irCodeValStr  = payload.substring(beginIRCodeValueIndex, endIRCodeValueIndex);
- 
+
       unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
       sendCode(irCodeType, irCodeValue, irCodeLength);
     }
@@ -129,7 +130,7 @@ void processIR() {
         analogWrite(GREEN_PIN, 0);
         delay(250);
         analogWrite(GREEN_PIN, 255);
-      } 
+      }
      }
     irrecv.resume(); // resume receiver
   }
@@ -138,7 +139,7 @@ void processIR() {
 
 // Storage for the recorded code
 int codeType = -1; // The type of code
-unsigned long codeValue; 
+unsigned long codeValue;
 int codeLen; // The length of the code
 int toggle = 0; // The RC5/6 toggle state
 
@@ -147,7 +148,7 @@ int storeCode(decode_results *results) {
   int count = results->rawlen;
    // TODO: add LED green blink feedback on successful storage of supported code
    switch(codeType) {
-      case NEC:     
+      case NEC:
         if (results->value == REPEAT) {
           return false;
         }
@@ -173,7 +174,7 @@ int storeCode(decode_results *results) {
         recording = true;
         return false;
     }
-    
+
     codeValue = results->value;
     codeLen = results->bits;
     Serial.print(",\"length\":");
@@ -212,7 +213,7 @@ void sendCode(String codeType, unsigned long codeValue, int codeLen) {
       Serial.print("Sent RC5 ");
       Serial.println(codeValue, HEX);
       irsend.sendRC5(codeValue, codeLen);
-    } 
+    }
     else {
       irsend.sendRC6(codeValue, codeLen);
       Serial.print("Sent RC6 ");
@@ -238,7 +239,3 @@ void sendCode(String codeType, unsigned long codeValue, int codeLen) {
   analogWrite(RED_PIN, 0);
 
 }
-
-
-
-
