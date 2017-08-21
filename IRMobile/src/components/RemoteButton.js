@@ -59,7 +59,7 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { id, style, text, iconName, onPress = () => {}, recording, status, color } = this.props
+    const { iconSize = 30, id, style, description, iconName, onPress = () => {}, recording, status, color = LIGHT_GREY } = this.props
     const isRecording = recording === id
     const hasStatus = status !== null
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
@@ -86,10 +86,10 @@ class RemoteButton extends Component {
           onPress={() => onPress(id)}
           style={styles.touchable}
         >
-          <Icon name={iconName} size={30} color={color || LIGHT_GREY} />
-          { text &&
+          <Icon name={iconName} size={iconSize} color={color} />
+          { description &&
             <Text style={styles.text}>
-              {text}
+              {description}
             </Text>
           }
         </TouchableOpacity>
@@ -106,8 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 15,
-
   },
   text: {
     color: '#ddd',
@@ -116,10 +114,8 @@ const styles = StyleSheet.create({
   },
   animatedContainer: {
     flex: 1,
-
     margin: 15,
     height: 75,
-    width: 120,
     borderRadius: BUTTON_RADIUS,
     backgroundColor: PRIMARY_LIGHT,
   }

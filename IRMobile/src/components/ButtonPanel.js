@@ -19,6 +19,18 @@ class ButtonPanel extends Component {
   state = {
     recording: null,
     status: null,
+    buttons: [
+      {id: '4534', description: '', icon: 'cake-variant'},
+      //{id: 'qwe', description: '', icon: 'martini'},
+      //{id: '345', description: '', icon: 'music'},
+      //{id: '567', description: '', icon: 'music'},
+      //{id: '33', description: '', icon: 'cake-variant'},
+
+
+
+
+
+    ]
   }
 
   onPress = buttonId => {
@@ -36,37 +48,29 @@ class ButtonPanel extends Component {
       this.setState({ recording: buttonId })
   }
 
-  onStatusChanged = status => {
-    console.log('ON RECORD STATUS', status)
-    this.setState({ status })
-  }
+  onStatusChanged = status => this.setState({ status })
 
-  onStatusChangeEnd = () => {
-    this.setState({ status: null })
-  }
+  onStatusChangeEnd = () => this.setState({ status: null })
+
+
+  renderButton = ({id, description, icon}, index, array) => (
+    <RemoteButton
+      iconName={icon}
+      iconSize={array.length > 3 ? 20 : 30}
+      style={array.length > 3  ? { height: 50 } : { height: 75 }}
+      onPress={this.onPress}
+      recording={this.props.editing && this.state.recording}
+      status={this.state.status}
+      onStatusChangeEnd={this.onStatusChangeEnd}
+      id={id}
+      key={id}
+    />
+  )
 
   render() {
     return (
       <View style={styles.container}>
-        <RemoteButton
-          iconName="arrow-down"
-          style={styles.upDownButton}
-          onPress={this.onPress}
-          recording={this.props.editing && this.state.recording}
-          status={this.state.status}
-          onStatusChangeEnd={this.onStatusChangeEnd}
-          id="4534"
-        />
-        <RemoteButton
-          style={styles.upDownButton}
-          iconName="arrow-up"
-          onPress={this.onPress}
-          recording={this.props.editing && this.state.recording}
-          status={this.state.status}
-          onSetCode={this.onSetCode}
-          onStatusChangeEnd={this.onStatusChangeEnd}
-          id="qwe"
-        />
+        {this.state.buttons.map(this.renderButton)}
       </View>
     )
   }
@@ -74,7 +78,6 @@ class ButtonPanel extends Component {
 
 export default connect(state => ({
   buttons: state.buttons,
-  baseUrl: state.network.baseUrl
   }), dispatch => ({
   createButton: button => dispatch(createButton(button)),
   captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
@@ -87,10 +90,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  upDownContainer: {
-    flexDirection: 'row',
-  },
-  upDownButton: {
-    width: '40%'
-  }
 })
