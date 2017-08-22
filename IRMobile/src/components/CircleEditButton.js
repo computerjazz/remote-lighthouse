@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import {
   StyleSheet,
   TouchableOpacity,
+  ViewPropTypes,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -11,7 +12,7 @@ class CircleEditButton extends Component {
 
   static propTypes = {
     onPress: PropTypes.func,
-    style: PropTypes.object,
+    style: ViewPropTypes.style,
   }
 
   render() {

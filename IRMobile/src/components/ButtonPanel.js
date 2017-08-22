@@ -54,18 +54,18 @@ class ButtonPanel extends Component {
 
 
   renderButton = (button, index, array) => {
-    const { id, description, icon } = button
+    const { id, title, icon } = button
     const { recording, editing } = this.props
     return (
       <RemoteButton
-        description={description}
+        title={title}
         iconName={icon}
         iconSize={array.length > 3 ? 20 : 30}
         style={array.length > 3  ? { height: 50 } : { height: 75 }}
         onPress={this.onPress}
         onEditPress={this.onEditPress}
         editing={editing}
-        recording={editing && recording}
+        recording={recording}
         status={this.state.status}
         onStatusChangeEnd={this.onStatusChangeEnd}
         id={id}

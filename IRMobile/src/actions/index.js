@@ -1,16 +1,47 @@
-import { ASSIGN_IR_CODE, SET_BASE_URL } from '../constants/actions'
+import uuid from 'react-native-uuid'
 
-export function assignIRCode(buttonId, codeData){
-  console.log('ASSIGNING IR CODE TO BUTTON', buttonId, codeData)
+import { ASSIGN_IR_CODE, CREATE_BUTTON, DELETE_BUTTON, EDIT_BUTTON, SET_BASE_URL } from '../constants/actions'
+
+
+
+export function assignIRCode(id, codeData) {
+  console.log('ASSIGNING IR CODE TO BUTTON', id, codeData)
   const { type, value, length } = codeData
   return {
     type: ASSIGN_IR_CODE,
     payload: {
-      buttonId,
+      id,
       type,
       value,
       length,
     },
+  }
+}
+
+export function createButton() {
+ return (dispatch, getState) => {
+   return {
+     type: CREATE_BUTTON,
+     id: uuid.v1()
+   }
+ }
+}
+
+export function deleteButton(id) {
+  return {
+    type: DELETE_BUTTON,
+    id,
+  }
+}
+
+export function editButton({ id, title, icon }) {
+  return {
+    type: EDIT_BUTTON,
+    payload: {
+      id,
+      title,
+      icon,
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import {
   PanResponder,
   ScrollView,
   StyleSheet,
+  TouchableWithoutFeedback,
 } from 'react-native'
 import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
@@ -20,14 +21,15 @@ import CirclePlusButton from '../components/CirclePlusButton'
 
 // test buttons
 const dummyButts = [
-  {id: '4534', description: '', icon: 'cake-variant'},
-  {id: 'qwe', description: '', icon: 'martini'},
-  {id: '345', description: '', icon: 'music'}
-  //{id: '567', description: '', icon: 'music'},
-  //{id: '33', description: '', icon: 'cake-variant'},
+  {id: '4534', title: '', icon: 'cake-variant'},
+  {id: 'qwe', title: '', icon: 'martini'},
+  {id: '345', title: '', icon: 'music'}
+  //{id: '567', title: '', icon: 'music'},
+  //{id: '33', title: '', icon: 'cake-variant'},
 ]
 
 const dummyPanel = {
+  id: '34534543',
   type: 'custom',
   buttons: dummyButts,
 }
@@ -145,7 +147,14 @@ class Remote extends Component {
     this.props.navigation.setParams({ editButtonModalVisible: false })
   }
 
-  renderButtonPanel = ({ type, buttons }) => {
+  dismissAll = () => {
+    this.dismissMenu()
+    this.dismissRecording()
+    this.dismissEditButtonModal()
+    this.dismissAddelementModal()
+  }
+
+  renderButtonPanel = ({ id, type, buttons }) => {
     const { navigation } = this.props
     const { params } = navigation.state
     const editing = params && params.editing
@@ -153,8 +162,10 @@ class Remote extends Component {
 
     return (
       <ButtonPanel
-        type="custom"
-        buttons={dummyButts}
+        key={id}
+        id={id}
+        type={type}
+        buttons={buttons}
         editing={editing}
         recording={recording}
         setParams={navigation.setParams}
@@ -170,30 +181,32 @@ class Remote extends Component {
     const editButtonModalVisible = params && params.editButtonModalVisible
 
     return (
-      <Animated.View
-        {...this._panResponder.panHandlers}
-        style={[styles.container, editing && { backgroundColor: this.backgroundAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [PRIMARY_DARK, tinycolor(PRIMARY_DARK).lighten(8).toString()]
-        })}]}
-      >
-        <ScrollView style={styles.scrollView}>
-          { dummyPanels.map(this.renderButtonPanel)}
-        </ScrollView>
-        { editing && <CirclePlusButton onPress={this.showAddElementModal} /> }
-        { addElementModalVisible &&
-          <AddElementModal
-            onAccept={this.dismissAddelementModal}
-            onCancel={this.dismissAddelementModal}
-          /> }
+      <TouchableWithoutFeedback onPress={this.dismissAll}>
+        <Animated.View
+          {...this._panResponder.panHandlers}
+          style={[styles.container, editing && { backgroundColor: this.backgroundAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [PRIMARY_DARK, tinycolor(PRIMARY_DARK).lighten(8).toString()]
+          })}]}
+        >
+          <ScrollView style={styles.scrollView}>
+            { dummyPanels.map(this.renderButtonPanel)}
+          </ScrollView>
+          { editing && <CirclePlusButton onPress={this.showAddElementModal} /> }
+          { addElementModalVisible &&
+            <AddElementModal
+              onAccept={this.dismissAddelementModal}
+              onCancel={this.dismissAddelementModal}
+            /> }
 
-        { editButtonModalVisible &&
-          <EditButtonModal
-            onAccept={this.dismissEditButtonModal}
-            onCancel={this.dismissEditButtonModal}
-          /> }
+          { editButtonModalVisible &&
+            <EditButtonModal
+              onAccept={this.dismissEditButtonModal}
+              onCancel={this.dismissEditButtonModal}
+            /> }
 
-      </Animated.View>
+        </Animated.View>
+      </TouchableWithoutFeedback>
     )
   }
 }

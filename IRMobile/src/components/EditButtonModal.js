@@ -2,17 +2,16 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import TextButton from './TextButton'
 
-import { LIGHT_GREY, MID_GREY, DARK_GREY, RECORDING_IN_PROGRESS_COLOR } from '../constants/colors'
+import { LIGHT_GREY, MID_GREY, DARK_GREY } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const icons = [
   'arrow-up',
@@ -39,10 +38,11 @@ class EditButtonModal extends Component {
     selectedIcon: null,
   }
 
-  renderIconButton = iconName => {
+  renderIconButton = (iconName, index) => {
     const selected = this.state.selectedIcon === iconName
     return (
       <TouchableOpacity
+        key={index}
         onPress={() => this.setState({ selectedIcon: iconName })}
         style={[styles.icon, selected && { backgroundColor: MID_GREY}]}
       >
