@@ -5,47 +5,47 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { captureIRCode, createButton, transmitIRCode } from '../actions'
+import { captureIRCode, createButton, stopRecord, transmitIRCode } from '../actions'
 import RemoteButton from './RemoteButton'
 
 class ButtonPanel extends Component {
 
   static propTypes = {
-    captureIRCode: PropTypes.func,
+    buttons: PropTypes.array,
+    captureIRCode: PropTypes.func.isRequired,
     editing: PropTypes.bool,
-    transmitIRCode: PropTypes.func,
+    onPress: PropTypes.func,
+    recording: PropTypes.string,
+    setParams: PropTypes.func.isRequired,
+    stopRecord: PropTypes.func.isRequired,
+    transmitIRCode: PropTypes.func.isRequired,
   }
 
+
   state = {
-    recording: null,
     status: null,
-    buttons: [
-      {id: '4534', description: '', icon: 'cake-variant'},
-      //{id: 'qwe', description: '', icon: 'martini'},
-      //{id: '345', description: '', icon: 'music'},
-      //{id: '567', description: '', icon: 'music'},
-      //{id: '33', description: '', icon: 'cake-variant'},
-
-
-
-
-
-    ]
   }
 
   onPress = buttonId => {
     if (this.props.editing) {
-      this.setRecordButtonId(buttonId)
-      this.props.captureIRCode(buttonId, this.setRecordButtonId, this.onStatusChanged)
+      if (this.props.recording === buttonId) {
+        this.props.stopRecord()
+        this.props.setParams({ recording: null })
+      } else {
+        this.setRecordButtonId(buttonId)
+        this.props.captureIRCode(buttonId, this.setRecordButtonId, this.onStatusChanged)
+      }
     }
     else this.props.transmitIRCode(buttonId)
-    this.props.onPress && this.props.onPress()
+    this.props.onPress()
+  }
+
+  onEditPress = buttonId => {
+    this.props.setParams({ editButtonModalVisible: true })
   }
 
   setRecordButtonId = buttonId => {
-      const recording = !!buttonId
-      this.props.setParams({ recording })
-      this.setState({ recording: buttonId })
+      this.props.setParams({ recording: buttonId })
   }
 
   onStatusChanged = status => this.setState({ status })
@@ -53,34 +53,47 @@ class ButtonPanel extends Component {
   onStatusChangeEnd = () => this.setState({ status: null })
 
 
-  renderButton = ({id, description, icon}, index, array) => (
-    <RemoteButton
-      iconName={icon}
-      iconSize={array.length > 3 ? 20 : 30}
-      style={array.length > 3  ? { height: 50 } : { height: 75 }}
-      onPress={this.onPress}
-      recording={this.props.editing && this.state.recording}
-      status={this.state.status}
-      onStatusChangeEnd={this.onStatusChangeEnd}
-      id={id}
-      key={id}
-    />
-  )
+  renderButton = (button, index, array) => {
+    const { id, description, icon } = button
+    const { recording, editing } = this.props
+    return (
+      <RemoteButton
+        description={description}
+        iconName={icon}
+        iconSize={array.length > 3 ? 20 : 30}
+        style={array.length > 3  ? { height: 50 } : { height: 75 }}
+        onPress={this.onPress}
+        onEditPress={this.onEditPress}
+        editing={editing}
+        recording={editing && recording}
+        status={this.state.status}
+        onStatusChangeEnd={this.onStatusChangeEnd}
+        id={id}
+        key={id}
+      />
+    )
+  }
 
   render() {
+    const { buttons = [] } = this.props
     return (
       <View style={styles.container}>
-        {this.state.buttons.map(this.renderButton)}
+        {buttons.map(this.renderButton)}
       </View>
     )
   }
 }
 
-export default connect(state => ({
-  buttons: state.buttons,
-  }), dispatch => ({
+ButtonPanel.defaultProps = {
+  editing: false,
+  buttons: [],
+  onPress: () => {},
+}
+
+export default connect(null, dispatch => ({
   createButton: button => dispatch(createButton(button)),
   captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
+  stopRecord: () => dispatch(stopRecord()),
   transmitIRCode: buttonId => dispatch(transmitIRCode(buttonId))
 }))(ButtonPanel)
 

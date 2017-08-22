@@ -72,7 +72,7 @@ export function clearRecordingState() {
 
 const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 10
 
-export function checkForCapturedCode(buttonId, setRecordButton, onStatusChanged) {
+export function checkForCapturedCode(buttonId, setRecordButton = () => {}, onStatusChanged = () => {}) {
   return async (dispatch, getState) => {
     const { baseUrl } = getState().network
     try {
@@ -91,22 +91,24 @@ export function checkForCapturedCode(buttonId, setRecordButton, onStatusChanged)
           console.log('GOT A CODE!', codeData)
           clearInterval(pollInterval)
           dispatch(assignIRCode(buttonId, codeData))
-          onStatusChanged && onStatusChanged(true)
-          setRecordButton && setRecordButton(null)
-
+          onStatusChanged(true)
+          setRecordButton(null)
+          console.log('GOT CODE')
         } else if (pollCounter > MAX_TIMES_TO_CHECK_FOR_NEW_CODE) {
-          // give up
+          // Too much time has passed, give up
           dispatch(stopRecord())
           clearInterval(pollInterval)
-          onStatusChanged && onStatusChanged(false)
-          setRecordButton && setRecordButton(null)
+          onStatusChanged(false)
+          setRecordButton(null)
+          console.log('MAX REACTHED')
         }
         pollCounter++
       }, 1000)
     } catch (err) {
       pollInterval && clearInterval(pollInterval)
-      onStatusChanged && onStatusChanged(false)
-      setRecordButton && setRecordButton(null)
+      console.log('ERR!!!')
+      onStatusChanged(false)
+      setRecordButton(null)
     }
   }
 }

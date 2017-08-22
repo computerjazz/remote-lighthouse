@@ -84,7 +84,7 @@ class HeaderMenu extends Component {
         style={styles.touchable}
         onPress={() => {
           this.props.stopRecord()
-          this.props.setParams({ editing: false })
+          this.props.setParams({ editing: false, recording: null })
         }}
       >
         <Text style={styles.text}>Done</Text>

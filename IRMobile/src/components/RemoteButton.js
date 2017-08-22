@@ -1,10 +1,12 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   Animated,
   StyleSheet,
   TouchableOpacity,
   Text,
 }  from 'react-native'
+
+import CircleEditButton from './CircleEditButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { LIGHT_GREY, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, STATUS_GOOD_COLOR, STATUS_BAD_COLOR } from '../constants/colors'
@@ -13,6 +15,12 @@ import { BUTTON_RADIUS } from '../constants/style'
 const PULSE_RATE = 750
 
 class RemoteButton extends Component {
+
+  static propTypes = {
+    id: PropTypes.string,
+    recording: PropTypes.string,
+    status: PropTypes.bool,
+  }
 
   pulseAnim = new Animated.Value(0)
   statusAnim = new Animated.Value(0)
@@ -59,7 +67,7 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, description, iconName, onPress = () => {}, recording, status, color = LIGHT_GREY } = this.props
+    const { iconSize = 30, id, style, description, editing, iconName, onPress = () => {}, onEditPress, recording, status, color = LIGHT_GREY } = this.props
     const isRecording = recording === id
     const hasStatus = status !== null
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
@@ -87,12 +95,14 @@ class RemoteButton extends Component {
           style={styles.touchable}
         >
           <Icon name={iconName} size={iconSize} color={color} />
-          { description &&
-            <Text style={styles.text}>
-              {description}
-            </Text>
+          { description ? (<Text style={[styles.text]}>
+            {description}
+          </Text>) : null
+
           }
         </TouchableOpacity>
+        { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
+
       </Animated.View>
       )
     }
@@ -118,5 +128,10 @@ const styles = StyleSheet.create({
     height: 75,
     borderRadius: BUTTON_RADIUS,
     backgroundColor: PRIMARY_LIGHT,
+  },
+  editButton: {
+    position: 'absolute',
+    top: -5,
+    left: -5,
   }
 })
