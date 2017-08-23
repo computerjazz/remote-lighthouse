@@ -153,7 +153,7 @@ class Remote extends Component {
     this.dismissAddPanelModal()
   }
 
-  renderButtonPanel = ({ id, type, buttons }) => {
+  renderButtonPanel = id => {
     const { navigation } = this.props
     const { params } = navigation.state
     const editing = params && params.editing
@@ -163,8 +163,6 @@ class Remote extends Component {
       <ButtonPanel
         key={id}
         id={id}
-        type={type}
-        buttons={buttons}
         editing={editing}
         recording={recording}
         setParams={navigation.setParams}
@@ -192,11 +190,7 @@ class Remote extends Component {
           })}]}
         >
           <ScrollView style={styles.scrollView}>
-            { this.props.remote.panels.map(panelId => {
-              const panel = this.props.panels[panelId]
-              const buttons = panel.buttons.map(buttonId => this.props.buttons[buttonId])
-              return this.renderButtonPanel({ type: panel.type, buttons, id: panelId})
-            })}
+            { this.props.remote && this.props.remote.panels.map(this.renderButtonPanel)}
           </ScrollView>
           { editing && <CirclePlusButton onPress={this.showAddPanelModal} /> }
           { addPanelModalVisible &&
@@ -219,8 +213,6 @@ class Remote extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
   remote: state.remotes[ownProps.navigation.state.params.id],
-  buttons: state.buttons,
-  panels: state.panels,
   title: state.remotes[ownProps.navigation.state.params.id].title
 })
 
@@ -229,6 +221,31 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   setBaseUrl: url => dispatch(setBaseUrl(url)),
   stopRecord: () => dispatch(stopRecord())
 })
+
+const nestedRemote = (state, remoteId) => {
+  //@TODO: cleanup
+
+  let nested = {
+    panels: []
+  }
+  const remoteState = {...state.remotes}
+  const buttonState = {...state.buttons}
+  const panelState = {...state.panels}
+
+  remoteState[remoteId].panels.forEach(panelId => {
+    nested.panels.push(panelState[panelId])
+  })
+
+  nested.panels = nested.panels.map((panel, index) => {
+    return {
+      buttons: panel.buttons.map(buttonId => ({ id: buttonId, ...buttonState[buttonId]})),
+      type: panel.type,
+      id: remoteState[remoteId].panels[index]
+    }
+  })
+
+  return nested
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 

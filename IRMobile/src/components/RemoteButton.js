@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
 }  from 'react-native'
+import { connect } from 'react-redux'
 
 import CircleEditButton from './CircleEditButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -109,7 +110,10 @@ class RemoteButton extends Component {
 }
 
 
-export default RemoteButton
+export default connect((state, ownProps) => ({
+  iconName: state.buttons[ownProps.id].icon,
+  title: state.buttons[ownProps.id].title,
+}), null)(RemoteButton)
 
 const styles = StyleSheet.create({
   touchable: {

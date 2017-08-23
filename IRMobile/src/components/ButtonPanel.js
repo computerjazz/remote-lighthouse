@@ -55,13 +55,11 @@ class ButtonPanel extends Component {
   onStatusChangeEnd = () => this.setState({ status: null })
 
 
-  renderButton = (button, index, array) => {
-    const { id, title, icon } = button
+  renderButton = (buttonId, index, array) => {
+    console.log('RENDERING BUTTON', buttonId)
     const { recording, editing } = this.props
     return (
       <RemoteButton
-        title={title}
-        iconName={icon}
         iconSize={array.length > 3 ? 20 : 30}
         style={array.length > 3  ? { height: 50 } : { height: 75 }}
         onPress={this.onPress}
@@ -71,8 +69,8 @@ class ButtonPanel extends Component {
         recording={recording}
         status={this.state.status}
         onStatusChangeEnd={this.onStatusChangeEnd}
-        id={id}
-        key={id}
+        id={buttonId}
+        key={buttonId}
       />
     )
   }
@@ -94,7 +92,8 @@ ButtonPanel.defaultProps = {
 }
 
 export default connect((state, ownProps) => ({
-  buttons: state.panels[ownProps.id].buttons
+    buttons: state.panels[ownProps.id].buttons,
+    type: state.panels[ownProps.id].type
 }), dispatch => ({
   captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
   stopRecord: () => dispatch(stopRecord()),

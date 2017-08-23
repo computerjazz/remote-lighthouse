@@ -27,6 +27,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         [action.payload.buttonId]: {
+          ...state[action.payload.buttonId],
           type: action.payload.type,
           value: action.payload.value,
           length: action.payload.length,
@@ -42,7 +43,7 @@ export default (state = initialState, action) => {
           icon: action.payload.icon,
         }
       }
-      
+
     default:
       return state
   }
