@@ -11,30 +11,36 @@ import TextButton from './TextButton'
 
 import { LIGHT_GREY } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
+import { CUSTOM, MEDIA_PLAYBACK } from '../constants/types'
 
-class AddElementModal extends Component {
+class AddPanelModal extends Component {
   render() {
-    const { onAccept = () => {}, onCancel = () => {} } = this.props
+    const { onAccept = () => {}, onCancel = () => {}, remoteId } = this.props
     return (
       <View style={styles.container}>
+        <TextButton
+          text="Custom"
+          buttonStyle={styles.confirmButton}
+          onPress={() => onAccept(CUSTOM)}
+        />
+        <TextButton
+          text="Media Playback"
+          buttonStyle={styles.confirmButton}
+          onPress={() => onAccept(MEDIA_PLAYBACK)}
+        />
         <View style={styles.confirmButtonContainer}>
           <TextButton
             text="Cancel"
             buttonStyle={styles.confirmButton}
             onPress={onCancel}
           />
-        <TextButton
-          text="Ok"
-          buttonStyle={styles.confirmButton}
-          onPress={onAccept}
-        />
-      </View>
+        </View>
       </View>
     )
   }
 }
 
-export default AddElementModal
+export default AddPanelModal
 
 const styles = StyleSheet.create({
   container: {

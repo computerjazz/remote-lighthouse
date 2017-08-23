@@ -7,6 +7,9 @@ const Navigator = StackNavigator({
   Remote: { screen: Remote },
   }, {
   initialRouteName: 'Remote',
+  initialRouteParams: {
+    id: 'testRemote' // TODO: delete
+  }
 })
 
 export default Navigator

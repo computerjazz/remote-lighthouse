@@ -4,38 +4,27 @@ import {
   PanResponder,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native'
 import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
 
-import { setBaseUrl, stopRecord } from '../actions'
+import { setBaseUrl, stopRecord, createButtonPanel } from '../actions'
 
-import { PRIMARY_DARK, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, LIGHT_GREY} from '../constants/colors'
+import {
+  LIGHT_GREY,
+  PRIMARY_DARK_ANALOGOUS,
+  PRIMARY_DARK,
+  PRIMARY_LIGHT_ANALOGOUS,
+  RECORDING_IN_PROGRESS_COLOR,
+} from '../constants/colors'
 
-import AddElementModal from '../components/AddElementModal'
+import AddPanelModal from '../components/AddPanelModal'
 import ButtonPanel from '../components/ButtonPanel'
 import EditButtonModal from '../components/EditButtonModal'
 import HeaderMenu from '../components/HeaderMenu'
 import CirclePlusButton from '../components/CirclePlusButton'
-
-// test buttons
-const dummyButts = [
-  {id: '4534', title: '', icon: 'cake-variant'},
-  {id: 'qwe', title: '', icon: 'martini'},
-  {id: '345', title: '', icon: 'music'}
-  //{id: '567', title: '', icon: 'music'},
-  //{id: '33', title: '', icon: 'cake-variant'},
-]
-
-const dummyPanel = {
-  id: '34534543',
-  type: 'custom',
-  buttons: dummyButts,
-}
-
-const dummyPanels = [dummyPanel]
-
 
 class Remote extends Component {
 
@@ -46,7 +35,7 @@ class Remote extends Component {
   }
 
   state = {
-    addElementModalVisible: false,
+    addPanelModalVisible: false,
   }
 
   backgroundAnim = new Animated.Value(0)
@@ -56,19 +45,20 @@ class Remote extends Component {
     const menuVisible = params && params.menuVisible
     const editing = params && params.editing
     const recording = params && params.recording
-    const addElementModalVisible = params && params.addElementModalVisible
+    const addPanelModalVisible = params && params.addPanelModalVisible
     const editButtonModalVisible = params && params.editButtonModalVisible
-    const modalVisible = addElementModalVisible || editButtonModalVisible
+    const modalVisible = addPanelModalVisible || editButtonModalVisible
+    const remoteTitle = params && params.title
 
 
-    const title = editing ? recording ? 'Listening...' : 'Ready to Capture' : 'Remote Control'
+    const title = editing ? recording ? 'Listening...' : 'Ready to Capture' : remoteTitle
     return {
         title,
         headerStyle: {
-          backgroundColor: editing ? RECORDING_IN_PROGRESS_COLOR : PRIMARY_LIGHT,
+          backgroundColor: editing ? RECORDING_IN_PROGRESS_COLOR : PRIMARY_LIGHT_ANALOGOUS,
         },
         headerTitleStyle: {
-          color: editing ? LIGHT_GREY : PRIMARY_DARK,
+          color: editing ? LIGHT_GREY : PRIMARY_DARK_ANALOGOUS,
         },
         headerRight: !modalVisible && <HeaderMenu
           menuVisible={menuVisible}
@@ -80,7 +70,7 @@ class Remote extends Component {
 
   componentWillMount() {
     this.props.setBaseUrl('http://192.168.86.99')
-
+    this.props.navigation.setParams({ title: this.props.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => false,
      onStartShouldSetPanResponderCapture: () => false,
@@ -135,12 +125,21 @@ class Remote extends Component {
     return true
   }
 
-  showAddElementModal = () => {
-    this.props.navigation.setParams({ addElementModalVisible: true })
+  showAddPanelModal = () => {
+    this.props.navigation.setParams({ addPanelModalVisible: true })
   }
 
-  dismissAddelementModal = () => {
-    this.props.navigation.setParams({ addElementModalVisible: false })
+  dismissAddPanelModal = () => {
+    this.props.navigation.setParams({ addPanelModalVisible: false })
+  }
+
+  submitAddPanelModal = type => {
+    this.props.createButtonPanel(type)
+    this.props.navigation.setParams({ addPanelModalVisible: false })
+  }
+
+  submitEditButtonModal = ({ title, icon }) => {
+    this.props.navigation.setParams({ editButtonModalVisible: false })
   }
 
   dismissEditButtonModal = () => {
@@ -151,7 +150,7 @@ class Remote extends Component {
     this.dismissMenu()
     this.dismissRecording()
     this.dismissEditButtonModal()
-    this.dismissAddelementModal()
+    this.dismissAddPanelModal()
   }
 
   renderButtonPanel = ({ id, type, buttons }) => {
@@ -177,9 +176,12 @@ class Remote extends Component {
     const { navigation } = this.props
     const { params } = navigation.state
     const editing = params && params.editing
-    const addElementModalVisible = params && params.addElementModalVisible
+    const addPanelModalVisible = params && params.addPanelModalVisible
     const editButtonModalVisible = params && params.editButtonModalVisible
 
+
+
+    console.log('PROPS!!', this.props)
     return (
       <TouchableWithoutFeedback onPress={this.dismissAll}>
         <Animated.View
@@ -190,18 +192,22 @@ class Remote extends Component {
           })}]}
         >
           <ScrollView style={styles.scrollView}>
-            { dummyPanels.map(this.renderButtonPanel)}
+            { this.props.remote.panels.map(panelId => {
+              const panel = this.props.panels[panelId]
+              const buttons = panel.buttons.map(buttonId => this.props.buttons[buttonId])
+              return this.renderButtonPanel({ type: panel.type, buttons, id: panelId})
+            })}
           </ScrollView>
-          { editing && <CirclePlusButton onPress={this.showAddElementModal} /> }
-          { addElementModalVisible &&
-            <AddElementModal
-              onAccept={this.dismissAddelementModal}
-              onCancel={this.dismissAddelementModal}
+          { editing && <CirclePlusButton onPress={this.showAddPanelModal} /> }
+          { addPanelModalVisible &&
+            <AddPanelModal
+              onAccept={this.submitAddPanelModal}
+              onCancel={this.dismissAddPanelModal}
             /> }
 
           { editButtonModalVisible &&
             <EditButtonModal
-              onAccept={this.dismissEditButtonModal}
+              onAccept={this.submitEditButtonModal}
               onCancel={this.dismissEditButtonModal}
             /> }
 
@@ -211,10 +217,20 @@ class Remote extends Component {
   }
 }
 
-export default connect(null, dispatch => ({
+const mapStateToProps = (state, ownProps) => ({
+  remote: state.remotes[ownProps.navigation.state.params.id],
+  buttons: state.buttons,
+  panels: state.panels,
+  title: state.remotes[ownProps.navigation.state.params.id].title
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.params.id)),
   setBaseUrl: url => dispatch(setBaseUrl(url)),
   stopRecord: () => dispatch(stopRecord())
-}))(Remote)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 
 const styles = StyleSheet.create({
   container: {

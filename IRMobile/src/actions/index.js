@@ -1,16 +1,18 @@
 import uuid from 'react-native-uuid'
 
-import { ASSIGN_IR_CODE, CREATE_BUTTON, DELETE_BUTTON, EDIT_BUTTON, SET_BASE_URL } from '../constants/actions'
+import panelDefs from '../dictionaries/panels'
+
+import { ASSIGN_IR_CODE, CREATE_BUTTON, CREATE_BUTTON_PANEL, DELETE_BUTTON, EDIT_BUTTON, SET_BASE_URL } from '../constants/actions'
 
 
 
-export function assignIRCode(id, codeData) {
-  console.log('ASSIGNING IR CODE TO BUTTON', id, codeData)
+export function assignIRCode(buttonId, codeData) {
+  console.log('ASSIGNING IR CODE TO BUTTON', buttonId, codeData)
   const { type, value, length } = codeData
   return {
     type: ASSIGN_IR_CODE,
     payload: {
-      id,
+      buttonId,
       type,
       value,
       length,
@@ -18,19 +20,24 @@ export function assignIRCode(id, codeData) {
   }
 }
 
-export function createButton() {
- return (dispatch, getState) => {
-   return {
-     type: CREATE_BUTTON,
-     id: uuid.v1()
-   }
- }
+export function createButton(icon, panelId) {
+  const buttonId = uuid.v1()
+  return {
+    type: CREATE_BUTTON,
+    payload: {
+       buttonId,
+       icon,
+       panelId,
+      }
+    }
 }
 
-export function deleteButton(id) {
+export function deleteButton(buttonId) {
   return {
     type: DELETE_BUTTON,
-    id,
+    payload: {
+      buttonId,
+    }
   }
 }
 
@@ -38,10 +45,31 @@ export function editButton({ id, title, icon }) {
   return {
     type: EDIT_BUTTON,
     payload: {
-      id,
+      buttonId: id,
       title,
       icon,
     }
+  }
+}
+
+const createButtonPanelAction = (remoteId, panelId, type) => ({
+    type: CREATE_BUTTON_PANEL,
+    payload: {
+      remoteId,
+      panelId,
+      type,
+    }
+  })
+
+export function createButtonPanel(type, remoteId) {
+  return async (dispatch) => {
+    const panelId = uuid.v1()
+    if (!panelDefs[type]) return
+    await dispatch(createButtonPanelAction(remoteId, panelId, type))
+    panelDefs[type].forEach(iconName => {
+      console.log('CREATING BUTTON!!!!', iconName, panelId)
+      dispatch(createButton(iconName, panelId))
+    })
   }
 }
 

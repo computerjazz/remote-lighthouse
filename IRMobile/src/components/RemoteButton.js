@@ -9,7 +9,7 @@ import {
 import CircleEditButton from './CircleEditButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { LIGHT_GREY, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, STATUS_GOOD_COLOR, STATUS_BAD_COLOR } from '../constants/colors'
+import { LIGHT_GREY, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, STATUS_GOOD_COLOR, STATUS_BAD_COLOR, WARM_ORANGE } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
 
 const PULSE_RATE = 750

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -13,14 +14,25 @@ import { LIGHT_GREY, MID_GREY, DARK_GREY } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
 
 
-const icons = [
-  'arrow-up',
-  'arrow-down',
-  'arrow-left',
-  'arrow-right',
-  'backspace',
-  'bell-ring-outline',
-  'block-helper',
+const generalIcons = [
+  'chevron-up',
+  'chevron-down',
+  'chevron-left',
+  'chevron-right',
+  'home',
+  'reload',
+  'wrench',
+  'menu',
+  'lightbulb',
+  'lightbulb-on-outline',
+  'cake-variant',
+  'martini',
+  'pencil',
+
+]
+
+const deviceIcons = [
+  'power',
   'brightness-1',
   'brightness-2',
   'brightness-3',
@@ -28,7 +40,37 @@ const icons = [
   'brightness-5',
   'brightness-6',
   'brightness-7',
+  'projector',
+  'printer',
+  'monitor',
 
+]
+
+const mediaIcons = [
+  'play',
+  'pause',
+  'play-pause',
+  'stop',
+  'rewind',
+  'fast-forward',
+  'skip-previous',
+  'skip-next',
+  'step-backward',
+  'step-forward',
+  'step-backward-2',
+  'step-forward-2',
+]
+
+const audioIcons = [
+  'volume-low',
+  'volume-medium',
+  'volume-high',
+  'volume-minus',
+  'volume-plus',
+  'volume-mute',
+  'volume-off',
+  'music',
+  'music-off',
 ]
 
 
@@ -61,8 +103,24 @@ class EditButtonModal extends Component {
       <View style={styles.container}>
 
         <ScrollView style={styles.scrollView}>
-          <View style={styles.iconContainer}>
-            {icons.map(this.renderIconButton)}
+          <View>
+            <Text style={styles.title}>Icon</Text>
+            <Text style={styles.categoryTitle}>Device</Text>
+            <View style={styles.iconContainer}>
+              {deviceIcons.map(this.renderIconButton)}
+            </View>
+            <Text style={styles.categoryTitle}>Media Playback</Text>
+            <View style={styles.iconContainer}>
+              {mediaIcons.map(this.renderIconButton)}
+            </View>
+            <Text style={styles.categoryTitle}>Audio</Text>
+            <View style={styles.iconContainer}>
+              {audioIcons.map(this.renderIconButton)}
+            </View>
+            <Text style={styles.categoryTitle}>General</Text>
+            <View style={styles.iconContainer}>
+              {generalIcons.map(this.renderIconButton)}
+            </View>
           </View>
         </ScrollView>
 
@@ -96,6 +154,15 @@ const styles = StyleSheet.create({
     right: 20,
     borderRadius: BUTTON_RADIUS,
   },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: DARK_GREY,
+  },
+  categoryTitle: {
+    fontSize: 15,
+    color: DARK_GREY,
+  },
   confirmButtonContainer: {
     position: 'absolute',
     bottom: 0,
@@ -113,9 +180,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-
     flexDirection: 'row',
     flexWrap: 'wrap',
+    borderTopColor: DARK_GREY,
+    borderTopWidth: 0.5,
+    paddingTop: 10,
+    marginBottom: 20,
   },
   icon: {
     width: 40,

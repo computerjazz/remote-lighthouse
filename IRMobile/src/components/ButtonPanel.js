@@ -5,7 +5,9 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { captureIRCode, createButton, stopRecord, transmitIRCode } from '../actions'
+import { PRIMARY_DARK } from '../constants/colors'
+
+import { captureIRCode, stopRecord, transmitIRCode } from '../actions'
 import RemoteButton from './RemoteButton'
 
 class ButtonPanel extends Component {
@@ -63,6 +65,7 @@ class ButtonPanel extends Component {
         iconSize={array.length > 3 ? 20 : 30}
         style={array.length > 3  ? { height: 50 } : { height: 75 }}
         onPress={this.onPress}
+        color={PRIMARY_DARK}
         onEditPress={this.onEditPress}
         editing={editing}
         recording={recording}
@@ -90,8 +93,9 @@ ButtonPanel.defaultProps = {
   onPress: () => {},
 }
 
-export default connect(null, dispatch => ({
-  createButton: button => dispatch(createButton(button)),
+export default connect((state, ownProps) => ({
+  buttons: state.panels[ownProps.id].buttons
+}), dispatch => ({
   captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
   stopRecord: () => dispatch(stopRecord()),
   transmitIRCode: buttonId => dispatch(transmitIRCode(buttonId))

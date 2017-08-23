@@ -12,7 +12,7 @@ import HeaderMenuItem from './HeaderMenuItem'
 
 import { stopRecord } from '../actions'
 
-import { LIGHT_GREY, PRIMARY_DARK } from '../constants/colors'
+import { LIGHT_GREY, PRIMARY_DARK, PRIMARY_DARK_ANALOGOUS } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
 
 class HeaderMenu extends Component {
@@ -72,7 +72,7 @@ class HeaderMenu extends Component {
         <Icon
           name="dots-vertical"
           size={30}
-          color={PRIMARY_DARK}
+          color={PRIMARY_DARK_ANALOGOUS}
         />
       </TouchableOpacity>
     )
