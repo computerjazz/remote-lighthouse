@@ -4,8 +4,6 @@ import {
   PanResponder,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
 } from 'react-native'
 import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
@@ -13,11 +11,11 @@ import tinycolor from 'tinycolor2'
 import { setBaseUrl, stopRecord, createButtonPanel } from '../actions'
 
 import {
-  LIGHT_GREY,
-  PRIMARY_DARK_ANALOGOUS,
-  PRIMARY_DARK,
-  PRIMARY_LIGHT_ANALOGOUS,
-  RECORDING_IN_PROGRESS_COLOR,
+  HEADER_TITLE_COLOR,
+  HEADER_TITLE_EDITING_COLOR,
+  HEADER_BACKGROUND_EDITING_COLOR,
+  HEADER_BACKGROUND_COLOR,
+  REMOTE_BACKGROUND_COLOR,
 } from '../constants/colors'
 
 import AddPanelModal from '../components/AddPanelModal'
@@ -51,14 +49,14 @@ class Remote extends Component {
     const remoteTitle = params && params.title
 
 
-    const title = editing ? recording ? 'Listening...' : 'Ready to Capture' : remoteTitle
+    const title = editing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
     return {
         title,
         headerStyle: {
-          backgroundColor: editing ? RECORDING_IN_PROGRESS_COLOR : PRIMARY_LIGHT_ANALOGOUS,
+          backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
         },
         headerTitleStyle: {
-          color: editing ? LIGHT_GREY : PRIMARY_DARK_ANALOGOUS,
+          color: editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR,
         },
         headerRight: !modalVisible && <HeaderMenu
           menuVisible={menuVisible}
@@ -121,8 +119,10 @@ class Remote extends Component {
   dismissMenu = () => {
     const { navigation } = this.props
     const menuVisible = navigation.state.params && navigation.state.params.menuVisible
-    if (menuVisible) navigation.setParams({ menuVisible: false })
-    return true
+    if (menuVisible) {
+      navigation.setParams({ menuVisible: false })
+      return false
+    } else return true
   }
 
   showAddPanelModal = () => {
@@ -136,10 +136,6 @@ class Remote extends Component {
   submitAddPanelModal = type => {
     this.props.createButtonPanel(type)
     this.props.navigation.setParams({ addPanelModalVisible: false })
-  }
-
-  submitEditButtonModal = ({ title, icon }) => {
-    this.props.navigation.setParams({ editButtonModalVisible: false })
   }
 
   dismissEditButtonModal = () => {
@@ -177,36 +173,30 @@ class Remote extends Component {
     const addPanelModalVisible = params && params.addPanelModalVisible
     const editButtonModalVisible = params && params.editButtonModalVisible
 
-
-
-    console.log('PROPS!!', this.props)
     return (
-      <TouchableWithoutFeedback onPress={this.dismissAll}>
-        <Animated.View
-          {...this._panResponder.panHandlers}
-          style={[styles.container, editing && { backgroundColor: this.backgroundAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [PRIMARY_DARK, tinycolor(PRIMARY_DARK).lighten(8).toString()]
-          })}]}
-        >
-          <ScrollView style={styles.scrollView}>
-            { this.props.remote && this.props.remote.panels.map(this.renderButtonPanel)}
-          </ScrollView>
-          { editing && <CirclePlusButton onPress={this.showAddPanelModal} /> }
-          { addPanelModalVisible &&
-            <AddPanelModal
-              onAccept={this.submitAddPanelModal}
-              onCancel={this.dismissAddPanelModal}
-            /> }
-
-          { editButtonModalVisible &&
-            <EditButtonModal
-              onAccept={this.submitEditButtonModal}
-              onCancel={this.dismissEditButtonModal}
-            /> }
-
-        </Animated.View>
-      </TouchableWithoutFeedback>
+      <Animated.View
+        {...this._panResponder.panHandlers}
+        style={[styles.container, editing && { backgroundColor: this.backgroundAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [REMOTE_BACKGROUND_COLOR, tinycolor(REMOTE_BACKGROUND_COLOR).lighten(8).toString()]
+        })}]}
+      >
+        <ScrollView style={styles.scrollView}>
+          { this.props.remote && this.props.remote.panels.map(this.renderButtonPanel)}
+        </ScrollView>
+        { editing && <CirclePlusButton onPress={this.showAddPanelModal} /> }
+        { addPanelModalVisible &&
+          <AddPanelModal
+            onAccept={this.submitAddPanelModal}
+            onCancel={this.dismissAddPanelModal}
+          /> }
+        { editButtonModalVisible  &&
+          <EditButtonModal
+            buttonId={this.props.navigation.state.params.editingButtonId}
+            onAccept={this.dismissEditButtonModal}
+            onCancel={this.dismissEditButtonModal}
+          /> }
+      </Animated.View>
     )
   }
 }
@@ -222,31 +212,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   stopRecord: () => dispatch(stopRecord())
 })
 
-const nestedRemote = (state, remoteId) => {
-  //@TODO: cleanup
-
-  let nested = {
-    panels: []
-  }
-  const remoteState = {...state.remotes}
-  const buttonState = {...state.buttons}
-  const panelState = {...state.panels}
-
-  remoteState[remoteId].panels.forEach(panelId => {
-    nested.panels.push(panelState[panelId])
-  })
-
-  nested.panels = nested.panels.map((panel, index) => {
-    return {
-      buttons: panel.buttons.map(buttonId => ({ id: buttonId, ...buttonState[buttonId]})),
-      type: panel.type,
-      id: remoteState[remoteId].panels[index]
-    }
-  })
-
-  return nested
-}
-
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 
 const styles = StyleSheet.create({
@@ -254,7 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: PRIMARY_DARK,
+    backgroundColor: REMOTE_BACKGROUND_COLOR,
   },
   scrollView: {
     flex: 1,

@@ -7,77 +7,24 @@ import {
   View,
 } from 'react-native'
 
+import _ from 'lodash'
+import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+
 import TextButton from './TextButton'
-
-import { LIGHT_GREY, MID_GREY, DARK_GREY } from '../constants/colors'
+import { editButton } from '../actions'
+import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
-
-
-const generalIcons = [
-  'chevron-up',
-  'chevron-down',
-  'chevron-left',
-  'chevron-right',
-  'home',
-  'reload',
-  'wrench',
-  'menu',
-  'lightbulb',
-  'lightbulb-on-outline',
-  'cake-variant',
-  'martini',
-  'pencil',
-
-]
-
-const deviceIcons = [
-  'power',
-  'brightness-1',
-  'brightness-2',
-  'brightness-3',
-  'brightness-4',
-  'brightness-5',
-  'brightness-6',
-  'brightness-7',
-  'projector',
-  'printer',
-  'monitor',
-
-]
-
-const mediaIcons = [
-  'play',
-  'pause',
-  'play-pause',
-  'stop',
-  'rewind',
-  'fast-forward',
-  'skip-previous',
-  'skip-next',
-  'step-backward',
-  'step-forward',
-  'step-backward-2',
-  'step-forward-2',
-]
-
-const audioIcons = [
-  'volume-low',
-  'volume-medium',
-  'volume-high',
-  'volume-minus',
-  'volume-plus',
-  'volume-mute',
-  'volume-off',
-  'music',
-  'music-off',
-]
-
+import buttonCategories from '../dictionaries/buttons'
 
 class EditButtonModal extends Component {
 
   state = {
     selectedIcon: null,
+  }
+
+  componentDidMount() {
+    this.setState({ selectedIcon: this.props.button.icon })
   }
 
   renderIconButton = (iconName, index) => {
@@ -86,92 +33,102 @@ class EditButtonModal extends Component {
       <TouchableOpacity
         key={index}
         onPress={() => this.setState({ selectedIcon: iconName })}
-        style={[styles.icon, selected && { backgroundColor: MID_GREY}]}
+        style={[styles.icon, selected && { backgroundColor: ICON_SELECTED_BACKGROUND_COLOR}]}
       >
         <Icon
           name={iconName}
           size={30}
-          color={selected ? LIGHT_GREY : DARK_GREY}
+          color={selected ? MODAL_BACKGROUND_COLOR : TEXT_COLOR_DARK}
         />
       </TouchableOpacity>
     )
   }
 
+  renderIconCategory = ({ title, icons }, key) => (
+    <View key={key}>
+      <Text style={styles.categoryTitle}>{title}</Text>
+      <View style={styles.iconContainer}>
+        { icons.map(this.renderIconButton) }
+      </View>
+    </View>
+  )
+
+  onOkPress = () => {
+    const updatedButton = {
+      ...this.props.button,
+      icon: this.state.selectedIcon,
+    }
+    this.props.editButton(updatedButton)
+    this.props.onAccept()
+  }
+
   render() {
-    const { onAccept = () => {}, onCancel = () => {} } = this.props
+    const { onAccept = () => {}, onCancel = () => {}, button } = this.props
     return (
-      <View style={styles.container}>
+      <View style={styles.wrapper}>
+        <View style={styles.container}>
 
-        <ScrollView style={styles.scrollView}>
-          <View>
+          <ScrollView style={styles.scrollView}>
             <Text style={styles.title}>Icon</Text>
-            <Text style={styles.categoryTitle}>Device</Text>
-            <View style={styles.iconContainer}>
-              {deviceIcons.map(this.renderIconButton)}
-            </View>
-            <Text style={styles.categoryTitle}>Media Playback</Text>
-            <View style={styles.iconContainer}>
-              {mediaIcons.map(this.renderIconButton)}
-            </View>
-            <Text style={styles.categoryTitle}>Audio</Text>
-            <View style={styles.iconContainer}>
-              {audioIcons.map(this.renderIconButton)}
-            </View>
-            <Text style={styles.categoryTitle}>General</Text>
-            <View style={styles.iconContainer}>
-              {generalIcons.map(this.renderIconButton)}
-            </View>
-          </View>
-        </ScrollView>
+            { _.map(buttonCategories, this.renderIconCategory) }
+          </ScrollView>
 
-        <View style={styles.confirmButtonContainer}>
-          <TextButton
-            text="Cancel"
-            buttonStyle={styles.confirmButton}
-            onPress={onCancel}
-          />
-          <TextButton
-            text="Ok"
-            buttonStyle={styles.confirmButton}
-            onPress={onAccept}
-          />
+          <View style={styles.confirmButtonContainer}>
+            <TextButton
+              text="Cancel"
+              buttonStyle={styles.confirmButton}
+              onPress={onCancel}
+            />
+            <TextButton
+              text="Ok"
+              buttonStyle={styles.confirmButton}
+              onPress={this.onOkPress}
+            />
+          </View>
         </View>
       </View>
     )
   }
 }
 
-export default EditButtonModal
+const mapStateToProps = (state, ownProps) => ({
+  button: state.buttons[ownProps.buttonId],
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  editButton: updatedButton => dispatch(editButton(ownProps.buttonId, updatedButton))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditButtonModal)
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: LIGHT_GREY,
+    flex: 1,
+    backgroundColor: MODAL_BACKGROUND_COLOR,
     opacity: 0.9,
-    position: 'absolute',
-    top: 5,
-    bottom: 20,
-    left: 20,
-    right: 20,
     borderRadius: BUTTON_RADIUS,
+  },
+  wrapper: {
+    ...StyleSheet.absoluteFillObject,
+    padding: 20,
   },
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: DARK_GREY,
+    color: TEXT_COLOR_DARK,
+    alignSelf: 'center',
   },
   categoryTitle: {
     fontSize: 15,
-    color: DARK_GREY,
+    color: TEXT_COLOR_DARK,
   },
   confirmButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#ccc',
+    height: 60,
   },
   confirmButton: {
     padding: 20,
@@ -182,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    borderTopColor: DARK_GREY,
+    borderTopColor: TEXT_COLOR_DARK,
     borderTopWidth: 0.5,
     paddingTop: 10,
     marginBottom: 20,
@@ -197,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_RADIUS,
   },
   scrollView: {
-    flex: 1,
+    flex: 6,
     padding: 10,
   }
 })

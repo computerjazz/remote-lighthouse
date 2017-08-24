@@ -6,34 +6,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-
+import _ from 'lodash'
 import TextButton from './TextButton'
 
 import { LIGHT_GREY } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
-import { CUSTOM, MEDIA_PLAYBACK } from '../constants/types'
+import panelDict from '../dictionaries/panels'
 
 class AddPanelModal extends Component {
+
+  renderAddPanelOption = ({ title }, key) => (
+    <TextButton
+      key={key}
+      text={title}
+      buttonStyle={styles.confirmButton}
+      onPress={() => this.props.onAccept(key)}
+    />
+  )
+
   render() {
     const { onAccept = () => {}, onCancel = () => {}, remoteId } = this.props
     return (
-      <View style={styles.container}>
-        <TextButton
-          text="Custom"
-          buttonStyle={styles.confirmButton}
-          onPress={() => onAccept(CUSTOM)}
-        />
-        <TextButton
-          text="Media Playback"
-          buttonStyle={styles.confirmButton}
-          onPress={() => onAccept(MEDIA_PLAYBACK)}
-        />
-        <View style={styles.confirmButtonContainer}>
-          <TextButton
-            text="Cancel"
-            buttonStyle={styles.confirmButton}
-            onPress={onCancel}
-          />
+      <View style={styles.wrapper}>
+        <View style={styles.container}>
+          { _.map(panelDict, this.renderAddPanelOption) }
+          <View style={styles.confirmButtonContainer}>
+            <TextButton
+              text="Cancel"
+              buttonStyle={styles.confirmButton}
+              onPress={onCancel}
+            />
+          </View>
         </View>
       </View>
     )
@@ -44,13 +47,10 @@ export default AddPanelModal
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    width: '90%',
     backgroundColor: LIGHT_GREY,
     opacity: 0.9,
-    position: 'absolute',
-    top: 20,
-    bottom: 20,
-    left: 20,
-    right: 20,
     borderRadius: BUTTON_RADIUS,
   },
   confirmButtonContainer: {
@@ -65,5 +65,12 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     padding: 20,
-  }
+  },
+  wrapper: {
+  ...StyleSheet.absoluteFillObject,
+  padding: 20,
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  },
 })

@@ -31,6 +31,7 @@ export default HeaderMenuItem
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 15,
     flexDirection: 'row',
     alignItems: 'center',
   },

@@ -41,11 +41,11 @@ export function deleteButton(buttonId) {
   }
 }
 
-export function editButton({ id, title, icon }) {
+export function editButton(buttonId, { title, icon }) {
   return {
     type: EDIT_BUTTON,
     payload: {
-      buttonId: id,
+      buttonId,
       title,
       icon,
     }
@@ -66,7 +66,7 @@ export function createButtonPanel(type, remoteId) {
     const panelId = uuid.v1()
     if (!panelDefs[type]) return
     await dispatch(createButtonPanelAction(remoteId, panelId, type))
-    panelDefs[type].forEach(iconName => {
+    panelDefs[type].icons.forEach(iconName => {
       console.log('CREATING BUTTON!!!!', iconName, panelId)
       dispatch(createButton(iconName, panelId))
     })

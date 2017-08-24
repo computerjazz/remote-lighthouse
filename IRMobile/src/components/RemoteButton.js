@@ -95,12 +95,9 @@ class RemoteButton extends Component {
           onPress={() => onPress(id)}
           style={styles.touchable}
         >
-          <Icon name={iconName} size={iconSize} color={color} />
-          { description ? (<Text style={[styles.text]}>
-            {description}
-          </Text>) : null
+          { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
+          { !!description && <Text style={[styles.text]}>{description}</Text> }
 
-          }
         </TouchableOpacity>
         { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 

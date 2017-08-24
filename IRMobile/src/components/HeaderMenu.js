@@ -12,7 +12,7 @@ import HeaderMenuItem from './HeaderMenuItem'
 
 import { stopRecord } from '../actions'
 
-import { LIGHT_GREY, PRIMARY_DARK, PRIMARY_DARK_ANALOGOUS } from '../constants/colors'
+import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/style'
 
 class HeaderMenu extends Component {
@@ -39,13 +39,24 @@ class HeaderMenu extends Component {
   renderMenu = () => {
     return (
       <Animated.View style={[styles.menu, { opacity: this.animVal }]}>
+
         <HeaderMenuItem
-          icon="pencil"
-          text="Edit Remote"
+          icon="remote"
+          text="Capture/Edit"
           onPress={() => {
             this.setMenu(false)
             this.props.setParams({editing: true, menuVisible: false})
           }}
+        />
+        <HeaderMenuItem
+          icon="plus"
+          text="Add Remote"
+          onPress={() => {}}
+        />
+        <HeaderMenuItem
+          icon="delete"
+          text="Delete"
+          onPress={() => {}}
         />
       </Animated.View>
     )

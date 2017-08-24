@@ -9,6 +9,7 @@ import { PRIMARY_DARK } from '../constants/colors'
 
 import { captureIRCode, stopRecord, transmitIRCode } from '../actions'
 import RemoteButton from './RemoteButton'
+import EditButtonModal from './EditButtonModal'
 
 class ButtonPanel extends Component {
 
@@ -26,6 +27,7 @@ class ButtonPanel extends Component {
 
   state = {
     status: null,
+    editButtonModalVisible: false,
   }
 
   onPress = buttonId => {
@@ -42,8 +44,8 @@ class ButtonPanel extends Component {
     this.props.onPress()
   }
 
-  onEditPress = buttonId => {
-    this.props.setParams({ editButtonModalVisible: true })
+  onEditPress = editingButtonId  => {
+    this.props.setParams({ editButtonModalVisible: true, editingButtonId })
   }
 
   setRecordButtonId = buttonId => {
@@ -56,7 +58,6 @@ class ButtonPanel extends Component {
 
 
   renderButton = (buttonId, index, array) => {
-    console.log('RENDERING BUTTON', buttonId)
     const { recording, editing } = this.props
     return (
       <RemoteButton
@@ -79,7 +80,7 @@ class ButtonPanel extends Component {
     const { buttons = [] } = this.props
     return (
       <View style={styles.container}>
-        {buttons.map(this.renderButton)}
+        {buttons.map(this.renderButton)}        
       </View>
     )
   }
@@ -91,14 +92,18 @@ ButtonPanel.defaultProps = {
   onPress: () => {},
 }
 
-export default connect((state, ownProps) => ({
+const mapStateToProps = (state, ownProps) => ({
     buttons: state.panels[ownProps.id].buttons,
     type: state.panels[ownProps.id].type
-}), dispatch => ({
+})
+
+const mapDispatchToProps = dispatch => ({
   captureIRCode: (buttonId, setRecordButton, onStatusChanged) => dispatch(captureIRCode(buttonId, setRecordButton, onStatusChanged)),
   stopRecord: () => dispatch(stopRecord()),
   transmitIRCode: buttonId => dispatch(transmitIRCode(buttonId))
-}))(ButtonPanel)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ButtonPanel)
 
 const styles = StyleSheet.create({
   container: {

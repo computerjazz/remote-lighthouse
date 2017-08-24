@@ -8,6 +8,7 @@
 	},
 	"dependencies": {
 		"buffer": "^5.0.7",
+		"lodash": "^4.17.4",
 		"react": "16.0.0-alpha.12",
 		"react-native": "0.47.1",
 		"react-native-uuid": "^1.4.9",
