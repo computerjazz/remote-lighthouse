@@ -2,9 +2,74 @@ import uuid from 'react-native-uuid'
 
 import panelDefs from '../dictionaries/panels'
 
-import { ASSIGN_IR_CODE, CREATE_BUTTON, CREATE_BUTTON_PANEL, DELETE_BUTTON, EDIT_BUTTON, SET_BASE_URL } from '../constants/actions'
+import {
+  ASSIGN_IR_CODE,
+  CREATE_BUTTON,
+  CREATE_BUTTON_PANEL,
+  DELETE_BUTTON,
+  EDIT_BUTTON,
+  SET_BASE_URL,
+  SET_HEADER_MENU,
+  SET_EDIT_MODE,
+  SET_RECORDING_BUTTON_ID,
+  SET_ADD_PANEL_MODAL_VISIBLE,
+  SET_EDIT_BUTTON_MODAL_VISIBLE,
+  SET_EDIT_BUTTON_ID,
+} from '../constants/actions'
 
+export function setHeaderMenu(visible) {
+  return {
+    type: SET_HEADER_MENU,
+    payload: {
+      visible
+    }
+  }
+}
 
+export function setEditMode(editing) {
+  return {
+    type: SET_EDIT_MODE,
+    payload: {
+      editing,
+    }
+  }
+}
+
+export function setRecordingButtonId(buttonId) {
+  return {
+    type: SET_RECORDING_BUTTON_ID,
+    payload: {
+      buttonId,
+    }
+  }
+}
+
+export function setAddPanelModalVisible(visible) {
+  return {
+    type: SET_ADD_PANEL_MODAL_VISIBLE,
+    payload: {
+      visible,
+    }
+  }
+}
+
+export function setEditButtonModalVisible(visible) {
+  return {
+    type: SET_EDIT_BUTTON_MODAL_VISIBLE,
+    payload: {
+      visible,
+    }
+  }
+}
+
+export function setEditButtonId(buttonId) {
+  return {
+    type: SET_EDIT_BUTTON_ID,
+    payload: {
+      buttonId,
+    }
+  }
+}
 
 export function assignIRCode(buttonId, codeData) {
   console.log('ASSIGNING IR CODE TO BUTTON', buttonId, codeData)

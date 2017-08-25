@@ -11,6 +11,7 @@ export const DARK_GREY = '#333'
 export const ORANGE = '#d35400'
 export const EMERALD = '#27ae60'
 export const POMEGRANATE = '#c0392b'
+export const WHITE = 'white'
 
 // Theme
 export const PRIMARY_LIGHT = LIGHT_PURPLE
@@ -31,7 +32,10 @@ export const HEADER_TITLE_EDITING_COLOR = LIGHT_GREY
 export const ICON_SELECTED_BACKGROUND_COLOR = MID_GREY
 export const TEXT_COLOR_LIGHT = LIGHT_GREY
 export const MODAL_BACKGROUND_COLOR = LIGHT_GREY
+export const MENU_BACKGROUND_COLOR = LIGHT_GREY
 export const RECORDING_IN_PROGRESS_COLOR = POMEGRANATE
 export const REMOTE_BACKGROUND_COLOR = PRIMARY_DARK
+export const STATUS_BAR_COLOR = DARK_BLUE
 export const STATUS_BAD_COLOR = ORANGE
 export const STATUS_GOOD_COLOR = EMERALD
+export const CIRCLE_PLUS_BUTTON_COLOR = POMEGRANATE

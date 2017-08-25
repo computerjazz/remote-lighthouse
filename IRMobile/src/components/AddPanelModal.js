@@ -10,7 +10,7 @@ import _ from 'lodash'
 import TextButton from './TextButton'
 
 import { LIGHT_GREY } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/style'
+import { BUTTON_RADIUS } from '../constants/dimensions'
 import panelDict from '../dictionaries/panels'
 
 class AddPanelModal extends Component {
@@ -46,6 +46,13 @@ class AddPanelModal extends Component {
 export default AddPanelModal
 
 const styles = StyleSheet.create({
+  wrapper: {
+    ...StyleSheet.absoluteFillObject,
+    padding: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     width: '90%',
@@ -65,12 +72,5 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     padding: 20,
-  },
-  wrapper: {
-  ...StyleSheet.absoluteFillObject,
-  padding: 20,
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
   },
 })

@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { LIGHT_GREY, RECORDING_IN_PROGRESS_COLOR } from '../constants/colors'
+import { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR } from '../constants/colors'
 
 class CirclePlusButton extends Component {
 
@@ -35,10 +35,9 @@ export default CirclePlusButton
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: RECORDING_IN_PROGRESS_COLOR,
+    backgroundColor: CIRCLE_PLUS_BUTTON_COLOR,
     position: 'absolute',
     width: 60,
     height: 60,

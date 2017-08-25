@@ -9,7 +9,8 @@ const Navigator = StackNavigator({
   initialRouteName: 'Remote',
   initialRouteParams: {
     id: 'testRemote' // TODO: delete
-  }
+  },
+  headerMode: 'float',
 })
 
 export default Navigator

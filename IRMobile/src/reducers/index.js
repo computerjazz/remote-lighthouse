@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'
 
-import buttons from './buttons'
+import app from './app'
 import network from './network'
-import panels from './panels'
 import remotes from './remotes'
+import panels from './panels'
+import buttons from './buttons'
 
 const reducers = {
+  app,
   buttons,
   network,
   panels,

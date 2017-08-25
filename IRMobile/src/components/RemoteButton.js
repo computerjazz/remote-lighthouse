@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  View,
 }  from 'react-native'
 import { connect } from 'react-redux'
 
@@ -11,7 +12,7 @@ import CircleEditButton from './CircleEditButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { LIGHT_GREY, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, STATUS_GOOD_COLOR, STATUS_BAD_COLOR, WARM_ORANGE } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/style'
+import { BUTTON_RADIUS } from '../constants/dimensions'
 
 const PULSE_RATE = 750
 
@@ -19,7 +20,7 @@ class RemoteButton extends Component {
 
   static propTypes = {
     id: PropTypes.string,
-    recording: PropTypes.string,
+    recordingButtonId: PropTypes.string,
     status: PropTypes.bool,
   }
 
@@ -31,14 +32,14 @@ class RemoteButton extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const isRecording = this.props.recording === this.props.id
+    const isRecording = this.props.recordingButtonId === this.props.id
     const hasNewStatus = (this.props.status !== null) && (prevProps.status !== this.props.status)
-    if ((prevProps.recording !== this.props.id) && isRecording) this.pulseBackground()
+    if ((prevProps.recordingButtonId !== this.props.id) && isRecording) this.pulseBackground()
     if (isRecording && hasNewStatus) this.onStatusChanged()
   }
 
   pulseBackground = () => {
-    if (this.props.recording !== this.props.id) return
+    if (this.props.recordingButtonId !== this.props.id) return
 
     Animated.timing(this.pulseAnim, {
       toValue: 1,
@@ -68,8 +69,8 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, description, editing, iconName, onPress = () => {}, onEditPress, recording, status, color = LIGHT_GREY } = this.props
-    const isRecording = recording === id
+    const { iconSize = 30, id, style, description, editing, iconName, onPress = () => {}, onEditPress, recordingButtonId, status, color = LIGHT_GREY } = this.props
+    const isRecording = recordingButtonId === id
     const hasStatus = status !== null
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
 
@@ -88,6 +89,7 @@ class RemoteButton extends Component {
     }
 
     return (
+      <View style={styles.wrapper}>
       <Animated.View
         style={[styles.animatedContainer, isRecording && pulseStyle, hasStatus && statusStyle, style]}
       >
@@ -99,9 +101,11 @@ class RemoteButton extends Component {
           { !!description && <Text style={[styles.text]}>{description}</Text> }
 
         </TouchableOpacity>
-        { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
       </Animated.View>
+      { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
+
+    </View>
       )
     }
 }
@@ -110,9 +114,14 @@ class RemoteButton extends Component {
 export default connect((state, ownProps) => ({
   iconName: state.buttons[ownProps.id].icon,
   title: state.buttons[ownProps.id].title,
+  editing: state.app.editing,
+  recordingButtonId: state.app.recordingButtonId,
 }), null)(RemoteButton)
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   touchable: {
     flex: 1,
     alignItems: 'center',
@@ -132,7 +141,9 @@ const styles = StyleSheet.create({
   },
   editButton: {
     position: 'absolute',
-    top: -5,
-    left: -5,
+    transform: [
+      { translateX: 8 },
+      { translateY: 8 }
+    ],
   }
 })

@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import TextButton from './TextButton'
 import { editButton } from '../actions'
 import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/style'
+import { BUTTON_RADIUS } from '../constants/dimensions'
 import buttonCategories from '../dictionaries/buttons'
 
 class EditButtonModal extends Component {
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     ...StyleSheet.absoluteFillObject,
-    padding: 20,
+    padding: 10,
   },
   title: {
     fontSize: 25,
