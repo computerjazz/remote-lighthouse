@@ -1,15 +1,12 @@
 import { StackNavigator } from 'react-navigation'
 
-import Remote from '../screens/Remote'
+import RemoteContainer from '../components/RemoteContainer'
 
 
 const Navigator = StackNavigator({
-  Remote: { screen: Remote },
+  Remote: { screen: RemoteContainer },
   }, {
   initialRouteName: 'Remote',
-  initialRouteParams: {
-    id: 'testRemote' // TODO: delete
-  },
   headerMode: 'float',
 })
 

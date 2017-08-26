@@ -8,12 +8,12 @@ import {
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { stopRecord, setHeaderMenu, setEditMode, setRecordingButtonId } from '../actions'
+import { stopRecord, setHeaderMenu, setEditMode, setRecordingButtonId } from '../../actions'
 
-import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS, MENU_BACKGROUND_COLOR } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/dimensions'
+import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS, MENU_BACKGROUND_COLOR } from '../../constants/colors'
+import { BUTTON_RADIUS } from '../../constants/dimensions'
 
-class HeaderMenu extends Component {
+class HeaderMenuButton extends Component {
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
@@ -75,7 +75,7 @@ const mapDispatchToProps = dispatch => ({
   setRecordingButtonId: buttonId => dispatch(setRecordingButtonId(buttonId))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenu)
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenuButton)
 
 const styles = StyleSheet.create({
   container: {

@@ -6,16 +6,25 @@ import {
   ASSIGN_IR_CODE,
   CREATE_BUTTON,
   CREATE_BUTTON_PANEL,
+  CREATE_REMOTE,
   DELETE_BUTTON,
   EDIT_BUTTON,
   SET_BASE_URL,
   SET_HEADER_MENU,
   SET_EDIT_MODE,
   SET_RECORDING_BUTTON_ID,
-  SET_ADD_PANEL_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_ID,
+  SET_DRAGGING,
 } from '../constants/actions'
+
+export function createRemote() {
+  const remoteId = uuid.v1()
+  return {
+    type: CREATE_REMOTE,
+    payload: {
+      remoteId,
+    }
+  }
+}
 
 export function setHeaderMenu(visible) {
   return {
@@ -35,36 +44,18 @@ export function setEditMode(editing) {
   }
 }
 
+export function setDragging(dragging) {
+  return {
+    type: SET_DRAGGING,
+    payload: {
+      dragging,
+    }
+  }
+}
+
 export function setRecordingButtonId(buttonId) {
   return {
     type: SET_RECORDING_BUTTON_ID,
-    payload: {
-      buttonId,
-    }
-  }
-}
-
-export function setAddPanelModalVisible(visible) {
-  return {
-    type: SET_ADD_PANEL_MODAL_VISIBLE,
-    payload: {
-      visible,
-    }
-  }
-}
-
-export function setEditButtonModalVisible(visible) {
-  return {
-    type: SET_EDIT_BUTTON_MODAL_VISIBLE,
-    payload: {
-      visible,
-    }
-  }
-}
-
-export function setEditButtonId(buttonId) {
-  return {
-    type: SET_EDIT_BUTTON_ID,
     payload: {
       buttonId,
     }

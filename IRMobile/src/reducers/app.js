@@ -2,18 +2,14 @@ import {
   SET_HEADER_MENU,
   SET_EDIT_MODE,
   SET_RECORDING_BUTTON_ID,
-  SET_ADD_PANEL_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_ID,
+  SET_DRAGGING,
 } from '../constants/actions'
 
 const initialState = {
   headerMenuVisible: false,
   editing: false,
+  dragging: false,
   recordingButtonId: null,
-  addPanelModalVisible: false,
-  editButtonModalVisible: false,
-  editButtonId: null,
 }
 
 export default (state = initialState, action) => {
@@ -23,31 +19,25 @@ export default (state = initialState, action) => {
         ...state,
         headerMenuVisible: action.payload.visible,
       }
+
     case SET_EDIT_MODE:
       return {
         ...state,
         editing: action.payload.editing,
       }
+
     case SET_RECORDING_BUTTON_ID:
       return {
         ...state,
         recordingButtonId: action.payload.buttonId,
       }
-    case SET_ADD_PANEL_MODAL_VISIBLE:
+
+    case SET_DRAGGING:
       return {
         ...state,
-        addPanelModalVisible: action.payload.visible,
+        dragging: action.payload.dragging,
       }
-    case SET_EDIT_BUTTON_MODAL_VISIBLE:
-      return {
-        ...state,
-        editButtonModalVisible: action.payload.visible,
-      }
-    case SET_EDIT_BUTTON_ID:
-      return {
-        ...state,
-        editButtonId: action.payload.buttonId,
-      }
+
     default:
       return state
   }

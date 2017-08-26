@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {
+  BackHandler,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,19 +14,31 @@ import { LIGHT_GREY } from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/dimensions'
 import panelDict from '../dictionaries/panels'
 
+import { isAndroid } from '../utils'
+
 class AddPanelModal extends Component {
+
+  componentWillMount() {
+    if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
+  }
+
+  captureAndroidBackPress = () => {
+    this.props.onSubmit()
+    BackHandler.removeEventListener('hardwareBackPress', this.captureAndroidBackPress)
+    return true
+  }
 
   renderAddPanelOption = ({ title }, key) => (
     <TextButton
       key={key}
       text={title}
       buttonStyle={styles.confirmButton}
-      onPress={() => this.props.onAccept(key)}
+      onPress={() => this.props.onSubmit(key)}
     />
   )
 
   render() {
-    const { onAccept = () => {}, onCancel = () => {}, remoteId } = this.props
+    const { onSubmit, remoteId } = this.props
     return (
       <View style={styles.wrapper}>
         <View style={styles.container}>
@@ -34,7 +47,7 @@ class AddPanelModal extends Component {
             <TextButton
               text="Cancel"
               buttonStyle={styles.confirmButton}
-              onPress={onCancel}
+              onPress={onSubmit}
             />
           </View>
         </View>
@@ -43,12 +56,16 @@ class AddPanelModal extends Component {
   }
 }
 
+AddPanelModal.defaultProps = {
+  onSubmit: () => {},
+}
+
 export default AddPanelModal
 
 const styles = StyleSheet.create({
   wrapper: {
     ...StyleSheet.absoluteFillObject,
-    padding: 20,
+    padding: 10,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

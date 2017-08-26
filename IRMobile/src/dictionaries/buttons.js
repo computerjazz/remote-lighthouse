@@ -7,30 +7,6 @@ import {
 } from '../constants/ui'
 
 export default {
-  [GENERAL]: {
-    title: 'General',
-    icons: [
-      'check',
-      'cancel',
-      'checkbox-blank-outline',
-      'checkbox-blank-circle-outline',
-      'chevron-up',
-      'chevron-down',
-      'chevron-left',
-      'chevron-right',
-      'home',
-      'pencil',
-      'camera-timer',
-      'wrench',
-      'adjust',
-      'menu',
-      'lightbulb',
-      'lightbulb-on-outline',
-      'cake-variant',
-      'martini',
-      'cat',
-    ]
-  },
   [DEVICE]: {
     title: 'Device',
     icons: [
@@ -85,5 +61,39 @@ export default {
       'brightness-6',
       'brightness-7',
     ],
-  }
+  },
+  [GENERAL]: {
+    title: 'General',
+    icons: [
+      'check',
+      'cancel',
+      'checkbox-blank-outline',
+      'checkbox-blank-circle-outline',
+      'chevron-up',
+      'chevron-down',
+      'chevron-left',
+      'chevron-right',
+      'home',
+      'pencil',
+      'camera-timer',
+      'wrench',
+      'adjust',
+      'menu',
+      'numeric-0-box',
+      'numeric-1-box',
+      'numeric-2-box',
+      'numeric-3-box',
+      'numeric-4-box',
+      'numeric-5-box',
+      'numeric-6-box',
+      'numeric-7-box',
+      'numeric-8-box',
+      'numeric-9-box',
+      'lightbulb',
+      'lightbulb-on-outline',
+      'cake-variant',
+      'martini',
+      'cat',
+    ]
+  },
 }

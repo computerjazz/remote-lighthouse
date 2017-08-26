@@ -8,10 +8,17 @@ import {
 }  from 'react-native'
 import { connect } from 'react-redux'
 
-import CircleEditButton from './CircleEditButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import CircleEditButton from './CircleEditButton'
 
-import { LIGHT_GREY, PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR, STATUS_GOOD_COLOR, STATUS_BAD_COLOR, WARM_ORANGE } from '../constants/colors'
+import {
+  LIGHT_GREY,
+  BUTTON_BACKGROUND_COLOR,
+  BUTTON_TEXT_COLOR,
+  RECORDING_IN_PROGRESS_COLOR,
+  STATUS_GOOD_COLOR,
+  STATUS_BAD_COLOR
+} from '../constants/colors'
 import { BUTTON_RADIUS } from '../constants/dimensions'
 
 const PULSE_RATE = 750
@@ -69,7 +76,7 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, description, editing, iconName, onPress = () => {}, onEditPress, recordingButtonId, status, color = LIGHT_GREY } = this.props
+    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, recordingButtonId, status, color = LIGHT_GREY } = this.props
     const isRecording = recordingButtonId === id
     const hasStatus = status !== null
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
@@ -77,14 +84,14 @@ class RemoteButton extends Component {
     const pulseStyle = {
         backgroundColor: this.pulseAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: [PRIMARY_LIGHT, RECORDING_IN_PROGRESS_COLOR]
+          outputRange: [BUTTON_BACKGROUND_COLOR, RECORDING_IN_PROGRESS_COLOR]
         })
       }
 
     const statusStyle = {
       backgroundColor: this.statusAnim.interpolate({
         inputRange: [0, 0.5, 1],
-        outputRange: [PRIMARY_LIGHT, PRIMARY_LIGHT, flashColor]
+        outputRange: [BUTTON_BACKGROUND_COLOR, BUTTON_BACKGROUND_COLOR, flashColor]
       })
     }
 
@@ -98,7 +105,7 @@ class RemoteButton extends Component {
           style={styles.touchable}
         >
           { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
-          { !!description && <Text style={[styles.text]}>{description}</Text> }
+          { !!title && <Text style={styles.text} numberOfLines={1}>{title}</Text> }
 
         </TouchableOpacity>
 
@@ -128,16 +135,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: '#ddd',
-    fontWeight: 'bold',
-    fontSize: 20,
+    color: BUTTON_TEXT_COLOR,
+    fontWeight: "300",
+    fontSize: 15,
+    paddingHorizontal: 7,
   },
   animatedContainer: {
     flex: 1,
     margin: 15,
     height: 75,
     borderRadius: BUTTON_RADIUS,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: BUTTON_BACKGROUND_COLOR,
   },
   editButton: {
     position: 'absolute',

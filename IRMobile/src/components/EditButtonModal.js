@@ -1,30 +1,46 @@
 import React, { Component } from 'react'
 import {
+  BackHandler,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
 
-import _ from 'lodash'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import TextButton from './TextButton'
 import { editButton } from '../actions'
-import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/dimensions'
+import { isAndroid } from '../utils'
+
 import buttonCategories from '../dictionaries/buttons'
+import { BUTTON_RADIUS } from '../constants/dimensions'
+import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, PRIMARY_DARK } from '../constants/colors'
 
 class EditButtonModal extends Component {
 
   state = {
     selectedIcon: null,
+    newTitle: '',
+  }
+
+  componentWillMount() {
+    if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
+  }
+
+  captureAndroidBackPress = () => {
+    this.props.onSubmit()
+    BackHandler.removeEventListener('hardwareBackPress', this.captureAndroidBackPress)
+    return true
   }
 
   componentDidMount() {
-    this.setState({ selectedIcon: this.props.button.icon })
+    const { icon, title } = this.props.button
+    this.setState({ selectedIcon: icon,  newTitle: title})
   }
 
   renderIconButton = (iconName, index) => {
@@ -57,18 +73,27 @@ class EditButtonModal extends Component {
     const updatedButton = {
       ...this.props.button,
       icon: this.state.selectedIcon,
+      title: this.state.newTitle,
     }
     this.props.editButton(updatedButton)
-    this.props.onAccept()
+    this.props.onSubmit()
   }
 
   render() {
-    const { onAccept = () => {}, onCancel = () => {}, button } = this.props
+    const { onSubmit, button } = this.props
     return (
       <View style={styles.wrapper}>
         <View style={styles.container}>
 
           <ScrollView style={styles.scrollView}>
+            <Text style={styles.title}>Label</Text>
+            <TextInput
+              style={styles.textInput}
+              onChangeText={text => this.setState({ newTitle: text })}
+              value={this.state.newTitle}
+              autoCorrect={false}
+              underlineColorAndroid={PRIMARY_DARK}
+            />
             <Text style={styles.title}>Icon</Text>
             { _.map(buttonCategories, this.renderIconCategory) }
           </ScrollView>
@@ -77,7 +102,7 @@ class EditButtonModal extends Component {
             <TextButton
               text="Cancel"
               buttonStyle={styles.confirmButton}
-              onPress={onCancel}
+              onPress={onSubmit}
             />
             <TextButton
               text="Ok"
@@ -89,6 +114,10 @@ class EditButtonModal extends Component {
       </View>
     )
   }
+}
+
+EditButtonModal.defaultProps = {
+  onSubmit: () => {},
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -114,13 +143,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    fontWeight: 'bold',
     color: TEXT_COLOR_DARK,
-    alignSelf: 'center',
   },
   categoryTitle: {
+    marginTop: 15,
     fontSize: 15,
     color: TEXT_COLOR_DARK,
+    borderBottomColor: TEXT_COLOR_DARK,
+    borderBottomWidth: 0.5,
+    alignSelf: 'flex-end',
   },
   confirmButtonContainer: {
     flexDirection: 'row',
@@ -139,8 +170,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    borderTopColor: TEXT_COLOR_DARK,
-    borderTopWidth: 0.5,
     paddingTop: 10,
     marginBottom: 20,
   },
@@ -156,5 +185,8 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 6,
     padding: 10,
+  },
+  textInput: {
+    flex: 1,
   }
 })

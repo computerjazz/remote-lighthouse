@@ -11,6 +11,7 @@ export const DARK_GREY = '#333'
 export const ORANGE = '#d35400'
 export const EMERALD = '#27ae60'
 export const POMEGRANATE = '#c0392b'
+export const POMEGRANATE_ANALOGOUS = tinycolor(POMEGRANATE).complement().toString()
 export const WHITE = 'white'
 
 // Theme
@@ -22,7 +23,12 @@ export const PRIMARY_DARK_ANALOGOUS = DARK_BLUE_ANALOGOUS
 
 // Function
 export const BUTTON_EDIT_BUTTON_COLOR = POMEGRANATE
+export const BUTTON_PLUS_COLOR = POMEGRANATE
+export const BUTTON_TRASH_COLOR = POMEGRANATE_ANALOGOUS
+
 export const BUTTON_ICON_COLOR = PRIMARY_DARK
+export const BUTTON_TEXT_COLOR = PRIMARY_DARK
+export const BUTTON_BACKGROUND_COLOR = PRIMARY_LIGHT
 export const CONFIRM_BUTTON_TEXT_COLOR = PRIMARY_DARK
 export const TEXT_COLOR_DARK = DARK_GREY
 export const HEADER_BACKGROUND_COLOR = PRIMARY_LIGHT_ANALOGOUS

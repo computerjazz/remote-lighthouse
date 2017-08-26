@@ -1,11 +1,16 @@
 import React, { Component, PropTypes } from 'react'
 import {
+  Animated,
+  LayoutAnimation,
   StyleSheet,
-  View
+  TouchableOpacity,
+  View,
+  UIManager
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { PRIMARY_DARK } from '../constants/colors'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { PRIMARY_DARK, PRIMARY_LIGHT } from '../constants/colors'
 
 import {
   captureIRCode,
@@ -14,6 +19,7 @@ import {
   setRecordingButtonId ,
   setEditButtonModalVisible,
   setEditButtonId,
+  setDragging,
 } from '../actions'
 import RemoteButton from './RemoteButton'
 
@@ -29,12 +35,11 @@ class ButtonPanel extends Component {
     transmitIRCode: PropTypes.func.isRequired,
   }
 
-
   state = {
     status: null,
     editButtonModalVisible: false,
   }
-
+  
   onPress = buttonId => {
     if (this.props.editing) {
       if (this.props.recordingButtonId === buttonId) {
@@ -75,10 +80,23 @@ class ButtonPanel extends Component {
   }
 
   render() {
-    const { buttons = [] } = this.props
+    const { buttons, editing } = this.props
     return (
       <View style={styles.container}>
         {buttons.map(this.renderButton)}
+        {editing &&
+          <TouchableOpacity
+            onPressIn={() => this.props.setDragging(true)}
+            onPressOut={() => this.props.setDragging(false)}
+            style={{marginRight: 10}}
+          >
+            <Icon
+              name="drag-vertical"
+              color={PRIMARY_LIGHT}
+              size={30}
+            />
+          </TouchableOpacity>
+        }
       </View>
     )
   }
@@ -103,13 +121,15 @@ const mapDispatchToProps = dispatch => ({
   transmitIRCode: buttonId => dispatch(transmitIRCode(buttonId)),
   setRecordingButtonId: buttonId => dispatch(setRecordingButtonId(buttonId)),
   setEditButtonModalVisible: visible => dispatch(setEditButtonModalVisible(visible)),
-  setEditButtonId: buttonId => dispatch(setEditButtonId(buttonId))
+  setEditButtonId: buttonId => dispatch(setEditButtonId(buttonId)),
+  setDragging: dragging => dispatch(setDragging(dragging)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ButtonPanel)
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

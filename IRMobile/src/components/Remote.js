@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react'
 import {
   Animated,
   PanResponder,
-  ScrollView,
+  FlatList,
   StyleSheet,
   View,
+  UIManager,
+  LayoutAnimation,
 } from 'react-native'
 import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
@@ -12,20 +14,26 @@ import tinycolor from 'tinycolor2'
 import { setBaseUrl, stopRecord, createButtonPanel, setHeaderMenu } from '../actions'
 
 import {
-  HEADER_TITLE_COLOR,
-  HEADER_TITLE_EDITING_COLOR,
-  HEADER_BACKGROUND_EDITING_COLOR,
-  HEADER_BACKGROUND_COLOR,
   REMOTE_BACKGROUND_COLOR,
 } from '../constants/colors'
 
-import { STATUS_BAR_HEIGHT } from '../constants/dimensions'
+import ButtonPanel from './ButtonPanel'
+import CirclePlusButton from './CirclePlusButton'
+import AddPanelModal from './AddPanelModal'
+import EditButtonModal from './EditButtonModal'
 
-import ButtonPanel from '../components/ButtonPanel'
-import HeaderMenu from '../components/HeaderMenu'
-import CirclePlusButton from '../components/CirclePlusButton'
-import AddPanelModal from '../components/AddPanelModal'
-import EditButtonModal from '../components/EditButtonModal'
+const CustomLayoutSpring = {
+    duration: 400,
+    create: {
+      type: LayoutAnimation.Types.spring,
+      property: LayoutAnimation.Properties.scaleXY,
+      springDamping: 0.7,
+    },
+    update: {
+      type: LayoutAnimation.Types.spring,
+      springDamping: 0.7,
+    },
+  };
 
 class Remote extends Component {
 
@@ -44,34 +52,8 @@ class Remote extends Component {
 
   backgroundAnim = new Animated.Value(0)
 
-  static navigationOptions = ({ navigation }) => {
-    const { params } = navigation.state
-    const menuVisible = params && params.menuVisible
-    const editing = params && params.editing
-    const recording = params && params.recording
-    const modalVisible = params && params.modalVisible
-    const remoteTitle = params && params.title
-
-
-    const title = editing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
-    return {
-        title,
-        headerStyle: {
-          backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
-          paddingTop: STATUS_BAR_HEIGHT,
-          height: 75,
-        },
-        headerTitleStyle: {
-          color: editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR,
-        },
-        headerRight: !modalVisible && <HeaderMenu
-          menuVisible={menuVisible}
-          setParams={navigation.setParams}
-        />,
-      }
-    }
-
   componentWillMount() {
+    console.log('PROPS', this.props)
     this.props.setBaseUrl('http://192.168.86.99')
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
@@ -84,21 +66,24 @@ class Remote extends Component {
        // is called before button onPress.
 
        // this.dismissRecording()
-       this.dismissMenu()
+       if (this.props.headerMenuVisible) this.dismissMenu()
        return false
      }
    });
  }
 
- componentDidUpdate(prevProps) {
-   const prevEditing = prevProps.editing && prevProps.editing
-   const thisEditing = this.props.editing && this.props.editing
-   if (prevEditing !== thisEditing) this.props.navigation.setParams({ editing: this.props.editing })
-   if (!prevEditing && thisEditing) this.pulseBackground()
+ componentWillUpdate(nextProps) {
+   if (this.props.editing !== nextProps.editing) {
+     LayoutAnimation.configureNext(CustomLayoutSpring)
+     this.props.navigation.setParams({ editing: nextProps.editing })
+   }
+   if (!this.props.editing && nextProps.editing) {
+     this.pulseBackground()
+   }
  }
 
  pulseBackground = () => {
-   if (this.props.navigation.state.params && this.props.navigation.state.params.editing) {
+   if (this.props.editing) {
      Animated.timing(this.backgroundAnim, {
        toValue: 1,
        duration: 1000,
@@ -131,13 +116,8 @@ class Remote extends Component {
     this.props.navigation.setParams({ modalVisible: true })
   }
 
-  dismissAddPanelModal = () => {
-    this.setState({ addPanelModalVisible: false })
-    this.props.navigation.setParams({ modalVisible: false })
-  }
-
   submitAddPanelModal = type => {
-    this.props.createButtonPanel(type)
+    if (type) this.props.createButtonPanel(type)
     this.setState({ addPanelModalVisible: false })
     this.props.navigation.setParams({ modalVisible: false })
   }
@@ -159,9 +139,9 @@ class Remote extends Component {
     this.dismissAddPanelModal()
   }
 
-  renderButtonPanel = id => {
+  renderButtonPanel = ({ item: id }) => {
     const { navigation } = this.props
-
+    console.log('id!!!', id)
     return (
       <ButtonPanel
         key={id}
@@ -173,54 +153,55 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing } = this.props
+    const { editing, remote } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
 
     return (
       <View style={{flex: 1}}>
-      <Animated.View
-        {...this._panResponder.panHandlers}
-        style={[styles.container, editing && { backgroundColor: this.backgroundAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [REMOTE_BACKGROUND_COLOR, tinycolor(REMOTE_BACKGROUND_COLOR).lighten(8).toString()]
-        })}]}
-      >
-        <ScrollView style={styles.scrollView}>
-          { this.props.remote && this.props.remote.panels.map(this.renderButtonPanel)}
-        </ScrollView>
+        <View
+          {...this._panResponder.panHandlers}
+          style={[styles.container]}
+        >
+          <FlatList
+            style={styles.buttonPanelList}
+            data={remote.panels}
+            renderItem={this.renderButtonPanel}
+          />
+          { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
 
-        { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
+        </View>
+        { addPanelModalVisible &&
+          <AddPanelModal
+            onSubmit={this.submitAddPanelModal}
+          /> }
 
-      </Animated.View>
-      { addPanelModalVisible &&
-        <AddPanelModal
-          onAccept={this.submitAddPanelModal}
-          onCancel={this.dismissAddPanelModal}
-        /> }
-
-      { editButtonModalVisible &&
-        <EditButtonModal
-          buttonId={editingButtonId}
-          onAccept={this.dismissEditButtonModal}
-          onCancel={this.dismissEditButtonModal}
-        /> }
+        { editButtonModalVisible &&
+          <EditButtonModal
+            buttonId={editingButtonId}
+            onSubmit={this.dismissEditButtonModal}
+          /> }
     </View>
     )
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  remote: state.remotes[ownProps.navigation.state.params.id],
-  editing: state.app.editing,
-  editingButtonId: state.app.editingButtonId,
-  editButtonModalVisible: state.app.editButtonModalVisible,
-})
+const mapStateToProps = (state, ownProps) => {
+  console.log('OWN PROPS', ownProps)
+  return {
+
+    remote: state.remotes[ownProps.navigation.state.routeName],
+    editing: state.app.editing,
+    editingButtonId: state.app.editingButtonId,
+    editButtonModalVisible: state.app.editButtonModalVisible,
+    headerMenuVisible: state.app.headerMenuVisible,
+  }
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.params.id)),
-  setBaseUrl: url => dispatch(setBaseUrl(url)),
-  stopRecord: () => dispatch(stopRecord()),
-  setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
+    createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),
+    setBaseUrl: url => dispatch(setBaseUrl(url)),
+    stopRecord: () => dispatch(stopRecord()),
+    setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
@@ -232,7 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: REMOTE_BACKGROUND_COLOR,
   },
-  scrollView: {
+  buttonPanelList: {
     flex: 1,
     width: '100%',
   },

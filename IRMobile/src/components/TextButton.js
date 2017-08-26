@@ -1,22 +1,37 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   Text,
-  TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native'
 
 import tinycolor from 'tinycolor2'
 
-import { PRIMARY_DARK } from '../constants/colors'
+import { PRIMARY_DARK, MID_GREY } from '../constants/colors'
 
 class TextButton extends Component {
+
+  static propTypes = {
+      onPress: PropTypes.func,
+  }
+
   render() {
-    const { text, color = tinycolor(PRIMARY_DARK).analogous().toString(), onPress = () => {}, textStyle, buttonStyle } = this.props
+    const { text, color = tinycolor(PRIMARY_DARK).analogous().toString(), onPress, textStyle, buttonStyle } = this.props
     return (
-      <TouchableOpacity onPress={onPress} style={buttonStyle}>
+      <TouchableHighlight
+        onPress={onPress}
+        style={buttonStyle}
+        activeOpacity={0.5}
+        underlayColor={MID_GREY}
+      >
         <Text style={[{color}, textStyle]}>{text}</Text>
-      </TouchableOpacity>
+      </TouchableHighlight>
+
     )
   }
+}
+
+TextButton.defaultProps = {
+  onPress: () => {},
 }
 
 export default TextButton

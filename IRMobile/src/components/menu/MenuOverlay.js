@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { Animated, View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
-import { setHeaderMenu, setEditMode } from '../actions'
+import { setHeaderMenu, setEditMode, createRemote } from '../../actions'
 import HeaderMenuItem from './HeaderMenuItem'
 
-import { MENU_BACKGROUND_COLOR } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/dimensions'
+import { MENU_BACKGROUND_COLOR } from '../../constants/colors'
+import { BUTTON_RADIUS } from '../../constants/dimensions'
 
 class MenuOverlay extends Component {
 
@@ -49,7 +49,7 @@ class MenuOverlay extends Component {
         <HeaderMenuItem
           icon="plus"
           text="Add Remote"
-          onPress={() => {}}
+          onPress={this.props.createRemote}
         />
         <HeaderMenuItem
           icon="delete"
@@ -71,14 +71,15 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setEditMode: editing => dispatch(setEditMode(editing)),
-  setHeaderMenu: visible => dispatch(setHeaderMenu(visible))
+  setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
+  createRemote: () => dispatch(createRemote()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuOverlay)
 
 const styles = StyleSheet.create({
   menu: {
-    padding: 10,
+    paddingHorizontal: 10,
     backgroundColor: MENU_BACKGROUND_COLOR,
     borderRadius: BUTTON_RADIUS,
     position: 'absolute',
