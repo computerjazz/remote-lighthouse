@@ -6,12 +6,15 @@ import {
   ASSIGN_IR_CODE,
   CREATE_BUTTON,
   CREATE_BUTTON_PANEL,
+  DELETE_BUTTON_PANEL,
   CREATE_REMOTE,
   DELETE_BUTTON,
   EDIT_BUTTON,
   SET_BASE_URL,
   SET_HEADER_MENU,
   SET_EDIT_MODE,
+  SET_CAPTURE_MODE,
+  SET_CURRENT_REMOTE_ID,
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
 } from '../constants/actions'
@@ -20,6 +23,15 @@ export function createRemote() {
   const remoteId = uuid.v1()
   return {
     type: CREATE_REMOTE,
+    payload: {
+      remoteId,
+    }
+  }
+}
+
+export function setCurrentRemoteId(remoteId) {
+  return {
+    type: SET_CURRENT_REMOTE_ID,
     payload: {
       remoteId,
     }
@@ -43,6 +55,14 @@ export function setEditMode(editing) {
     }
   }
 }
+export function setCaptureMode(capturing) {
+  return {
+    type: SET_CAPTURE_MODE,
+    payload: {
+      capturing,
+    }
+  }
+}
 
 export function setDragging(dragging) {
   return {
@@ -53,7 +73,7 @@ export function setDragging(dragging) {
   }
 }
 
-export function setRecordingButtonId(buttonId) {
+export function setcapturingButtonId(buttonId) {
   return {
     type: SET_RECORDING_BUTTON_ID,
     payload: {
@@ -123,9 +143,18 @@ export function createButtonPanel(type, remoteId) {
     if (!panelDefs[type]) return
     await dispatch(createButtonPanelAction(remoteId, panelId, type))
     panelDefs[type].icons.forEach(iconName => {
-      console.log('CREATING BUTTON!!!!', iconName, panelId)
       dispatch(createButton(iconName, panelId))
     })
+  }
+}
+
+export function deleteButtonPanel(panelId, remoteId) {
+  return {
+    type: DELETE_BUTTON_PANEL,
+    payload: {
+      panelId,
+      remoteId,
+    }
   }
 }
 
@@ -138,13 +167,13 @@ export function setBaseUrl(url) {
 
 let pollInterval
 
-export function captureIRCode(buttonId, setRecordButton, onStatusChanged) {
+export function captureIRCode(buttonId, onStatusChanged) {
   return async (dispatch, getState) => {
     console.log('CAPTURING!!', buttonId)
     try {
-      const response = await dispatch(startRecord())
+      const response = await dispatch(startRecord(buttonId))
       if (response.ok) {
-        dispatch(checkForCapturedCode(buttonId, setRecordButton, onStatusChanged))
+        dispatch(checkForCapturedCode(buttonId, onStatusChanged))
       }
     } catch (err) {
       console.log('## startRecord err', err)
@@ -153,9 +182,10 @@ export function captureIRCode(buttonId, setRecordButton, onStatusChanged) {
   }
 }
 
-export function startRecord() {
+export function startRecord(buttonId) {
   return async (dispatch, getState) => {
     console.log('START RECORD')
+    dispatch(setcapturingButtonId(buttonId))
     const { baseUrl } = getState().network
     const response = await fetch(`${baseUrl}/rec`)
     return response
@@ -166,6 +196,7 @@ export function stopRecord() {
   return async (dispatch, getState) => {
     const { baseUrl } = getState().network
     try {
+      dispatch(setcapturingButtonId(null))
       fetch(`${baseUrl}/stop`)
       if (pollInterval) clearInterval(pollInterval)
     } catch (err) {
@@ -185,16 +216,17 @@ export function clearRecordingState() {
   }
 }
 
-const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 10
+// Check for IR code every second
+const POLL_INTERVAL = 1000
+const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 5
 
-export function checkForCapturedCode(buttonId, setRecordButton = () => {}, onStatusChanged = () => {}) {
+export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
   return async (dispatch, getState) => {
     const { baseUrl } = getState().network
     try {
 
       if (pollInterval) clearInterval(pollInterval)
 
-      // Check for IR code every second
       let pollCounter = 0
       pollInterval = setInterval(async () => {
 
@@ -207,23 +239,21 @@ export function checkForCapturedCode(buttonId, setRecordButton = () => {}, onSta
           clearInterval(pollInterval)
           dispatch(assignIRCode(buttonId, codeData))
           onStatusChanged(true)
-          setRecordButton(null)
-          console.log('GOT CODE')
+          dispatch(stopRecord())
         } else if (pollCounter > MAX_TIMES_TO_CHECK_FOR_NEW_CODE) {
           // Too much time has passed, give up
-          dispatch(stopRecord())
           clearInterval(pollInterval)
           onStatusChanged(false)
-          setRecordButton(null)
-          console.log('MAX REACTHED')
+          dispatch(stopRecord())
+          console.log('MAX REACTHED, GIVING UP')
         }
         pollCounter++
-      }, 1000)
+      }, POLL_INTERVAL)
     } catch (err) {
       pollInterval && clearInterval(pollInterval)
       console.log('ERR!!!')
       onStatusChanged(false)
-      setRecordButton(null)
+      dispatch(stopRecord())
     }
   }
 }

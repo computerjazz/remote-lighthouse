@@ -21,7 +21,7 @@ class CirclePlusButton extends Component {
       <TouchableOpacity style={[styles.container, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
         <Icon
           color={LIGHT_GREY}
-          name={dragging ? 'delete' : 'plus'}
+          name={'plus'}
           size={35}
         />
       </TouchableOpacity>

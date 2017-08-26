@@ -15,7 +15,7 @@ import {
   LIGHT_GREY,
   BUTTON_BACKGROUND_COLOR,
   BUTTON_TEXT_COLOR,
-  RECORDING_IN_PROGRESS_COLOR,
+  CAPTURING_IN_PROGRESS_COLOR,
   STATUS_GOOD_COLOR,
   STATUS_BAD_COLOR
 } from '../constants/colors'
@@ -27,7 +27,7 @@ class RemoteButton extends Component {
 
   static propTypes = {
     id: PropTypes.string,
-    recordingButtonId: PropTypes.string,
+    capturingButtonId: PropTypes.string,
     status: PropTypes.bool,
   }
 
@@ -39,14 +39,14 @@ class RemoteButton extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const isRecording = this.props.recordingButtonId === this.props.id
+    const isRecording = this.props.capturingButtonId === this.props.id
     const hasNewStatus = (this.props.status !== null) && (prevProps.status !== this.props.status)
-    if ((prevProps.recordingButtonId !== this.props.id) && isRecording) this.pulseBackground()
+    if ((prevProps.capturingButtonId !== this.props.id) && isRecording) this.pulseBackground()
     if (isRecording && hasNewStatus) this.onStatusChanged()
   }
 
   pulseBackground = () => {
-    if (this.props.recordingButtonId !== this.props.id) return
+    if (this.props.capturingButtonId !== this.props.id) return
 
     Animated.timing(this.pulseAnim, {
       toValue: 1,
@@ -76,15 +76,15 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, recordingButtonId, status, color = LIGHT_GREY } = this.props
-    const isRecording = recordingButtonId === id
+    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, color = LIGHT_GREY } = this.props
+    const isRecording = capturingButtonId === id
     const hasStatus = status !== null
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
 
     const pulseStyle = {
         backgroundColor: this.pulseAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: [BUTTON_BACKGROUND_COLOR, RECORDING_IN_PROGRESS_COLOR]
+          outputRange: [BUTTON_BACKGROUND_COLOR, CAPTURING_IN_PROGRESS_COLOR]
         })
       }
 
@@ -101,7 +101,7 @@ class RemoteButton extends Component {
         style={[styles.animatedContainer, isRecording && pulseStyle, hasStatus && statusStyle, style]}
       >
         <TouchableOpacity
-          onPress={() => onPress(id)}
+          onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
           style={styles.touchable}
         >
           { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
@@ -117,13 +117,14 @@ class RemoteButton extends Component {
     }
 }
 
-
-export default connect((state, ownProps) => ({
+const mapStateToProps = (state, ownProps) => ({
   iconName: state.buttons[ownProps.id].icon,
   title: state.buttons[ownProps.id].title,
   editing: state.app.editing,
-  recordingButtonId: state.app.recordingButtonId,
-}), null)(RemoteButton)
+  capturingButtonId: state.app.capturingButtonId,
+})
+
+export default connect(mapStateToProps)(RemoteButton)
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -31,7 +31,8 @@ class App extends Component {
           <Navigator />
           <MenuOverlay />
         </View>
-      </Provider>)
+      </Provider>
+    )
   }
 }
 

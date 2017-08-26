@@ -8,7 +8,7 @@ import {
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { stopRecord, setHeaderMenu, setEditMode, setRecordingButtonId } from '../../actions'
+import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode } from '../../actions'
 
 import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS, MENU_BACKGROUND_COLOR } from '../../constants/colors'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
@@ -17,6 +17,7 @@ class HeaderMenuButton extends Component {
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
+    capturing: PropTypes.bool.isRequired,
     setParams: PropTypes.func.isRequired,
   }
 
@@ -45,7 +46,7 @@ class HeaderMenuButton extends Component {
         style={styles.touchable}
         onPress={() => {
           this.props.stopRecord()
-          this.props.setRecordingButtonId(null)
+          this.props.setCaptureMode(false)
           this.props.setEditMode(false)
         }}
       >
@@ -55,10 +56,10 @@ class HeaderMenuButton extends Component {
   }
 
   render() {
-    const { editing } = this.props
+    const { editing, capturing } = this.props
     return (
       <View style={styles.container}>
-        { editing ? this.renderDoneButton() : this.renderDots() }
+        { editing || capturing ? this.renderDoneButton() : this.renderDots() }
       </View>
     )
   }
@@ -66,13 +67,14 @@ class HeaderMenuButton extends Component {
 
 const mapStateToProps = state => ({
   editing: state.app.editing,
+  capturing: state.app.capturing,
 })
 
 const mapDispatchToProps = dispatch => ({
   stopRecord: () => dispatch(stopRecord()),
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   setEditMode: editing => dispatch(setEditMode(editing)),
-  setRecordingButtonId: buttonId => dispatch(setRecordingButtonId(buttonId))
+  setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenuButton)

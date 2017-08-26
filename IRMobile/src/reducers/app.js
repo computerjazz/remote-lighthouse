@@ -1,15 +1,19 @@
 import {
   SET_HEADER_MENU,
   SET_EDIT_MODE,
+  SET_CAPTURE_MODE,
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
+  SET_CURRENT_REMOTE_ID,
 } from '../constants/actions'
 
 const initialState = {
   headerMenuVisible: false,
   editing: false,
+  capturing: false,
   dragging: false,
-  recordingButtonId: null,
+  capturingButtonId: null,
+  currentRemoteId: null,
 }
 
 export default (state = initialState, action) => {
@@ -26,10 +30,22 @@ export default (state = initialState, action) => {
         editing: action.payload.editing,
       }
 
+      case SET_CAPTURE_MODE:
+        return {
+          ...state,
+          capturing: action.payload.capturing,
+        }
+
     case SET_RECORDING_BUTTON_ID:
       return {
         ...state,
-        recordingButtonId: action.payload.buttonId,
+        capturingButtonId: action.payload.buttonId,
+      }
+
+    case SET_CURRENT_REMOTE_ID:
+      return {
+        ...state,
+        currentRemoteId: action.payload.remoteId,
       }
 
     case SET_DRAGGING:

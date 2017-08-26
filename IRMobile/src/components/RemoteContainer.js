@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react'
 import {
   View,
   UIManager,
+  LayoutAnimation,
 } from 'react-native'
-
-import { TabNavigator } from 'react-navigation'
 
 import { connect } from 'react-redux'
 import Remote from './Remote'
 import HeaderMenuButton from './menu/HeaderMenuButton'
+import { createTabNavigator } from '../navigation'
 import { createRemote } from '../actions'
 import { isAndroid } from '../utils'
 
@@ -21,15 +21,23 @@ import {
 
 import { STATUS_BAR_HEIGHT } from '../constants/dimensions'
 
-const Tabs = ({screen1, screen2, screen3}) => {
-  const Navigator = TabNavigator({
-      tab1: { screen: screen1 },
-      tab2: { screen: screen2 },
-      tab3: { screen: screen3 }
-  })
-  return <Navigator />
-}
-
+const CustomLayoutSpring = {
+    duration: 400,
+    create: {
+      type: LayoutAnimation.Types.spring,
+      property: LayoutAnimation.Properties.scaleXY,
+      springDamping: 0.7,
+    },
+    update: {
+      type: LayoutAnimation.Types.spring,
+      springDamping: 0.7,
+    },
+    delete: {
+      type: LayoutAnimation.Types.spring,
+      property: LayoutAnimation.Properties.scaleXY,
+      springDamping: 0.7,
+    },
+  }
 
 class RemoteContainer extends Component {
 
@@ -37,14 +45,15 @@ class RemoteContainer extends Component {
     const { params } = navigation.state
     const menuVisible = params && params.menuVisible
     const editing = params && params.editing
+    const capturing = params && params.capturing
     const recording = params && params.recording
     const modalVisible = params && params.modalVisible
     const remoteTitle = params && params.title
 
-
-    const title = editing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
+    const title = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
     return {
         title,
+        tabBarLabel: 'hi',
         headerStyle: {
           backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
           paddingTop: STATUS_BAR_HEIGHT,
@@ -60,41 +69,56 @@ class RemoteContainer extends Component {
       }
     }
 
+  static propTypes = {
+    remotes: PropTypes.object.isRequired,
+    createRemote: PropTypes.func.isRequired,
+    navigation: PropTypes.object.isRequired,
+  }
+
+  shouldComponentUpdate(nextProps) {
+    // Only update the container when a remote has been added or deleted
+    const shouldUpdate = nextProps.remotes.list.length !== this.props.remotes.list.length
+    return shouldUpdate
+
+  }
+
   componentWillMount() {
       if (this.props.remotes && !this.props.remotes.length) this.props.createRemote()
       if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.editing !== this.props.editing) this.props.navigation.setParams({ editing: nextProps.editing })
-  }
+    const { setParams } = this.props.navigation
 
-  createTabNavigator = (remotes) => {
-    const routeConfig = { }
-    remotes.list.forEach(remoteId => {
-      routeConfig[remoteId] = { screen: Remote, params: { id: remoteId } }
-    })
-    const navigatorConfig = {
-      swipeEnabled: true,
-      animationEnabled: true,
-      order: this.props.remotes.list
+    const thisRemote = this.props.remotes[this.props.currentRemoteId]
+    const nextRemote = nextProps.remotes[nextProps.currentRemoteId]
+
+    if (nextProps.editing !== this.props.editing) {
+      LayoutAnimation.configureNext(CustomLayoutSpring)
+      setParams({ editing: nextProps.editing })
     }
-    const Navigator = TabNavigator(routeConfig, navigatorConfig)
-    return <Navigator />
+    if (nextProps.capturing !== this.props.capturing) setParams({ capturing: nextProps.capturing })
+    if (nextProps.capturingButtonId !== this.props.capturingButtonId) setParams({ recording: !!nextProps.capturingButtonId })
+    if (thisRemote && nextRemote && nextRemote.panels.length !== thisRemote.panels.length) {
+      // Button panel was added/deleted
+      LayoutAnimation.configureNext(CustomLayoutSpring)
+    }
   }
 
   render() {
     const { remotes } = this.props
     if (!remotes || !remotes.list || !remotes.list.length) return <View />
-    //if (remotes.list.length === 1) return <Remote navigation={this.props.navigation} id={remotes.list[0]} />
 
-    return this.createTabNavigator(remotes)
+    return createTabNavigator(remotes.list, Remote)
   }
 }
 
 const mapStateToProps = state => ({
   remotes: state.remotes,
   editing: state.app.editing,
+  capturing: state.app.capturing,
+  capturingButtonId: state.app.capturingButtonId,
+  currentRemoteId: state.app.currentRemoteId,
 })
 
 const mapDispatchToProps = dispatch => ({

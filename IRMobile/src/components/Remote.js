@@ -5,11 +5,8 @@ import {
   FlatList,
   StyleSheet,
   View,
-  UIManager,
-  LayoutAnimation,
 } from 'react-native'
 import { connect } from 'react-redux'
-import tinycolor from 'tinycolor2'
 
 import { setBaseUrl, stopRecord, createButtonPanel, setHeaderMenu } from '../actions'
 
@@ -22,20 +19,13 @@ import CirclePlusButton from './CirclePlusButton'
 import AddPanelModal from './AddPanelModal'
 import EditButtonModal from './EditButtonModal'
 
-const CustomLayoutSpring = {
-    duration: 400,
-    create: {
-      type: LayoutAnimation.Types.spring,
-      property: LayoutAnimation.Properties.scaleXY,
-      springDamping: 0.7,
-    },
-    update: {
-      type: LayoutAnimation.Types.spring,
-      springDamping: 0.7,
-    },
-  };
-
 class Remote extends Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      tabBarLabel: 'TEST',
+    }
+  }
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
@@ -53,7 +43,6 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
-    console.log('PROPS', this.props)
     this.props.setBaseUrl('http://192.168.86.99')
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
@@ -72,30 +61,8 @@ class Remote extends Component {
    });
  }
 
- componentWillUpdate(nextProps) {
-   if (this.props.editing !== nextProps.editing) {
-     LayoutAnimation.configureNext(CustomLayoutSpring)
-     this.props.navigation.setParams({ editing: nextProps.editing })
-   }
-   if (!this.props.editing && nextProps.editing) {
-     this.pulseBackground()
-   }
- }
-
- pulseBackground = () => {
-   if (this.props.editing) {
-     Animated.timing(this.backgroundAnim, {
-       toValue: 1,
-       duration: 1000,
-     }).start(() => {
-       Animated.timing(this.backgroundAnim, {
-         toValue: 0,
-         duration: 1000,
-       }).start(() => {
-         this.pulseBackground()
-       })
-     })
-   }
+ componentWillReceiveProps(nextProps) {
+   console.log('REMOTE PROPS!!', nextProps)
  }
 
   dismissRecording = () => {
@@ -107,9 +74,7 @@ class Remote extends Component {
     }
   }
 
-  dismissMenu = () => {
-    this.props.setHeaderMenu(false)
-  }
+  dismissMenu = () => this.props.setHeaderMenu(false)
 
   showAddPanelModal = () => {
     this.setState({ addPanelModalVisible: true })
@@ -139,13 +104,13 @@ class Remote extends Component {
     this.dismissAddPanelModal()
   }
 
-  renderButtonPanel = ({ item: id }) => {
+  renderButtonPanel = ({ item }) => {
     const { navigation } = this.props
-    console.log('id!!!', id)
+    console.log(item)
     return (
       <ButtonPanel
-        key={id}
-        id={id}
+        id={item}
+        remoteId={this.props.navigation.state.routeName}
         onEditPress={this.onEditPress}
         setParams={navigation.setParams}
       />
@@ -166,6 +131,7 @@ class Remote extends Component {
             style={styles.buttonPanelList}
             data={remote.panels}
             renderItem={this.renderButtonPanel}
+            keyExtractor={item => item}
           />
           { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
 
@@ -180,22 +146,18 @@ class Remote extends Component {
             buttonId={editingButtonId}
             onSubmit={this.dismissEditButtonModal}
           /> }
-    </View>
+      </View>
     )
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  console.log('OWN PROPS', ownProps)
-  return {
-
-    remote: state.remotes[ownProps.navigation.state.routeName],
-    editing: state.app.editing,
-    editingButtonId: state.app.editingButtonId,
-    editButtonModalVisible: state.app.editButtonModalVisible,
-    headerMenuVisible: state.app.headerMenuVisible,
-  }
-}
+const mapStateToProps = (state, ownProps) => ({
+  remote: state.remotes[ownProps.navigation.state.routeName],
+  editing: state.app.editing,
+  editingButtonId: state.app.editingButtonId,
+  editButtonModalVisible: state.app.editButtonModalVisible,
+  headerMenuVisible: state.app.headerMenuVisible,
+})
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),

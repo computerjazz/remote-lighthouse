@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { Animated, View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
-import { setHeaderMenu, setEditMode, createRemote } from '../../actions'
-import HeaderMenuItem from './HeaderMenuItem'
+import { setHeaderMenu, setCaptureMode, setEditMode, createRemote } from '../../actions'
+import MenuItem from './MenuItem'
 
 import { MENU_BACKGROUND_COLOR } from '../../constants/colors'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
@@ -35,33 +35,54 @@ class MenuOverlay extends Component {
     })
   }
 
-  renderMenu = () => {
+  renderMainMenu = () => {
     return (
       <Animated.View style={[styles.menu, { opacity: this.animVal }]}>
-        <HeaderMenuItem
+        <MenuItem
           icon="remote"
-          text="Capture/Edit"
+          text="Capture"
           onPress={() => {
+            this.props.setCaptureMode(true)
             this.props.setHeaderMenu(false)
-            this.props.setEditMode(true)
           }}
         />
-        <HeaderMenuItem
+        <MenuItem
+          icon="pencil"
+          text="Modify"
+          onPress={() => {
+            this.props.setEditMode(true)
+            this.props.setHeaderMenu(false)
+          }}
+        />
+        <MenuItem
           icon="plus"
           text="Add Remote"
-          onPress={this.props.createRemote}
+          onPress={() => {
+            this.props.setHeaderMenu(false)
+            this.props.createRemote()
+          }}
         />
-        <HeaderMenuItem
+        <MenuItem
+          icon="share-variant"
+          text="Share"
+          onPress={() => {
+            this.props.setHeaderMenu(false)
+            this.props.createRemote()
+          }}
+        />
+        <MenuItem
           icon="delete"
           text="Delete"
-          onPress={() => {}}
+          onPress={() => {
+            this.props.setHeaderMenu(false)
+          }}
         />
       </Animated.View>
     )
   }
 
   render() {
-    return (this.props.headerMenuVisible || this.state.forceShowMenu) ? this.renderMenu() : null
+    return (this.props.headerMenuVisible || this.state.forceShowMenu) ? this.renderMainMenu() : null
   }
 }
 
@@ -71,6 +92,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setEditMode: editing => dispatch(setEditMode(editing)),
+  setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   createRemote: () => dispatch(createRemote()),
 })

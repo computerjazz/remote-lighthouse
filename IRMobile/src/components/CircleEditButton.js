@@ -6,7 +6,7 @@ import {
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { LIGHT_GREY, RECORDING_IN_PROGRESS_COLOR } from '../constants/colors'
+import { LIGHT_GREY, BUTTON_EDIT_COLOR } from '../constants/colors'
 
 class CircleEditButton extends Component {
 
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: RECORDING_IN_PROGRESS_COLOR,
+    backgroundColor: BUTTON_EDIT_COLOR,
     width: 30,
     height: 30,
     borderRadius: 100,
