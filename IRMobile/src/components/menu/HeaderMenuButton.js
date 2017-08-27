@@ -11,14 +11,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode } from '../../actions'
 
 import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS, MENU_BACKGROUND_COLOR } from '../../constants/colors'
-import { BUTTON_RADIUS } from '../../constants/dimensions'
+import { BUTTON_RADIUS, STATUS_BAR_HEIGHT } from '../../constants/dimensions'
 
 class HeaderMenuButton extends Component {
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
     capturing: PropTypes.bool.isRequired,
-    setParams: PropTypes.func.isRequired,
+    stopRecord: PropTypes.func.isRequired,
+    setEditMode: PropTypes.func.isRequired,
+    setCaptureMode: PropTypes.func.isRequired,
+    setHeaderMenu: PropTypes.func.isRequired,
   }
 
   state = {
@@ -45,22 +48,24 @@ class HeaderMenuButton extends Component {
       <TouchableOpacity
         style={styles.touchable}
         onPress={() => {
+          this.props.onPressDone()
           this.props.stopRecord()
           this.props.setCaptureMode(false)
           this.props.setEditMode(false)
         }}
       >
-        <Text style={styles.text}>Done</Text>
+        <Text style={[styles.text, { color: this.props.capturing ? PRIMARY_DARK_ANALOGOUS : LIGHT_GREY }]}>Done</Text>
       </TouchableOpacity>
     )
   }
 
   render() {
-    const { editing, capturing } = this.props
+    const { editing, capturing, style, modalVisible } = this.props
+    if (modalVisible) return null
     return (
-      <View style={styles.container}>
-        { editing || capturing ? this.renderDoneButton() : this.renderDots() }
-      </View>
+        <View style={[styles.container, style]}>
+          { editing || capturing ? this.renderDoneButton() : this.renderDots() }
+        </View>
     )
   }
 }
@@ -68,6 +73,7 @@ class HeaderMenuButton extends Component {
 const mapStateToProps = state => ({
   editing: state.app.editing,
   capturing: state.app.capturing,
+  modalVisible: state.app.modalVisible,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -83,9 +89,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginRight: 20,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    marginTop: STATUS_BAR_HEIGHT * 1.5,
   },
   text: {
-    color: LIGHT_GREY,
     fontSize: 18,
   },
   touchable: {

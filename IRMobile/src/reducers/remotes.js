@@ -2,6 +2,7 @@ import {
   CREATE_REMOTE,
   CREATE_BUTTON_PANEL,
   DELETE_BUTTON_PANEL,
+  UPDATE_REMOTE,
 } from '../constants/actions'
 
 const initialState = {
@@ -23,6 +24,15 @@ export default (state = initialState, action) => {
         }
       }
     }
+
+    case UPDATE_REMOTE:
+      return {
+        ...state,
+        [action.payload.remoteId]: {
+          ...action.payload.updatedRemote,  
+        }
+      }
+
     case CREATE_BUTTON_PANEL:
       return {
         ...state,

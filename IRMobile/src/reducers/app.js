@@ -1,10 +1,11 @@
 import {
-  SET_HEADER_MENU,
+  SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
   SET_CURRENT_REMOTE_ID,
+  SET_MODAL_VISIBLE,
 } from '../constants/actions'
 
 const initialState = {
@@ -14,14 +15,20 @@ const initialState = {
   dragging: false,
   capturingButtonId: null,
   currentRemoteId: null,
+  modalVisible: false,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SET_HEADER_MENU:
+    case SET_HEADER_MENU_VISIBLE:
       return {
         ...state,
         headerMenuVisible: action.payload.visible,
+      }
+    case SET_MODAL_VISIBLE:
+      return {
+        ...state,
+        modalVisible: action.payload.visible,
       }
 
     case SET_EDIT_MODE:

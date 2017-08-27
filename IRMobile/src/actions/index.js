@@ -11,12 +11,14 @@ import {
   DELETE_BUTTON,
   EDIT_BUTTON,
   SET_BASE_URL,
-  SET_HEADER_MENU,
+  SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
   SET_CURRENT_REMOTE_ID,
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
+  SET_MODAL_VISIBLE,
+  UPDATE_REMOTE,
 } from '../constants/actions'
 
 export function createRemote() {
@@ -24,6 +26,16 @@ export function createRemote() {
   return {
     type: CREATE_REMOTE,
     payload: {
+      remoteId,
+    }
+  }
+}
+
+export function updateRemote(remoteId, updatedRemote) {
+  return {
+    type: UPDATE_REMOTE,
+    payload: {
+      updatedRemote,
       remoteId,
     }
   }
@@ -40,9 +52,18 @@ export function setCurrentRemoteId(remoteId) {
 
 export function setHeaderMenu(visible) {
   return {
-    type: SET_HEADER_MENU,
+    type: SET_HEADER_MENU_VISIBLE,
     payload: {
       visible
+    }
+  }
+}
+
+export function setModalVisible(visible) {
+  return {
+    type: SET_MODAL_VISIBLE,
+    payload: {
+      visible,
     }
   }
 }

@@ -8,6 +8,7 @@ import {
 import { connect } from 'react-redux'
 import Remote from './Remote'
 import HeaderMenuButton from './menu/HeaderMenuButton'
+import Header from './menu/Header'
 import { createTabNavigator } from '../navigation'
 import { createRemote } from '../actions'
 import { isAndroid } from '../utils'
@@ -39,6 +40,21 @@ const CustomLayoutSpring = {
     },
   }
 
+  const CustomLayoutLinear = {
+    duration: 200,
+    create: {
+      type: LayoutAnimation.Types.linear,
+      property: LayoutAnimation.Properties.opacity,
+    },
+    update: {
+      type: LayoutAnimation.Types.linear,
+    },
+    delete: {
+      type: LayoutAnimation.Types.linear,
+      property: LayoutAnimation.Properties.opacity,
+    }
+  }
+
 class RemoteContainer extends Component {
 
   static navigationOptions = ({ navigation }) => {
@@ -51,21 +67,22 @@ class RemoteContainer extends Component {
     const remoteTitle = params && params.title
 
     const title = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
+    console.log('MODAL VISIBLE??', modalVisible)
     return {
         title,
-        tabBarLabel: 'hi',
-        headerStyle: {
-          backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
-          paddingTop: STATUS_BAR_HEIGHT,
-          height: 75,
-        },
-        headerTitleStyle: {
-          color: editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR,
-        },
-        headerRight: !modalVisible && <HeaderMenuButton
-          menuVisible={menuVisible}
-          setParams={navigation.setParams}
-        />,
+        header: (
+          <Header
+            title={title}
+            titleStyle={{
+                color: editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR,
+              }}
+            headerStyle={{
+              backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
+              paddingTop: STATUS_BAR_HEIGHT,
+              height: 75,
+            }}
+          />
+        ),
       }
     }
 
@@ -99,10 +116,11 @@ class RemoteContainer extends Component {
     }
     if (nextProps.capturing !== this.props.capturing) setParams({ capturing: nextProps.capturing })
     if (nextProps.capturingButtonId !== this.props.capturingButtonId) setParams({ recording: !!nextProps.capturingButtonId })
-    if (thisRemote && nextRemote && nextRemote.panels.length !== thisRemote.panels.length) {
-      // Button panel was added/deleted
-      LayoutAnimation.configureNext(CustomLayoutSpring)
-    }
+    if (thisRemote && nextRemote && this.props.currentRemoteId === nextProps.currentRemoteId && nextRemote.panels.length !== thisRemote.panels.length) {
+      // Button panels were added/deleted
+      if (nextRemote.panels.length > thisRemote.panels.length) LayoutAnimation.configureNext(CustomLayoutLinear)
+      else LayoutAnimation.configureNext(CustomLayoutSpring)
+    } else if (this.props.modalVisible !== nextProps.modalVisible) LayoutAnimation.configureNext(CustomLayoutLinear)
   }
 
   render() {
@@ -119,6 +137,7 @@ const mapStateToProps = state => ({
   capturing: state.app.capturing,
   capturingButtonId: state.app.capturingButtonId,
   currentRemoteId: state.app.currentRemoteId,
+  modalVisible: state.app.modalVisible,
 })
 
 const mapDispatchToProps = dispatch => ({

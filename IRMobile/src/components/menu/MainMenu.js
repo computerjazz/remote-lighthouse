@@ -7,7 +7,7 @@ import MenuItem from './MenuItem'
 import { MENU_BACKGROUND_COLOR } from '../../constants/colors'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 
-class MenuOverlay extends Component {
+class MainMenu extends Component {
 
   state = {
     forceShowMenu: false,
@@ -55,16 +55,16 @@ class MenuOverlay extends Component {
           }}
         />
         <MenuItem
-          icon="plus"
-          text="Add Remote"
+          icon="share-variant"
+          text="Share"
           onPress={() => {
             this.props.setHeaderMenu(false)
             this.props.createRemote()
           }}
         />
         <MenuItem
-          icon="share-variant"
-          text="Share"
+          icon="plus"
+          text="Add Remote"
           onPress={() => {
             this.props.setHeaderMenu(false)
             this.props.createRemote()
@@ -97,7 +97,7 @@ const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(MenuOverlay)
+export default connect(mapStateToProps, mapDispatchToProps)(MainMenu)
 
 const styles = StyleSheet.create({
   menu: {

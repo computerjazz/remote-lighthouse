@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { setBaseUrl, stopRecord, createButtonPanel, setHeaderMenu } from '../actions'
+import { setBaseUrl, stopRecord, createButtonPanel, setHeaderMenu, setModalVisible } from '../actions'
 
 import {
   REMOTE_BACKGROUND_COLOR,
@@ -78,24 +78,24 @@ class Remote extends Component {
 
   showAddPanelModal = () => {
     this.setState({ addPanelModalVisible: true })
-    this.props.navigation.setParams({ modalVisible: true })
+    this.props.setModalVisible(true)
   }
 
   submitAddPanelModal = type => {
     if (type) this.props.createButtonPanel(type)
     this.setState({ addPanelModalVisible: false })
-    this.props.navigation.setParams({ modalVisible: false })
+    this.props.setModalVisible(false)
   }
 
   onEditPress = buttonId => {
-    this.props.navigation.setParams({ modalVisible: true })
     this.setState({ editButtonModalVisible: true, editingButtonId: buttonId })
+    this.props.setModalVisible(true)
   }
 
   dismissEditButtonModal = () => {
     this.setState({ editButtonModalVisible: false })
-    this.props.navigation.setParams({ modalVisible: false })
-  }
+    this.props.setModalVisible(false)
+}
 
   dismissAll = () => {
     this.dismissMenu()
@@ -106,11 +106,10 @@ class Remote extends Component {
 
   renderButtonPanel = ({ item }) => {
     const { navigation } = this.props
-    console.log(item)
     return (
       <ButtonPanel
         id={item}
-        remoteId={this.props.navigation.state.routeName}
+        remoteId={navigation.state.routeName}
         onEditPress={this.onEditPress}
         setParams={navigation.setParams}
       />
@@ -164,6 +163,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     setBaseUrl: url => dispatch(setBaseUrl(url)),
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
+    setModalVisible: visible => dispatch(setModalVisible(visible)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
