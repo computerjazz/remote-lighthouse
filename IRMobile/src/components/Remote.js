@@ -22,8 +22,9 @@ import {
 
 import ButtonPanel from './ButtonPanel'
 import CirclePlusButton from './CirclePlusButton'
-import AddPanelModal from './AddPanelModal'
-import EditButtonModal from './EditButtonModal'
+import AddPanelModal from './modals/AddPanelModal'
+import EditButtonModal from './modals/EditButtonModal'
+import SelectRemoteIconModal from './modals/SelectRemoteIconModal'
 import TabIcon from './menu/TabIcon'
 
 class Remote extends Component {
@@ -52,7 +53,6 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
-    this.props.setBaseUrl('http://192.168.86.99')
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => false,
@@ -71,11 +71,14 @@ class Remote extends Component {
  }
 
  componentWillReceiveProps(nextProps) {
-   console.log('REMOTE PROPS!!', nextProps)
    const { navigation, remote } = this.props
+   if (!nextProps.remote) return
    if (remote.title !== nextProps.remote.title) {
-     console.log('NEW TITLE!!!!', nextProps.remote.title)
      navigation.setParams({ title: nextProps.remote.title })
+   }
+
+   if (nextProps.currentRemoteId !== this.props.navigation.state.routeName) {
+     this.setState({ addPanelModalVisible: false, editButtonModalVisible: false })
    }
  }
 
@@ -131,8 +134,9 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, remote } = this.props
+    const { editing, remote, headerModalVisible, navigation } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
+    if (!remote) return null
 
     return (
       <View style={{flex: 1}}>
@@ -159,6 +163,8 @@ class Remote extends Component {
             buttonId={editingButtonId}
             onSubmit={this.dismissEditButtonModal}
           /> }
+
+        { headerModalVisible && <SelectRemoteIconModal />}
       </View>
     )
   }
@@ -166,10 +172,12 @@ class Remote extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
   remote: state.remotes[ownProps.navigation.state.routeName],
+  currentRemoteId: state.app.currentRemoteId,
   editing: state.app.editing,
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
   headerMenuVisible: state.app.headerMenuVisible,
+  headerModalVisible: state.app.headerModalVisible,
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

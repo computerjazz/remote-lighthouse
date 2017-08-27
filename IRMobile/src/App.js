@@ -19,7 +19,10 @@ const store = createStore(
   )
 )
 
-persistStore(store, { storage: AsyncStorage })
+persistStore(store, {
+  storage: AsyncStorage,
+  blacklist: ['app'],
+})
   //.purge()
 
 class App extends Component {

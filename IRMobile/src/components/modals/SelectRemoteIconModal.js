@@ -13,15 +13,15 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import TextButton from './TextButton'
-import { editButton } from '../actions'
-import { isAndroid } from '../utils'
+import TextButton from '../TextButton'
+import { updateRemote, setHeaderModalVisible } from '../../actions'
+import { isAndroid } from '../../utils'
 
-import buttonCategories from '../dictionaries/buttons'
-import { BUTTON_RADIUS } from '../constants/dimensions'
-import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, PRIMARY_DARK } from '../constants/colors'
+import buttonCategories from '../../dictionaries/buttons'
+import { BUTTON_RADIUS } from '../../constants/dimensions'
+import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, PRIMARY_DARK, LIGHT_GREY } from '../../constants/colors'
 
-class EditButtonModal extends Component {
+class SelectRemoteIconModal extends Component {
 
   state = {
     selectedIcon: null,
@@ -39,7 +39,7 @@ class EditButtonModal extends Component {
   }
 
   componentDidMount() {
-    const { icon, title } = this.props.button
+    const { icon, title } = this.props.remote
     this.setState({ selectedIcon: icon,  newTitle: title})
   }
 
@@ -71,30 +71,26 @@ class EditButtonModal extends Component {
 
   onOkPress = () => {
     const updatedButton = {
-      ...this.props.button,
+      ...this.props.remote,
       icon: this.state.selectedIcon,
-      title: this.state.newTitle,
     }
-    this.props.editButton(updatedButton)
+    this.props.updateRemote(this.props.currentRemoteId, updatedButton)
+    this.props.setHeaderModalVisible(false)
+    this.props.onSubmit()
+  }
+
+  onCancelPress = () => {
+    this.props.setHeaderModalVisible(false)
     this.props.onSubmit()
   }
 
   render() {
-    const { onSubmit, button } = this.props
+    const { onSubmit } = this.props
     return (
       <View style={styles.wrapper}>
         <View style={styles.container}>
 
           <ScrollView style={styles.scrollView}>
-            <Text style={styles.title}>Label</Text>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={text => this.setState({ newTitle: text })}
-              value={this.state.newTitle}
-              autoCorrect={false}
-              underlineColorAndroid={PRIMARY_DARK}
-            />
-            <Text style={styles.title}>Icon</Text>
             { _.map(buttonCategories, this.renderIconCategory) }
           </ScrollView>
 
@@ -102,7 +98,7 @@ class EditButtonModal extends Component {
             <TextButton
               text="Cancel"
               buttonStyle={styles.confirmButton}
-              onPress={onSubmit}
+              onPress={this.onCancelPress}
             />
             <TextButton
               text="Ok"
@@ -116,25 +112,26 @@ class EditButtonModal extends Component {
   }
 }
 
-EditButtonModal.defaultProps = {
+SelectRemoteIconModal.defaultProps = {
   onSubmit: () => {},
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  button: state.buttons[ownProps.buttonId],
+const mapStateToProps = state => ({
+  currentRemoteId: state.app.currentRemoteId,
+  remote: state.remotes[state.app.currentRemoteId],
 })
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  editButton: updatedButton => dispatch(editButton(ownProps.buttonId, updatedButton))
+const mapDispatchToProps = (dispatch) => ({
+  updateRemote: (remoteId, updatedRemote) => dispatch(updateRemote(remoteId, updatedRemote)),
+  setHeaderModalVisible: visible => dispatch(setHeaderModalVisible(visible)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditButtonModal)
+export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: MODAL_BACKGROUND_COLOR,
-    opacity: 0.9,
     borderRadius: BUTTON_RADIUS,
   },
   wrapper: {
@@ -146,12 +143,11 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR_DARK,
   },
   categoryTitle: {
-    marginTop: 15,
+    marginTop: 10,
     fontSize: 15,
     color: TEXT_COLOR_DARK,
     borderBottomColor: TEXT_COLOR_DARK,
     borderBottomWidth: 0.5,
-    alignSelf: 'flex-end',
   },
   confirmButtonContainer: {
     flexDirection: 'row',
@@ -170,7 +166,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingTop: 10,
     marginBottom: 20,
   },
   icon: {
@@ -188,5 +183,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
+    height: 45,
+    padding: 5,
+    marginBottom: 13,
+    borderRadius: BUTTON_RADIUS,
+    backgroundColor: 'rgba(0, 0, 0, .1)',
   }
 })

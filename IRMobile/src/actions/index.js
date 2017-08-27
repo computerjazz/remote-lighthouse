@@ -5,11 +5,13 @@ import panelDefs from '../dictionaries/panels'
 import {
   ASSIGN_IR_CODE,
   CREATE_BUTTON,
+  UPDATE_BUTTON,
   CREATE_BUTTON_PANEL,
   DELETE_BUTTON_PANEL,
   CREATE_REMOTE,
+  UPDATE_REMOTE,
+  DELETE_REMOTE,
   DELETE_BUTTON,
-  EDIT_BUTTON,
   SET_BASE_URL,
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
@@ -18,7 +20,7 @@ import {
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
   SET_MODAL_VISIBLE,
-  UPDATE_REMOTE,
+  SET_HEADER_MODAL_VISIBLE,
 } from '../constants/actions'
 
 export function createRemote() {
@@ -41,6 +43,16 @@ export function updateRemote(remoteId, updatedRemote) {
   }
 }
 
+export function deleteRemote(remoteId) {
+  return {
+    type: DELETE_REMOTE,
+    payload: {
+      remoteId,
+    }
+  }
+}
+
+
 export function setCurrentRemoteId(remoteId) {
   return {
     type: SET_CURRENT_REMOTE_ID,
@@ -62,6 +74,15 @@ export function setHeaderMenu(visible) {
 export function setModalVisible(visible) {
   return {
     type: SET_MODAL_VISIBLE,
+    payload: {
+      visible,
+    }
+  }
+}
+
+export function setHeaderModalVisible(visible) {
+  return {
+    type: SET_HEADER_MODAL_VISIBLE,
     payload: {
       visible,
     }
@@ -140,7 +161,7 @@ export function deleteButton(buttonId) {
 
 export function editButton(buttonId, { title, icon }) {
   return {
-    type: EDIT_BUTTON,
+    type: UPDATE_BUTTON,
     payload: {
       buttonId,
       title,

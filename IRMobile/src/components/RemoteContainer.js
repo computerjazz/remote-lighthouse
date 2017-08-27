@@ -3,24 +3,18 @@ import {
   View,
   UIManager,
   LayoutAnimation,
+  StyleSheet,
 } from 'react-native'
 
 import { connect } from 'react-redux'
 import Remote from './Remote'
-import HeaderMenuButton from './menu/HeaderMenuButton'
 import Header from './menu/Header'
+import LoadingScreen from './LoadingScreen'
 import { createTabNavigator } from '../navigation'
-import { createRemote } from '../actions'
+import { createRemote, setBaseUrl, setEditMode } from '../actions'
 import { isAndroid } from '../utils'
 
-import {
-  HEADER_TITLE_COLOR,
-  HEADER_TITLE_EDITING_COLOR,
-  HEADER_BACKGROUND_EDITING_COLOR,
-  HEADER_BACKGROUND_COLOR,
-} from '../constants/colors'
-
-import { STATUS_BAR_HEIGHT } from '../constants/dimensions'
+import { REMOTE_BACKGROUND_COLOR } from '../constants/colors'
 
 const CustomLayoutSpring = {
     duration: 400,
@@ -67,6 +61,8 @@ class RemoteContainer extends Component {
     remotes: PropTypes.object.isRequired,
     createRemote: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
+    setEditMode: PropTypes.func.isRequired,
+    setBaseUrl: PropTypes.func.isRequired,
   }
 
   shouldComponentUpdate(nextProps) {
@@ -77,12 +73,20 @@ class RemoteContainer extends Component {
   }
 
   componentWillMount() {
-      if (this.props.remotes && !this.props.remotes.length) this.props.createRemote()
-      if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    this.props.setBaseUrl('http://192.168.86.99')
+    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   componentWillReceiveProps(nextProps) {
     const { setParams } = this.props.navigation
+
+    if (!this.props.rehydrated && nextProps.rehydrated) {
+      if (!nextProps.remotes.list.length) {
+        // First time in, create a remote
+        this.props.createRemote()
+        this.props.setEditMode(true)
+      }
+    }
 
     const thisRemote = this.props.remotes[this.props.currentRemoteId]
     const nextRemote = nextProps.remotes[nextProps.currentRemoteId]
@@ -102,9 +106,14 @@ class RemoteContainer extends Component {
 
   render() {
     const { remotes } = this.props
-    if (!remotes || !remotes.list || !remotes.list.length) return <View />
+    if (!remotes || !remotes.list || !remotes.list.length) return <LoadingScreen />
 
-    return createTabNavigator(remotes.list, Remote)
+    return (
+      <View style={styles.container}>
+        {createTabNavigator(remotes.list, Remote)}
+      </View>
+    )
+
   }
 }
 
@@ -115,10 +124,20 @@ const mapStateToProps = state => ({
   capturingButtonId: state.app.capturingButtonId,
   currentRemoteId: state.app.currentRemoteId,
   modalVisible: state.app.modalVisible,
+  rehydrated: state.app.rehydrated,
 })
 
 const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
+  setBaseUrl: url => dispatch(setBaseUrl(url)),
+  setEditMode: editing => dispatch(setEditMode(editing)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteContainer)
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: REMOTE_BACKGROUND_COLOR,
+  }
+})

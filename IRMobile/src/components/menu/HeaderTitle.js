@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { TITLE_BACKGROUND_EDITING } from '../../constants/colors'
+import { HEADER_TITLE_BACKGROUND_EDITING } from '../../constants/colors'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 
 class HeaderTitleButton extends Component {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   editing: {
     borderRadius: BUTTON_RADIUS,
-    backgroundColor: TITLE_BACKGROUND_EDITING,
+    backgroundColor: HEADER_TITLE_BACKGROUND_EDITING,
     paddingHorizontal: 5,
   },
   text: {

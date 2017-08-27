@@ -8,13 +8,13 @@ import {
   View,
 } from 'react-native'
 import _ from 'lodash'
-import TextButton from './TextButton'
+import TextButton from '../TextButton'
 
-import { LIGHT_GREY } from '../constants/colors'
-import { BUTTON_RADIUS } from '../constants/dimensions'
-import panelDict from '../dictionaries/panels'
+import { LIGHT_GREY } from '../../constants/colors'
+import { BUTTON_RADIUS } from '../../constants/dimensions'
+import panelDict from '../../dictionaries/panels'
 
-import { isAndroid } from '../utils'
+import { isAndroid } from '../../utils'
 
 class AddPanelModal extends Component {
 

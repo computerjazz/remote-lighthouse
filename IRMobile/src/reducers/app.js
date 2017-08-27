@@ -6,6 +6,7 @@ import {
   SET_DRAGGING,
   SET_CURRENT_REMOTE_ID,
   SET_MODAL_VISIBLE,
+  SET_HEADER_MODAL_VISIBLE,
 } from '../constants/actions'
 
 const initialState = {
@@ -16,10 +17,19 @@ const initialState = {
   capturingButtonId: null,
   currentRemoteId: null,
   modalVisible: false,
+  headerModalVisible: false,
+  rehydrated: false,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
+
+    case 'persist/REHYDRATE':
+      return {
+        ...state,
+        rehydrated: true,
+      }
+
     case SET_HEADER_MENU_VISIBLE:
       return {
         ...state,
@@ -29,6 +39,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         modalVisible: action.payload.visible,
+      }
+    case SET_HEADER_MODAL_VISIBLE:
+      return {
+        ...state,
+        modalVisible: action.payload.visible,
+        headerModalVisible: action.payload.visible,
       }
 
     case SET_EDIT_MODE:

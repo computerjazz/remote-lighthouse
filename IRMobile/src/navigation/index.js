@@ -1,7 +1,7 @@
 import React from 'react'
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
-import { setCurrentRemoteId } from '../actions'
+import { setCurrentRemoteId, setModalVisible, setHeaderModalVisible, setEditMode } from '../actions'
 
 import RemoteContainer from '../components/RemoteContainer'
 
@@ -26,6 +26,7 @@ export const createTabNavigator = (keys, Screen) => {
   })
 
   const navigatorConfig = {
+    initialRouteName: keys[keys.length-1],
     swipeEnabled: true,
     animationEnabled: true,
     order: keys,
@@ -38,14 +39,16 @@ export const createTabNavigator = (keys, Screen) => {
   }
 
   const onNavigationStateChange = function(prevState, newState){
-    if (this.setCurrentRemoteId) {
-      this.setCurrentRemoteId(newState.routes[newState.index].routeName)
-    }
+    console.log('STATE CHANGED', prevState, newState)
+    if (this.setCurrentRemoteId) this.setCurrentRemoteId(newState.routes[newState.index].routeName)
+    if (this.setHeaderModalVisible) this.setHeaderModalVisible(false)
   }
 
   const mapDispatchToProps = function(dispatch){
     return {
-      setCurrentRemoteId: remoteId => dispatch(setCurrentRemoteId(remoteId))
+      setCurrentRemoteId: remoteId => dispatch(setCurrentRemoteId(remoteId)),
+      setHeaderModalVisible: visible => dispatch(setHeaderModalVisible(visible)),
+      setEditMode: editing => dispatch(setEditMode(editing))
     }
   }
 

@@ -27,7 +27,7 @@ class Header extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.remote && this.props.remote.title !== nextProps.remote.title) {
+    if (this.props.remote && nextProps.remote && this.props.remote.title !== nextProps.remote.title) {
       this.setState({ title: nextProps.remote.title })
     }
   }
@@ -48,14 +48,14 @@ class Header extends Component {
   }
 
   render() {
-    const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible } = this.props
+    const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible, rehydrated } = this.props
     const headerBackgroundColor = editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR
     const headerTitleColor = editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
     const remoteTitle = remote && remote.title || ' '
     const headerTitle = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
     return (
       <View style={[styles.container, { backgroundColor: headerBackgroundColor }, headerStyle]}>
-        {!modalVisible &&  <View style={styles.inner}>
+        {!modalVisible && rehydrated &&  <View style={styles.inner}>
             <HeaderMenuButton left />
             <HeaderTitle
               style={[{ color: headerTitleColor }, titleStyle]}
@@ -79,6 +79,7 @@ const mapStateToProps = state => ({
   capturing: state.app.capturing,
   recording: state.app.capturingButtonId !== null,
   modalVisible: state.app.modalVisible,
+  rehydrated: state.app.rehydrated,
 })
 
 const mapDispatchToProps = dispatch => ({

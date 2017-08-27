@@ -1,7 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { Animated, View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
-import { setHeaderMenu, setCaptureMode, setEditMode, createRemote } from '../../actions'
+import {
+  setHeaderMenu,
+  setCaptureMode,
+  setEditMode,
+  createRemote,
+  deleteRemote,
+} from '../../actions'
 import MenuItem from './MenuItem'
 
 import { MENU_BACKGROUND_COLOR } from '../../constants/colors'
@@ -59,7 +65,6 @@ class MainMenu extends Component {
           text="Share"
           onPress={() => {
             this.props.setHeaderMenu(false)
-            this.props.createRemote()
           }}
         />
         <MenuItem
@@ -68,15 +73,21 @@ class MainMenu extends Component {
           onPress={() => {
             this.props.setHeaderMenu(false)
             this.props.createRemote()
+            this.props.setEditMode(true)
           }}
         />
-        <MenuItem
-          icon="delete"
-          text="Delete"
-          onPress={() => {
-            this.props.setHeaderMenu(false)
-          }}
-        />
+        {
+          this.props.numberOfRemotes > 1 && (            
+            <MenuItem
+              icon="delete"
+              text="Delete"
+              onPress={() => {
+                this.props.deleteRemote(this.props.currentRemoteId)
+                this.props.setHeaderMenu(false)
+              }}
+            />
+          )
+        }
       </Animated.View>
     )
   }
@@ -88,6 +99,8 @@ class MainMenu extends Component {
 
 const mapStateToProps = state => ({
   headerMenuVisible: state.app.headerMenuVisible,
+  currentRemoteId: state.app.currentRemoteId,
+  numberOfRemotes: state.remotes.list.length,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -95,6 +108,7 @@ const mapDispatchToProps = dispatch => ({
   setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   createRemote: () => dispatch(createRemote()),
+  deleteRemote: remoteId => dispatch(deleteRemote(remoteId))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainMenu)

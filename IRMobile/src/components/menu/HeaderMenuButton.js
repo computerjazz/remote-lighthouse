@@ -8,13 +8,14 @@ import {
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode } from '../../actions'
+import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode, setHeaderModalVisible } from '../../actions'
 
 import {
   LIGHT_GREY,
   PRIMARY_DARK_ANALOGOUS,
   MENU_BACKGROUND_COLOR,
-  BUTTON_EDIT_COLOR
+  HEADER_ICON_EDITING,
+  HEADER_ICON_EDITING_BACKGROUND,
 } from '../../constants/colors'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 
@@ -68,12 +69,17 @@ class HeaderMenuButton extends Component {
     const { remote, editing } = this.props
 
     return (
-      <TouchableOpacity disabled={!editing}>
-        <Icon
-          name={remote ? remote.icon : 'pencil'}
-          color={editing ? LIGHT_GREY : PRIMARY_DARK_ANALOGOUS}
-          size={25}
-        />
+      <TouchableOpacity
+        disabled={!editing}
+        onPress={() => this.props.setHeaderModalVisible(true)}
+      >
+        <View style={[styles.icon, editing && styles.iconEditing]}>
+          <Icon
+            name={remote ? remote.icon : 'pencil'}
+            color={editing ? HEADER_ICON_EDITING : PRIMARY_DARK_ANALOGOUS}
+            size={25}
+          />
+        </View>
       </TouchableOpacity>
     )
   }
@@ -102,6 +108,7 @@ const mapDispatchToProps = dispatch => ({
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   setEditMode: editing => dispatch(setEditMode(editing)),
   setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
+  setHeaderModalVisible: visible => dispatch(setHeaderModalVisible(visible))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenuButton)
@@ -125,6 +132,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  icon: {
+    borderRadius: 100,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconEditing: {
+    backgroundColor: HEADER_ICON_EDITING_BACKGROUND,
   },
   menu: {
     position: 'absolute',

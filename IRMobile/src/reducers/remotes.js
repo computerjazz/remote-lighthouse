@@ -1,8 +1,9 @@
 import {
   CREATE_REMOTE,
+  UPDATE_REMOTE,
+  DELETE_REMOTE,
   CREATE_BUTTON_PANEL,
   DELETE_BUTTON_PANEL,
-  UPDATE_REMOTE,
 } from '../constants/actions'
 
 const initialState = {
@@ -32,6 +33,16 @@ export default (state = initialState, action) => {
           ...action.payload.updatedRemote,
         }
       }
+
+    case DELETE_REMOTE: {
+      const newState = {}
+      Object.keys(state).forEach(key => {
+        if (key !== action.payload.remoteId) newState[key] = state[key]
+      })
+      newState.list = state.list.filter(id => id !== action.payload.remoteId)
+      return newState
+    }
+
 
     case CREATE_BUTTON_PANEL:
       return {
