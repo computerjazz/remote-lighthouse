@@ -8,7 +8,13 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { setBaseUrl, stopRecord, createButtonPanel, setHeaderMenu, setModalVisible } from '../actions'
+import {
+  createButtonPanel,
+  setBaseUrl,
+  setHeaderMenu,
+  setModalVisible,
+  stopRecord,
+} from '../actions'
 
 import {
   REMOTE_BACKGROUND_COLOR,
@@ -18,12 +24,15 @@ import ButtonPanel from './ButtonPanel'
 import CirclePlusButton from './CirclePlusButton'
 import AddPanelModal from './AddPanelModal'
 import EditButtonModal from './EditButtonModal'
+import TabIcon from './menu/TabIcon'
 
 class Remote extends Component {
 
   static navigationOptions = ({ navigation }) => {
+    const title = navigation.state.params && navigation.state.params.title || ' '
     return {
-      tabBarLabel: 'TEST',
+      tabBarLabel: title,
+      tabBarIcon: <TabIcon id={navigation.state.routeName} />
     }
   }
 
@@ -63,6 +72,11 @@ class Remote extends Component {
 
  componentWillReceiveProps(nextProps) {
    console.log('REMOTE PROPS!!', nextProps)
+   const { navigation, remote } = this.props
+   if (remote.title !== nextProps.remote.title) {
+     console.log('NEW TITLE!!!!', nextProps.remote.title)
+     navigation.setParams({ title: nextProps.remote.title })
+   }
  }
 
   dismissRecording = () => {

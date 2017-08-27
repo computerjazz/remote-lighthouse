@@ -18,8 +18,8 @@ export default (state = initialState, action) => {
         ...state,
         list: newList,
         [action.payload.remoteId]: {
-          title: '',
-          icon: '',
+          title: ' ',
+          icon: 'cat',
           panels: [],
         }
       }
@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         [action.payload.remoteId]: {
-          ...action.payload.updatedRemote,  
+          ...action.payload.updatedRemote,
         }
       }
 

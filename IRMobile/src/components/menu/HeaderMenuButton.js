@@ -10,8 +10,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode } from '../../actions'
 
-import { LIGHT_GREY, PRIMARY_DARK_ANALOGOUS, MENU_BACKGROUND_COLOR } from '../../constants/colors'
-import { BUTTON_RADIUS, STATUS_BAR_HEIGHT } from '../../constants/dimensions'
+import {
+  LIGHT_GREY,
+  PRIMARY_DARK_ANALOGOUS,
+  MENU_BACKGROUND_COLOR,
+  BUTTON_EDIT_COLOR
+} from '../../constants/colors'
+import { BUTTON_RADIUS } from '../../constants/dimensions'
 
 class HeaderMenuButton extends Component {
 
@@ -59,12 +64,26 @@ class HeaderMenuButton extends Component {
     )
   }
 
-  render() {
-    const { editing, capturing, style, modalVisible } = this.props
-    if (modalVisible) return null
+  renderIcon = () => {
+    const { remote, editing } = this.props
+
     return (
-        <View style={[styles.container, style]}>
-          { editing || capturing ? this.renderDoneButton() : this.renderDots() }
+      <TouchableOpacity disabled={!editing}>
+        <Icon
+          name={remote ? remote.icon : 'pencil'}
+          color={editing ? LIGHT_GREY : PRIMARY_DARK_ANALOGOUS}
+          size={25}
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  render() {
+    const { editing, capturing, style, modalVisible, right, left } = this.props
+    return (
+        <View style={[styles.container, right ? styles.right : styles.left, style]}>
+          { left && this.renderIcon() }
+          { right && (editing || capturing ? this.renderDoneButton() : this.renderDots()) }
         </View>
     )
   }
@@ -74,6 +93,8 @@ const mapStateToProps = state => ({
   editing: state.app.editing,
   capturing: state.app.capturing,
   modalVisible: state.app.modalVisible,
+  currentRemoteId: state.app.currentRemoteId,
+  remote: state.remotes[state.app.currentRemoteId],
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -86,20 +107,23 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenuButton)
 
 const styles = StyleSheet.create({
+  right: {
+    marginRight: 20,
+    right: 0,
+  },
+  left: {
+    marginLeft: 20,
+    left: 0,
+  },
   container: {
     flex: 1,
-    marginRight: 20,
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    marginTop: STATUS_BAR_HEIGHT * 1.5,
   },
   text: {
     fontSize: 18,
   },
   touchable: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   menu: {

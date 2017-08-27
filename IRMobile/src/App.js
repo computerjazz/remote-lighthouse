@@ -20,7 +20,7 @@ const store = createStore(
 )
 
 persistStore(store, { storage: AsyncStorage })
-  .purge()
+  //.purge()
 
 class App extends Component {
   render() {

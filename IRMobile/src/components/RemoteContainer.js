@@ -58,31 +58,8 @@ const CustomLayoutSpring = {
 class RemoteContainer extends Component {
 
   static navigationOptions = ({ navigation }) => {
-    const { params } = navigation.state
-    const menuVisible = params && params.menuVisible
-    const editing = params && params.editing
-    const capturing = params && params.capturing
-    const recording = params && params.recording
-    const modalVisible = params && params.modalVisible
-    const remoteTitle = params && params.title
-
-    const title = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
-    console.log('MODAL VISIBLE??', modalVisible)
     return {
-        title,
-        header: (
-          <Header
-            title={title}
-            titleStyle={{
-                color: editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR,
-              }}
-            headerStyle={{
-              backgroundColor: editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR,
-              paddingTop: STATUS_BAR_HEIGHT,
-              height: 75,
-            }}
-          />
-        ),
+        header: <Header />,
       }
     }
 

@@ -11,22 +11,28 @@ import { updateRemote } from '../../actions'
 import HeaderTitle from './HeaderTitle'
 import HeaderMenuButton from './HeaderMenuButton'
 
+import {
+  HEADER_TITLE_COLOR,
+  HEADER_TITLE_EDITING_COLOR ,
+  HEADER_BACKGROUND_COLOR,
+  HEADER_BACKGROUND_EDITING_COLOR,
+} from '../../constants/colors'
+
+import { STATUS_BAR_HEIGHT } from '../../constants/dimensions'
+
 class Header extends Component {
 
   state = {
     title: '',
   }
 
-  componentDidMount() {
-    console.log('PROPS!!', {...this.props})
-    this.setState({ title: this.props.remote && this.props.remote.title })
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (!this.props.remote && nextProps.remote) this.setState({ title: nextProps.remote.title })
+    if (this.props.remote && this.props.remote.title !== nextProps.remote.title) {
+      this.setState({ title: nextProps.remote.title })
+    }
   }
 
-  onPressDone = () => {
+  onTitleUpdate = () => {
     if (this.props.remote && this.props.remote.title !== this.state.title) {
       const newRemote = {
         ...this.props.remote,
@@ -36,13 +42,31 @@ class Header extends Component {
     }
   }
 
+  onChangeText = text => {
+    this.setState({ title: text }, this.onTitleUpdate)
+
+  }
+
   render() {
-    console.log('EHADER PRPS', this.props)
-    const { remote, headerStyle, titleStyle } = this.props
+    const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible } = this.props
+    const headerBackgroundColor = editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR
+    const headerTitleColor = editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
+    const remoteTitle = remote && remote.title || ' '
+    const headerTitle = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
     return (
-      <View style={[styles.container, headerStyle]}>
-        <HeaderTitle style={titleStyle} title={this.state.title} onChangeText={text => this.setState({ title: text })} />
-        <HeaderMenuButton onPressDone={this.onPressDone} />
+      <View style={[styles.container, { backgroundColor: headerBackgroundColor }, headerStyle]}>
+        {!modalVisible &&  <View style={styles.inner}>
+            <HeaderMenuButton left />
+            <HeaderTitle
+              style={[{ color: headerTitleColor }, titleStyle]}
+              title={this.state.title}
+              onChangeText={this.onChangeText}
+              onBlur={this.onTitleUpdate}
+            />
+            <HeaderMenuButton right onPressDone={this.onTitleUpdate} />
+          </View>
+        }
+
       </View>
     )
   }
@@ -50,7 +74,11 @@ class Header extends Component {
 
 const mapStateToProps = state => ({
   currentRemoteId: state.app.currentRemoteId,
-  remote: state.remotes[state.app.currentRemoteId]
+  remote: state.remotes[state.app.currentRemoteId],
+  editing: state.app.editing,
+  capturing: state.app.capturing,
+  recording: state.app.capturingButtonId !== null,
+  modalVisible: state.app.modalVisible,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -61,8 +89,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(Header)
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: STATUS_BAR_HEIGHT,
+    height: 75,
+  },
+  inner: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
   }
 })
