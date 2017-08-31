@@ -7,7 +7,7 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
 import Navigator from './navigation'
-import MenuOverlay from './components/MenuOverlay'
+import MainMenu from './components/menu/MainMenu'
 import reducers from './reducers'
 
 const store = createStore(
@@ -19,7 +19,10 @@ const store = createStore(
   )
 )
 
-persistStore(store, { storage: AsyncStorage })
+persistStore(store, {
+  storage: AsyncStorage,
+  blacklist: ['app'],
+})
   //.purge()
 
 class App extends Component {
@@ -29,9 +32,10 @@ class App extends Component {
         <View style={{flex: 1}}>
           <StatusBar backgroundColor="transparent" barStyle="dark-content" translucent />
           <Navigator />
-          <MenuOverlay />
+          <MainMenu />
         </View>
-      </Provider>)
+      </Provider>
+    )
   }
 }
 

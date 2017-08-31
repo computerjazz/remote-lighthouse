@@ -1,4 +1,4 @@
-import { ASSIGN_IR_CODE, CREATE_BUTTON, DELETE_BUTTON, EDIT_BUTTON } from '../constants/actions'
+import { ASSIGN_IR_CODE, CREATE_BUTTON, DELETE_BUTTON, UPDATE_BUTTON } from '../constants/actions'
 
 const initialState = {}
 
@@ -34,7 +34,7 @@ export default (state = initialState, action) => {
         }
       }
 
-    case EDIT_BUTTON:
+    case UPDATE_BUTTON:
       return {
         ...state,
         [action.payload.buttonId]: {

@@ -3,23 +3,25 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native'
+import { connect } from 'react-redux'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR } from '../constants/colors'
+import { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } from '../constants/colors'
 
 class CirclePlusButton extends Component {
 
   static propTypes = {
     onPress: PropTypes.func,
+    dragging: PropTypes.bool,
   }
 
   render() {
-    const { onPress } = this.props
+    const { dragging, onPress } = this.props
     return (
-      <TouchableOpacity style={styles.container} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
         <Icon
           color={LIGHT_GREY}
-          name="plus"
+          name={'plus'}
           size={35}
         />
       </TouchableOpacity>
@@ -29,9 +31,16 @@ class CirclePlusButton extends Component {
 
 CirclePlusButton.defaultProps = {
   onPress: () => {},
+  dragging: false,
 }
 
-export default CirclePlusButton
+const mapStateToProps = state => ({
+  dragging: state.app.dragging,
+})
+
+export default connect(
+  mapStateToProps,
+)(CirclePlusButton)
 
 const styles = StyleSheet.create({
   container: {

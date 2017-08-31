@@ -1,53 +1,82 @@
 import {
-  SET_HEADER_MENU,
+  SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
+  SET_CAPTURE_MODE,
   SET_RECORDING_BUTTON_ID,
-  SET_ADD_PANEL_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_MODAL_VISIBLE,
-  SET_EDIT_BUTTON_ID,
+  SET_DRAGGING,
+  SET_CURRENT_REMOTE_ID,
+  SET_MODAL_VISIBLE,
+  SET_HEADER_MODAL_VISIBLE,
 } from '../constants/actions'
 
 const initialState = {
   headerMenuVisible: false,
   editing: false,
-  recordingButtonId: null,
-  addPanelModalVisible: false,
-  editButtonModalVisible: false,
-  editButtonId: null,
+  capturing: false,
+  dragging: false,
+  capturingButtonId: null,
+  currentRemoteId: null,
+  modalVisible: false,
+  headerModalVisible: false,
+  rehydrated: false,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SET_HEADER_MENU:
+
+    case 'persist/REHYDRATE':
+      return {
+        ...state,
+        rehydrated: true,
+      }
+
+    case SET_HEADER_MENU_VISIBLE:
       return {
         ...state,
         headerMenuVisible: action.payload.visible,
       }
+    case SET_MODAL_VISIBLE:
+      return {
+        ...state,
+        modalVisible: action.payload.visible,
+      }
+    case SET_HEADER_MODAL_VISIBLE:
+      return {
+        ...state,
+        modalVisible: action.payload.visible,
+        headerModalVisible: action.payload.visible,
+      }
+
     case SET_EDIT_MODE:
       return {
         ...state,
         editing: action.payload.editing,
       }
+
+      case SET_CAPTURE_MODE:
+        return {
+          ...state,
+          capturing: action.payload.capturing,
+        }
+
     case SET_RECORDING_BUTTON_ID:
       return {
         ...state,
-        recordingButtonId: action.payload.buttonId,
+        capturingButtonId: action.payload.buttonId,
       }
-    case SET_ADD_PANEL_MODAL_VISIBLE:
+
+    case SET_CURRENT_REMOTE_ID:
       return {
         ...state,
-        addPanelModalVisible: action.payload.visible,
+        currentRemoteId: action.payload.remoteId,
       }
-    case SET_EDIT_BUTTON_MODAL_VISIBLE:
+
+    case SET_DRAGGING:
       return {
         ...state,
-        editButtonModalVisible: action.payload.visible,
+        dragging: action.payload.dragging,
       }
-    case SET_EDIT_BUTTON_ID:
-      return {
-        ...state,
-        editButtonId: action.payload.buttonId,
-      }
+
     default:
       return state
   }
