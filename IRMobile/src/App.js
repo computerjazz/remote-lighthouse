@@ -21,7 +21,7 @@ const store = createStore(
 
 persistStore(store, {
   storage: AsyncStorage,
-  blacklist: ['app'],
+  blacklist: ['app', 'network'],
 })
   //.purge()
 
