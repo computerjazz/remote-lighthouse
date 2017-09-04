@@ -2,11 +2,13 @@ import React, { Component, PropTypes } from 'react'
 import {
   Animated,
   PanResponder,
-  FlatList,
   StyleSheet,
   View,
 } from 'react-native'
+
 import { connect } from 'react-redux'
+import _ from 'lodash'
+import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
@@ -14,6 +16,7 @@ import {
   setHeaderMenu,
   setModalVisible,
   stopRecord,
+  updateRemote,
 } from '../actions'
 
 import {
@@ -26,6 +29,8 @@ import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
 import SelectRemoteIconModal from './modals/SelectRemoteIconModal'
 import TabIcon from './menu/TabIcon'
+
+import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
 class Remote extends Component {
 
@@ -121,16 +126,26 @@ class Remote extends Component {
     this.dismissAddPanelModal()
   }
 
-  renderButtonPanel = ({ item }) => {
+  renderButtonPanel = id => {
     const { navigation } = this.props
     return (
       <ButtonPanel
-        id={item}
+        id={id}
         remoteId={navigation.state.routeName}
         onEditPress={this.onEditPress}
         setParams={navigation.setParams}
       />
     )
+  }
+
+  onRowMoved = ({ from, to, row }) => {
+    const panels = this.props.remote.panels.filter(panelId => panelId !== row.data)
+    panels.splice(to, 0, row.data)
+
+    this.props.updateRemote({
+      ...this.props.remote,
+      panels,
+    })
   }
 
   render() {
@@ -144,12 +159,28 @@ class Remote extends Component {
           {...this._panResponder.panHandlers}
           style={[styles.container]}
         >
-          <FlatList
+          <SortableListView
             style={styles.buttonPanelList}
-            data={remote.panels}
-            renderItem={this.renderButtonPanel}
-            keyExtractor={item => item}
+            data={this.props.remote.panels.reduce((acc, cur) => {
+              acc[cur] = cur
+              return acc
+            }, {})}
+            order={this.props.remote.panels}
+            renderRow={this.renderButtonPanel}
+            onRowMoved={this.onRowMoved}
+            sortRowStyle={{
+                opacity: 1.0,
+                elevation: 5,
+                shadowColor: 'black',
+                shadowOpacity: 0.4,
+                shadowOffset: {
+                  width: 3,
+                  height: 3,
+                },
+                shadowRadius: 3,
+              }}
           />
+
           { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
 
         </View>
@@ -186,6 +217,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),
+    updateRemote: updatedRemote => dispatch(updateRemote(ownProps.navigation.state.routeName, updatedRemote))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
@@ -193,20 +225,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: REMOTE_BACKGROUND_COLOR,
   },
   buttonPanelList: {
     flex: 1,
-    width: '100%',
   },
-  menu: {
-    padding: 10,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    transform: [{ translateY: -20 }]
-  }
 })

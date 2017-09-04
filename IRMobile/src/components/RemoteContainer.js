@@ -13,41 +13,9 @@ import LoadingScreen from './LoadingScreen'
 import { createTabNavigator } from '../navigation'
 import { createRemote, setBaseUrl, setEditMode } from '../actions'
 import { isAndroid } from '../utils'
+import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
 import { REMOTE_BACKGROUND_COLOR } from '../constants/colors'
-
-const CustomLayoutSpring = {
-    duration: 400,
-    create: {
-      type: LayoutAnimation.Types.spring,
-      property: LayoutAnimation.Properties.scaleXY,
-      springDamping: 0.7,
-    },
-    update: {
-      type: LayoutAnimation.Types.spring,
-      springDamping: 0.7,
-    },
-    delete: {
-      type: LayoutAnimation.Types.spring,
-      property: LayoutAnimation.Properties.scaleXY,
-      springDamping: 0.7,
-    },
-  }
-
-  const CustomLayoutLinear = {
-    duration: 200,
-    create: {
-      type: LayoutAnimation.Types.linear,
-      property: LayoutAnimation.Properties.opacity,
-    },
-    update: {
-      type: LayoutAnimation.Types.linear,
-    },
-    delete: {
-      type: LayoutAnimation.Types.linear,
-      property: LayoutAnimation.Properties.opacity,
-    }
-  }
 
 class RemoteContainer extends Component {
 
@@ -73,7 +41,7 @@ class RemoteContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.setBaseUrl('http://192.168.86.99')
+    this.props.setBaseUrl('http://192.168.86.125')
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 

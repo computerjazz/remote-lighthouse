@@ -94,9 +94,8 @@ class ButtonPanel extends Component {
 
         {editing &&
           <TouchableOpacity
-            onPressIn={() => this.props.setDragging(true)}
-            onPressOut={() => this.props.setDragging(false)}
-            style={{marginRight: 10}}
+            style={{ marginRight: 10 }}
+            {...this.props.sortHandlers}
           >
             <Icon
               name="drag-vertical"
