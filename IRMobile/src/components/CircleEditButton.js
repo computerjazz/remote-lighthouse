@@ -6,7 +6,7 @@ import {
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { LIGHT_GREY, BUTTON_EDIT_COLOR } from '../constants/colors'
+import themes from '../constants/themes'
 
 class CircleEditButton extends Component {
 
@@ -15,10 +15,15 @@ class CircleEditButton extends Component {
     style: ViewPropTypes.style,
   }
 
+  static contextTypes = {
+    theme: PropTypes.string,
+  }
+
   render() {
     const { onPress, style } = this.props
+    const { LIGHT_GREY, BUTTON_EDIT_COLOR }  = themes[this.context.theme]
     return (
-      <TouchableOpacity style={[styles.container, style]} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: BUTTON_EDIT_COLOR }, style]} onPress={onPress}>
         <Icon
           color={LIGHT_GREY}
           name="pencil"
@@ -41,7 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: BUTTON_EDIT_COLOR,
     width: 30,
     height: 30,
     borderRadius: 100,

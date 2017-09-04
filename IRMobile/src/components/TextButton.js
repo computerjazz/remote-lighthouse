@@ -4,9 +4,7 @@ import {
   TouchableHighlight,
 } from 'react-native'
 
-import tinycolor from 'tinycolor2'
-
-import { PRIMARY_DARK, MID_GREY } from '../constants/colors'
+import themes from '../constants/themes'
 
 class TextButton extends Component {
 
@@ -14,8 +12,13 @@ class TextButton extends Component {
       onPress: PropTypes.func,
   }
 
+  static contextTypes = {
+    theme: PropTypes.string,
+  }
+
   render() {
-    const { text, color = tinycolor(PRIMARY_DARK).analogous().toString(), onPress, textStyle, buttonStyle } = this.props
+    const { color, text, onPress, textStyle, buttonStyle } = this.props
+    const { MID_GREY } = themes[this.context.theme]
     return (
       <TouchableHighlight
         onPress={onPress}

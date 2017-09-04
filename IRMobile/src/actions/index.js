@@ -20,7 +20,8 @@ import {
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
   SET_MODAL_VISIBLE,
-  SET_HEADER_MODAL_VISIBLE,
+  SET_HEADER_MODAL,
+  SET_THEME,
 } from '../constants/actions'
 
 export function createRemote() {
@@ -52,12 +53,43 @@ export function deleteRemote(remoteId) {
   }
 }
 
+export function importRemote(nestedRemote) {
+
+}
+
+export function exportRemote(remoteId) {
+  return (dispatch, getState) => {
+    const { remotes, panels, buttons } = getState()
+    console.log('remotes', remotes)
+    if (!remotes[remoteId]) alert('No remote found with this id ', remoteId)
+    let nestedRemote = {
+      ...remotes[remoteId],
+      panels: remotes[remoteId].panels.map(panelId => {
+        return {
+          ...panels[panelId],
+          buttons: panels[panelId].buttons.map(buttonId => ({...buttons[buttonId]}))
+        }
+      })
+    }
+    return nestedRemote
+  }
+}
+
 
 export function setCurrentRemoteId(remoteId) {
   return {
     type: SET_CURRENT_REMOTE_ID,
     payload: {
       remoteId,
+    }
+  }
+}
+
+export function setTheme(theme) {
+  return {
+    type: SET_THEME,
+    payload: {
+      theme,
     }
   }
 }
@@ -80,11 +112,11 @@ export function setModalVisible(visible) {
   }
 }
 
-export function setHeaderModalVisible(visible) {
+export function setHeaderModal(modal) {
   return {
-    type: SET_HEADER_MODAL_VISIBLE,
+    type: SET_HEADER_MODAL,
     payload: {
-      visible,
+      modal,
     }
   }
 }

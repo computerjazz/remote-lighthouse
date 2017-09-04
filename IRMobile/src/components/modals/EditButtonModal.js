@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   BackHandler,
   ScrollView,
@@ -19,9 +19,13 @@ import { isAndroid } from '../../utils'
 
 import buttonCategories from '../../dictionaries/buttons'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
-import { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, PRIMARY_DARK, LIGHT_GREY } from '../../constants/colors'
+import themes from '../../constants/themes'
 
 class EditButtonModal extends Component {
+
+  static contextTypes = {
+    theme: PropTypes.string,
+  }
 
   state = {
     selectedIcon: null,
@@ -44,6 +48,7 @@ class EditButtonModal extends Component {
   }
 
   renderIconButton = (iconName, index) => {
+    const { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.context.theme]
     const selected = this.state.selectedIcon === iconName
     return (
       <TouchableOpacity
@@ -54,20 +59,23 @@ class EditButtonModal extends Component {
         <Icon
           name={iconName}
           size={30}
-          color={selected ? MODAL_BACKGROUND_COLOR : TEXT_COLOR_DARK}
+          color={selected ? MODAL_BACKGROUND_COLOR : MODAL_TEXT_COLOR}
         />
       </TouchableOpacity>
     )
   }
 
-  renderIconCategory = ({ title, icons }, key) => (
-    <View key={key}>
-      <Text style={styles.categoryTitle}>{title}</Text>
-      <View style={styles.iconContainer}>
-        { icons.map(this.renderIconButton) }
+  renderIconCategory = ({ title, icons }, key) => {
+    const { MODAL_TEXT_COLOR } = themes[this.context.theme]
+    return (
+      <View key={key}>
+        <Text style={[styles.categoryTitle, { color: MODAL_TEXT_COLOR, borderBottomColor: MODAL_TEXT_COLOR }]}>{title}</Text>
+        <View style={styles.iconContainer}>
+          { icons.map(this.renderIconButton) }
+        </View>
       </View>
-    </View>
-  )
+    )
+  }
 
   onOkPress = () => {
     const updatedButton = {
@@ -81,9 +89,10 @@ class EditButtonModal extends Component {
 
   render() {
     const { onSubmit, button } = this.props
+    const { PRIMARY_DARK, MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
     return (
       <View style={styles.wrapper}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
 
           <ScrollView style={styles.scrollView}>
             <TextInput
@@ -132,22 +141,15 @@ export default connect(mapStateToProps, mapDispatchToProps)(EditButtonModal)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: MODAL_BACKGROUND_COLOR,
     borderRadius: BUTTON_RADIUS,
   },
   wrapper: {
     ...StyleSheet.absoluteFillObject,
     padding: 10,
   },
-  title: {
-    fontSize: 25,
-    color: TEXT_COLOR_DARK,
-  },
   categoryTitle: {
     marginTop: 10,
     fontSize: 15,
-    color: TEXT_COLOR_DARK,
-    borderBottomColor: TEXT_COLOR_DARK,
     borderBottomWidth: 0.5,
   },
   confirmButtonContainer: {

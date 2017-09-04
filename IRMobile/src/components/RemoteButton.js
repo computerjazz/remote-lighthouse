@@ -11,14 +11,8 @@ import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleEditButton from './CircleEditButton'
 
-import {
-  LIGHT_GREY,
-  BUTTON_BACKGROUND_COLOR,
-  BUTTON_TEXT_COLOR,
-  CAPTURING_IN_PROGRESS_COLOR,
-  STATUS_GOOD_COLOR,
-  STATUS_BAD_COLOR
-} from '../constants/colors'
+import themes from '../constants/themes'
+
 import { BUTTON_RADIUS } from '../constants/dimensions'
 
 const PULSE_RATE = 750
@@ -29,6 +23,10 @@ class RemoteButton extends Component {
     id: PropTypes.string,
     capturingButtonId: PropTypes.string,
     status: PropTypes.bool,
+  }
+
+  static contextTypes = {
+    theme: PropTypes.string,
   }
 
   pulseAnim = new Animated.Value(0)
@@ -79,7 +77,22 @@ class RemoteButton extends Component {
     const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, color = LIGHT_GREY } = this.props
     const isRecording = capturingButtonId === id
     const hasStatus = status !== null
+
+    const {
+      LIGHT_GREY,
+      BUTTON_BACKGROUND_COLOR,
+      BUTTON_TEXT_COLOR,
+      CAPTURING_IN_PROGRESS_COLOR,
+      STATUS_GOOD_COLOR,
+      STATUS_BAD_COLOR
+    } = themes[this.context.theme]
+
+
+
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
+
+
+
 
     const pulseStyle = {
         backgroundColor: this.pulseAnim.interpolate({
@@ -97,22 +110,22 @@ class RemoteButton extends Component {
 
     return (
       <View style={styles.wrapper}>
-      <Animated.View
-        style={[styles.animatedContainer, isRecording && pulseStyle, hasStatus && statusStyle, style]}
-      >
-        <TouchableOpacity
-          onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
-          style={styles.touchable}
+        <Animated.View
+          style={[styles.animatedContainer, { backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]}
         >
-          { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
-          { !!title && <Text style={styles.text} numberOfLines={1}>{title}</Text> }
+          <TouchableOpacity
+            onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
+            style={styles.touchable}
+          >
+            { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
+            { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
 
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-      </Animated.View>
-      { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
+        </Animated.View>
+        { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
-    </View>
+      </View>
       )
     }
 }
@@ -136,7 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: BUTTON_TEXT_COLOR,
     fontWeight: "300",
     fontSize: 15,
     paddingHorizontal: 7,
@@ -146,7 +158,6 @@ const styles = StyleSheet.create({
     margin: 15,
     height: 75,
     borderRadius: BUTTON_RADIUS,
-    backgroundColor: BUTTON_BACKGROUND_COLOR,
   },
   editButton: {
     position: 'absolute',

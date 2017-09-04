@@ -4,6 +4,7 @@ import {
   PanResponder,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from 'react-native'
 
 import { connect } from 'react-redux'
@@ -19,9 +20,8 @@ import {
   updateRemote,
 } from '../actions'
 
-import {
-  REMOTE_BACKGROUND_COLOR,
-} from '../constants/colors'
+import themes from '../constants/themes'
+import modals from './modals'
 
 import ButtonPanel from './ButtonPanel'
 import CirclePlusButton from './CirclePlusButton'
@@ -48,6 +48,10 @@ class Remote extends Component {
     stopRecord: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     remote: PropTypes.object.isRequired,
+  }
+
+  static contextTypes = {
+    theme: PropTypes.string,
   }
 
   state = {
@@ -149,15 +153,17 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, remote, headerModalVisible, navigation } = this.props
+    const { editing, remote, headerModal } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
+    const GeneralModal = modals[headerModal]
     if (!remote) return null
+    const { REMOTE_BACKGROUND_COLOR } = themes[this.context.theme]
 
     return (
       <View style={{flex: 1}}>
         <View
           {...this._panResponder.panHandlers}
-          style={[styles.container]}
+          style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}
         >
           <SortableListView
             style={styles.buttonPanelList}
@@ -168,17 +174,7 @@ class Remote extends Component {
             order={this.props.remote.panels}
             renderRow={this.renderButtonPanel}
             onRowMoved={this.onRowMoved}
-            sortRowStyle={{
-                opacity: 1.0,
-                elevation: 5,
-                shadowColor: 'black',
-                shadowOpacity: 0.4,
-                shadowOffset: {
-                  width: 3,
-                  height: 3,
-                },
-                shadowRadius: 3,
-              }}
+            sortRowStyle={styles.sortRow}
           />
 
           { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
@@ -195,7 +191,7 @@ class Remote extends Component {
             onSubmit={this.dismissEditButtonModal}
           /> }
 
-        { headerModalVisible && <SelectRemoteIconModal />}
+        { !!headerModal && <GeneralModal />}
       </View>
     )
   }
@@ -208,7 +204,7 @@ const mapStateToProps = (state, ownProps) => ({
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
   headerMenuVisible: state.app.headerMenuVisible,
-  headerModalVisible: state.app.headerModalVisible,
+  headerModal: state.app.headerModal,
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -217,7 +213,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),
-    updateRemote: updatedRemote => dispatch(updateRemote(ownProps.navigation.state.routeName, updatedRemote))
+    updateRemote: updatedRemote => dispatch(updateRemote(ownProps.navigation.state.routeName, updatedRemote)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Remote)
@@ -225,9 +221,19 @@ export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: REMOTE_BACKGROUND_COLOR,
   },
   buttonPanelList: {
     flex: 1,
   },
+  sortRow: {
+      opacity: 1.0,
+      elevation: 5,
+      shadowColor: 'black',
+      shadowOpacity: 0.4,
+      shadowOffset: {
+        width: 3,
+        height: 3,
+      },
+      shadowRadius: 3,
+    }
 })

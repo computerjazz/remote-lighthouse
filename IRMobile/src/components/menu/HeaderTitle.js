@@ -7,13 +7,17 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { HEADER_TITLE_BACKGROUND_EDITING } from '../../constants/colors'
+import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 
 class HeaderTitleButton extends Component {
 
   static propTypes = {
     title: PropTypes.string,
+  }
+
+  static contextTypes = {
+    theme: PropTypes.string,
   }
 
   renderTitleAsInput() {
@@ -43,8 +47,9 @@ class HeaderTitleButton extends Component {
 
   render() {
     const { editing } = this.props
+    const { HEADER_TITLE_BACKGROUND_EDITING } = themes[this.context.theme]
     return (
-      <View style={[styles.container, editing && styles.editing]}>
+      <View style={[styles.container, editing && [styles.editing, { backgroundColor: HEADER_TITLE_BACKGROUND_EDITING }]]}>
         <View style={[styles.inner, !editing && styles.center]}>
         {editing ? this.renderTitleAsInput() : this.renderTitleAsText()}
       </View>
@@ -74,7 +79,6 @@ const styles = StyleSheet.create({
   },
   editing: {
     borderRadius: BUTTON_RADIUS,
-    backgroundColor: HEADER_TITLE_BACKGROUND_EDITING,
     paddingHorizontal: 5,
   },
   text: {

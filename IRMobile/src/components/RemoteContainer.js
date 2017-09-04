@@ -7,15 +7,16 @@ import {
 } from 'react-native'
 
 import { connect } from 'react-redux'
+
 import Remote from './Remote'
 import Header from './menu/Header'
 import LoadingScreen from './LoadingScreen'
+import themes from '../constants/themes'
+
 import { createTabNavigator } from '../navigation'
 import { createRemote, setBaseUrl, setEditMode } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
-
-import { REMOTE_BACKGROUND_COLOR } from '../constants/colors'
 
 class RemoteContainer extends Component {
 
@@ -26,6 +27,7 @@ class RemoteContainer extends Component {
     }
 
   static propTypes = {
+    theme: PropTypes.string.isRequired,
     remotes: PropTypes.object.isRequired,
     createRemote: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
@@ -33,20 +35,38 @@ class RemoteContainer extends Component {
     setBaseUrl: PropTypes.func.isRequired,
   }
 
+  static childContextTypes = {
+    theme: PropTypes.string,
+  }
+
+  getChildContext() {
+    return { theme: this.props.theme }
+  }
+
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
-    const shouldUpdate = nextProps.remotes.list.length !== this.props.remotes.list.length
+    // or theme has changed
+    const remoteListHasChanged = nextProps.remotes.list.length !== this.props.remotes.list.length
+    const themeHasChanged = nextProps.theme !== this.props.theme
+    const shouldUpdate = remoteListHasChanged || themeHasChanged
     return shouldUpdate
 
   }
 
   componentWillMount() {
-    this.props.setBaseUrl('http://192.168.86.125')
+    this.props.setBaseUrl('http://192.168.86.136')
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { setParams } = this.props.navigation
+    const { navigation } = this.props
+    const { setParams } = navigation
+
+
+    if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
+      setParams({ theme: nextProps.theme })
+      console.log('SETTING THEME')
+    }
 
     if (!this.props.rehydrated && nextProps.rehydrated) {
       if (!nextProps.remotes.list.length) {
@@ -73,12 +93,16 @@ class RemoteContainer extends Component {
   }
 
   render() {
-    const { remotes } = this.props
+    const { remotes, theme } = this.props
     if (!remotes || !remotes.list || !remotes.list.length) return <LoadingScreen />
+    console.log('CONATINAERE PRREP', this.props)
+    const { REMOTE_BACKGROUND_COLOR } = themes[theme]
+
+
 
     return (
-      <View style={styles.container}>
-        {createTabNavigator(remotes.list, Remote)}
+      <View style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}>
+        {createTabNavigator(remotes.list, Remote, theme)}
       </View>
     )
 
@@ -86,6 +110,7 @@ class RemoteContainer extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,
   capturing: state.app.capturing,
@@ -106,6 +131,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(RemoteContainer)
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: REMOTE_BACKGROUND_COLOR,
   }
 })

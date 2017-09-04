@@ -1,22 +1,23 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   BackHandler,
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import _ from 'lodash'
 import TextButton from '../TextButton'
 
-import { LIGHT_GREY } from '../../constants/colors'
+import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 import panelDict from '../../dictionaries/panels'
 
 import { isAndroid } from '../../utils'
 
 class AddPanelModal extends Component {
+
+  static contextTypes = {
+    theme: PropTypes.string,
+  }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
@@ -39,9 +40,10 @@ class AddPanelModal extends Component {
 
   render() {
     const { onSubmit, remoteId } = this.props
+    const { MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
     return (
       <View style={styles.wrapper}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
           { _.map(panelDict, this.renderAddPanelOption) }
           <View style={styles.confirmButtonContainer}>
             <TextButton
@@ -73,8 +75,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '90%',
-    backgroundColor: LIGHT_GREY,
-    opacity: 0.9,
     borderRadius: BUTTON_RADIUS,
   },
   confirmButtonContainer: {

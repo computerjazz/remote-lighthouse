@@ -6,7 +6,7 @@ import {
 import { connect } from 'react-redux'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } from '../constants/colors'
+import themes from '../constants/themes'
 
 class CirclePlusButton extends Component {
 
@@ -15,10 +15,15 @@ class CirclePlusButton extends Component {
     dragging: PropTypes.bool,
   }
 
+  static contextTypes = {
+    theme: PropTypes.string,
+  }
+
   render() {
     const { dragging, onPress } = this.props
+    const { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } = themes[this.context.theme]
     return (
-      <TouchableOpacity style={[styles.container, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: CIRCLE_PLUS_BUTTON_COLOR }, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
         <Icon
           color={LIGHT_GREY}
           name={'plus'}
@@ -46,7 +51,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: CIRCLE_PLUS_BUTTON_COLOR,
     position: 'absolute',
     width: 60,
     height: 60,
