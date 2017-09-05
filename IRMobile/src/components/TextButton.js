@@ -3,6 +3,7 @@ import {
   Text,
   TouchableHighlight,
 } from 'react-native'
+import { connect } from 'react-redux'
 
 import themes from '../constants/themes'
 
@@ -12,13 +13,9 @@ class TextButton extends Component {
       onPress: PropTypes.func,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   render() {
-    const { color, text, onPress, textStyle, buttonStyle } = this.props
-    const { MID_GREY } = themes[this.context.theme]
+    const { color, text, onPress, textStyle, buttonStyle, theme } = this.props
+    const { MID_GREY } = themes[theme]
     return (
       <TouchableHighlight
         onPress={onPress}
@@ -37,4 +34,8 @@ TextButton.defaultProps = {
   onPress: () => {},
 }
 
-export default TextButton
+const mapStateToProps = state => ({
+  theme: state.settings.theme,
+})
+
+export default connect(mapStateToProps)(TextButton)

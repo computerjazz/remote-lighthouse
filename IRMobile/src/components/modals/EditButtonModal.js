@@ -23,10 +23,6 @@ import themes from '../../constants/themes'
 
 class EditButtonModal extends Component {
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     selectedIcon: null,
     newTitle: '',
@@ -48,7 +44,7 @@ class EditButtonModal extends Component {
   }
 
   renderIconButton = (iconName, index) => {
-    const { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.context.theme]
+    const { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.props.theme]
     const selected = this.state.selectedIcon === iconName
     return (
       <TouchableOpacity
@@ -66,7 +62,7 @@ class EditButtonModal extends Component {
   }
 
   renderIconCategory = ({ title, icons }, key) => {
-    const { MODAL_TEXT_COLOR } = themes[this.context.theme]
+    const { MODAL_TEXT_COLOR } = themes[this.props.theme]
     return (
       <View key={key}>
         <Text style={[styles.categoryTitle, { color: MODAL_TEXT_COLOR, borderBottomColor: MODAL_TEXT_COLOR }]}>{title}</Text>
@@ -89,7 +85,7 @@ class EditButtonModal extends Component {
 
   render() {
     const { onSubmit, button } = this.props
-    const { PRIMARY_DARK, MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { PRIMARY_DARK, MODAL_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -129,6 +125,7 @@ EditButtonModal.defaultProps = {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  theme: state.settings.theme,
   button: state.buttons[ownProps.buttonId],
 })
 

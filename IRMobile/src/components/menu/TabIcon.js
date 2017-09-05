@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -11,7 +11,10 @@ class TabIcon extends Component {
     if (!remote) return null
     const { TAB_LABEL_COLOR_ACTIVE, TAB_LABEL_COLOR_INACTIVE } = themes[theme]
     const color = id === currentRemoteId ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE
-    return (<View style={{flex: 1, padding: 5}}><Icon name={remote.icon} color={color} size={25} /></View>)
+    return (
+      <View style={{flex: 1, padding: 5 }}>
+        <Icon name={remote.icon} color={color} size={25} />
+      </View>)
   }
 }
 

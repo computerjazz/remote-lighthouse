@@ -15,17 +15,13 @@ class CirclePlusButton extends Component {
     dragging: PropTypes.bool,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   render() {
-    const { dragging, onPress } = this.props
-    const { LIGHT_GREY, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } = themes[this.context.theme]
+    const { dragging, onPress, theme } = this.props
+    const { CIRCLE_PLUS_ICON_COLOR, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } = themes[theme]
     return (
       <TouchableOpacity style={[styles.container, { backgroundColor: CIRCLE_PLUS_BUTTON_COLOR }, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
         <Icon
-          color={LIGHT_GREY}
+          color={CIRCLE_PLUS_ICON_COLOR}
           name={'plus'}
           size={35}
         />
@@ -40,6 +36,7 @@ CirclePlusButton.defaultProps = {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   dragging: state.app.dragging,
 })
 

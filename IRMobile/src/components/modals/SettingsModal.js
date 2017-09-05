@@ -19,17 +19,13 @@ import themes, { list as themeList} from '../../constants/themes'
 
 class SelectRemoteIconModal extends Component {
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     selectedTheme: '',
   }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
-    this.setState({ selectedTheme: this.context.theme })
+    this.setState({ selectedTheme: this.props.theme })
   }
 
   captureAndroidBackPress = () => {
@@ -39,27 +35,36 @@ class SelectRemoteIconModal extends Component {
   }
 
   onDonePress = () => {
-    if (this.state.selectedTheme !== this.context.theme) this.props.setTheme(this.state.selectedTheme)
+    if (this.state.selectedTheme !== this.props.theme) this.props.setTheme(this.state.selectedTheme)
     this.props.setHeaderModal(null)
     this.props.onSubmit()
   }
 
+  renderFakeButton = (themeName, index) => (
+    <View key={index} style={[styles.fakeButton, {backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR}]}>
+      <View style={[styles.fakeButtonInner, {backgroundColor: themes[themeName].BUTTON_ICON_COLOR}]} />
+    </View>
+  )
+
   renderThemeOption = themeName => {
-    const { OPTION_SELECTED_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { OPTION_SELECTED_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
         key={themeName}
         onPress={() => this.setState({ selectedTheme: themeName })}
-        style={{ backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent'}}
+        style={[styles.option, { backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent'}]}
       >
+        <View style={[styles.fakeButtonRow,{backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR}]}>
+          {[0,0,0].map((item, i) => this.renderFakeButton(themeName, i))}
+        </View>
         <Text>{themeName}</Text>
       </TouchableOpacity>
     )
   }
 
   render() {
-    const { onSubmit } = this.props
-    const { MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { onSubmit, theme } = this.props
+    const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -86,6 +91,7 @@ SelectRemoteIconModal.defaultProps = {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
 })
@@ -144,6 +150,9 @@ const styles = StyleSheet.create({
     flex: 6,
     padding: 10,
   },
+  option: {
+    padding: 10,
+  },
   textInput: {
     flex: 1,
     height: 45,
@@ -151,5 +160,27 @@ const styles = StyleSheet.create({
     marginBottom: 13,
     borderRadius: BUTTON_RADIUS,
     backgroundColor: 'rgba(0, 0, 0, .1)',
+  },
+  fakeButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: BUTTON_RADIUS
+  },
+  fakeButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    flex: 1,
+    margin: 10,
+    borderRadius: BUTTON_RADIUS,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30
+  },
+  fakeButtonInner: {
+    padding: 10,
+    borderRadius: 30
   }
 })

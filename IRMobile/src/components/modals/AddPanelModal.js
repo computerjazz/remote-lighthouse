@@ -4,6 +4,8 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+import { connect } from 'react-redux'
+
 import _ from 'lodash'
 import TextButton from '../TextButton'
 
@@ -14,10 +16,6 @@ import panelDict from '../../dictionaries/panels'
 import { isAndroid } from '../../utils'
 
 class AddPanelModal extends Component {
-
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
@@ -39,8 +37,8 @@ class AddPanelModal extends Component {
   )
 
   render() {
-    const { onSubmit, remoteId } = this.props
-    const { MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { onSubmit, remoteId, theme } = this.props
+    const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -62,7 +60,11 @@ AddPanelModal.defaultProps = {
   onSubmit: () => {},
 }
 
-export default AddPanelModal
+const mapStateToProps = state => ({
+  theme: state.settings.theme,
+})
+
+export default connect(mapStateToProps)(AddPanelModal)
 
 const styles = StyleSheet.create({
   wrapper: {

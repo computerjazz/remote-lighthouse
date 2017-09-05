@@ -10,6 +10,7 @@ export const LIGHT_GREY = '#EEE'
 export const MID_GREY = '#CCC'
 export const DARK_GREY = '#333'
 export const ORANGE = '#d35400'
+export const LIGHT_ORANGE = '#e67e22'
 export const EMERALD = '#27ae60'
 export const POMEGRANATE = '#c0392b'
 export const POMEGRANATE_ANALOGOUS = tinycolor(POMEGRANATE).complement().toString()

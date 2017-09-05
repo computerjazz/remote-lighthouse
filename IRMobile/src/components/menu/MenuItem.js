@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native'
+import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import themes from '../../constants/themes'
@@ -16,13 +17,9 @@ class HeaderMenuItem extends Component {
     onPress: PropTypes.func.isRequired,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   render() {
-    const { icon, text, onPress } = this.props
-    const { MENU_ICON_COLOR } = themes[this.context.theme]
+    const { icon, text, onPress, theme } = this.props
+    const { MENU_ICON_COLOR } = themes[theme]
     return (
       <TouchableOpacity
         style={styles.container}
@@ -39,7 +36,11 @@ class HeaderMenuItem extends Component {
   }
 }
 
-export default HeaderMenuItem
+const mapStateToProps = state => ({
+  theme: state.settings.theme,
+})
+
+export default connect(mapStateToProps)(HeaderMenuItem)
 
 const styles = StyleSheet.create({
   container: {

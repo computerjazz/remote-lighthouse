@@ -25,10 +25,6 @@ class RemoteButton extends Component {
     status: PropTypes.bool,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   pulseAnim = new Animated.Value(0)
   statusAnim = new Animated.Value(0)
 
@@ -74,25 +70,21 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, color = LIGHT_GREY } = this.props
+    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, theme, color = LIGHT_GREY } = this.props
     const isRecording = capturingButtonId === id
     const hasStatus = status !== null
 
     const {
       LIGHT_GREY,
       BUTTON_BACKGROUND_COLOR,
+      BUTTON_ICON_COLOR,
       BUTTON_TEXT_COLOR,
       CAPTURING_IN_PROGRESS_COLOR,
       STATUS_GOOD_COLOR,
       STATUS_BAD_COLOR
-    } = themes[this.context.theme]
-
-
+    } = themes[theme]
 
     const flashColor = status ? STATUS_GOOD_COLOR : STATUS_BAD_COLOR
-
-
-
 
     const pulseStyle = {
         backgroundColor: this.pulseAnim.interpolate({
@@ -117,7 +109,7 @@ class RemoteButton extends Component {
             onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
             style={styles.touchable}
           >
-            { !!iconName && <Icon name={iconName} size={iconSize} color={color} /> }
+            { !!iconName && <Icon name={iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
             { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
 
           </TouchableOpacity>
@@ -131,6 +123,7 @@ class RemoteButton extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  theme: state.settings.theme,
   iconName: state.buttons[ownProps.id].icon,
   title: state.buttons[ownProps.id].title,
   editing: state.app.editing,

@@ -18,19 +18,11 @@ import { GENERAL_SETTINGS } from '../../constants/ui'
 
 class MainMenu extends Component {
 
-  static childContextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     forceShowMenu: false,
   }
 
   animVal = new Animated.Value(0)
-
-  getChildContext() {
-    return { theme: this.props.theme }
-  }
 
   componentDidUpdate(prevProps) {
     if (prevProps.headerMenuVisible && !this.props.headerMenuVisible) {

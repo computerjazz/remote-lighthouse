@@ -2,10 +2,10 @@ import tinycolor from 'tinycolor2'
 import * as colors from '../colors'
 
 
-export const PRIMARY_LIGHT = 'lightblue'
-export const PRIMARY_LIGHT_ANALOGOUS = colors.LIGHT_PURPLE_ANALOGOUS
-export const PRIMARY_DARK = 'darkblue'
-export const PRIMARY_DARK_ANALOGOUS = colors.DARK_BLUE_ANALOGOUS
+export const PRIMARY_LIGHT = '#bbb'
+export const PRIMARY_LIGHT_ANALOGOUS = '#aaa'
+export const PRIMARY_DARK = '#666'
+export const PRIMARY_DARK_ANALOGOUS = '#777'
 
 /*
 * Function
@@ -17,18 +17,21 @@ export const BUTTON_EDIT_COLOR = colors.POMEGRANATE_ANALOGOUS
 export const BUTTON_DELETE_COLOR = colors.POMEGRANATE
 export const BUTTON_PLUS_COLOR = colors.POMEGRANATE
 export const BUTTON_TRASH_COLOR = colors.POMEGRANATE_ANALOGOUS
-export const BUTTON_ICON_COLOR = PRIMARY_DARK
-export const BUTTON_TEXT_COLOR = PRIMARY_DARK
+export const BUTTON_ICON_COLOR = colors.LIGHT_ORANGE
+export const BUTTON_TEXT_COLOR = colors.LIGHT_ORANGE
 export const BUTTON_BACKGROUND_COLOR = PRIMARY_LIGHT
 export const CAPTURING_IN_PROGRESS_COLOR = colors.POMEGRANATE
 export const REMOTE_BACKGROUND_COLOR = PRIMARY_DARK
 export const STATUS_BAD_COLOR = colors.ORANGE
 export const STATUS_GOOD_COLOR = colors.EMERALD
 export const CIRCLE_PLUS_BUTTON_COLOR = colors.POMEGRANATE_ANALOGOUS
+export const CIRCLE_PLUS_ICON_COLOR = colors.LIGHT_GREY
+export const BUTTON_EDIT_ICON_COLOR = colors.LIGHT_GREY
+
 
 //Tab bar
-export const TAB_BACKGROUND_COLOR_INACTIVE = '#FF00FF'
-export const TAB_BACKGROUND_COLOR_ACTIVE = tinycolor(TAB_LABEL_COLOR_INACTIVE).lighten(5).toString()
+export const TAB_BACKGROUND_COLOR_INACTIVE = PRIMARY_LIGHT_ANALOGOUS
+export const TAB_BACKGROUND_COLOR_ACTIVE = tinycolor(TAB_BACKGROUND_COLOR_INACTIVE).lighten(5).toString()
 export const TAB_LABEL_COLOR_ACTIVE = colors.LIGHT_GREY
 export const TAB_LABEL_COLOR_INACTIVE = PRIMARY_DARK_ANALOGOUS
 

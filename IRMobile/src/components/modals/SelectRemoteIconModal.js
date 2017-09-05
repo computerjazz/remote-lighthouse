@@ -22,10 +22,6 @@ import themes from '../../constants/themes'
 
 class SelectRemoteIconModal extends Component {
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     selectedIcon: null,
     newTitle: '',
@@ -48,7 +44,7 @@ class SelectRemoteIconModal extends Component {
 
   renderIconButton = (iconName, index) => {
     const selected = this.state.selectedIcon === iconName
-    const { MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR, ICON_SELECTED_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR, ICON_SELECTED_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
         key={index}
@@ -65,7 +61,7 @@ class SelectRemoteIconModal extends Component {
   }
 
   renderIconCategory = ({ title, icons }, key) => {
-    const { MODAL_TEXT_COLOR } = themes[this.context.theme]
+    const { MODAL_TEXT_COLOR } = themes[this.props.theme]
     return (
       <View key={key}>
         <Text
@@ -96,8 +92,8 @@ class SelectRemoteIconModal extends Component {
   }
 
   render() {
-    const { onSubmit } = this.props
-    const { MODAL_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { onSubmit, theme } = this.props
+    const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -129,6 +125,7 @@ SelectRemoteIconModal.defaultProps = {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
 })

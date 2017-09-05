@@ -24,16 +24,12 @@ class HeaderMenuButton extends Component {
     setHeaderMenu: PropTypes.func.isRequired,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     editing: false,
   }
 
   renderDots() {
-    const { PRIMARY_DARK_ANALOGOUS } = themes[this.context.theme]
+    const { PRIMARY_DARK_ANALOGOUS } = themes[this.props.theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -49,7 +45,7 @@ class HeaderMenuButton extends Component {
   }
 
   renderDoneButton() {
-    const { PRIMARY_DARK_ANALOGOUS, HEADER_TITLE_EDITING_COLOR } = themes[this.context.theme]
+    const { PRIMARY_DARK_ANALOGOUS, HEADER_TITLE_EDITING_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -66,12 +62,12 @@ class HeaderMenuButton extends Component {
   }
 
   renderIcon = () => {
-    const { remote, editing } = this.props
+    const { remote, editing, theme } = this.props
     const {
       PRIMARY_DARK_ANALOGOUS,
       HEADER_ICON_EDITING,
       HEADER_ICON_EDITING_BACKGROUND,
-    } = themes[this.context.theme]
+    } = themes[theme]
 
     return (
       <TouchableOpacity
@@ -101,6 +97,7 @@ class HeaderMenuButton extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   editing: state.app.editing,
   capturing: state.app.capturing,
   modalVisible: state.app.modalVisible,

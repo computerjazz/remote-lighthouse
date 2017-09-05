@@ -4,11 +4,9 @@ import {
   PanResponder,
   StyleSheet,
   View,
-  TouchableOpacity,
 } from 'react-native'
 
 import { connect } from 'react-redux'
-import _ from 'lodash'
 import SortableListView from 'react-native-sortable-listview'
 
 import {
@@ -27,8 +25,8 @@ import ButtonPanel from './ButtonPanel'
 import CirclePlusButton from './CirclePlusButton'
 import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
-import SelectRemoteIconModal from './modals/SelectRemoteIconModal'
 import TabIcon from './menu/TabIcon'
+import TabLabel from './menu/TabLabel'
 
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
@@ -37,8 +35,9 @@ class Remote extends Component {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.state.params && navigation.state.params.title || ' '
     return {
-      tabBarLabel: title,
-      tabBarIcon: <TabIcon id={navigation.state.routeName} />
+      title,
+      //tabBarLabel: ({ focused, tintColor}) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
+      tabBarIcon: ({ focused, tintColor}) => <TabIcon focused={focused} id={navigation.state.routeName}  />
     }
   }
 
@@ -48,10 +47,6 @@ class Remote extends Component {
     stopRecord: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     remote: PropTypes.object.isRequired,
-  }
-
-  static contextTypes = {
-    theme: PropTypes.string,
   }
 
   state = {
@@ -153,11 +148,11 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, remote, headerModal } = this.props
+    const { editing, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
     const GeneralModal = modals[headerModal]
     if (!remote) return null
-    const { REMOTE_BACKGROUND_COLOR } = themes[this.context.theme]
+    const { REMOTE_BACKGROUND_COLOR } = themes[theme]
 
     return (
       <View style={{flex: 1}}>
@@ -198,6 +193,7 @@ class Remote extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  theme: state.settings.theme,
   remote: state.remotes[ownProps.navigation.state.routeName],
   currentRemoteId: state.app.currentRemoteId,
   editing: state.app.editing,

@@ -26,14 +26,6 @@ class Header extends Component {
     title: '',
   }
 
-  static childContextTypes = {
-    theme: PropTypes.string,
-  }
-
-  getChildContext() {
-    return { theme: this.props.theme }
-  }
-
   componentWillReceiveProps(nextProps) {
     if (this.props.remote && nextProps.remote && this.props.remote.title !== nextProps.remote.title) {
       this.setState({ title: nextProps.remote.title })

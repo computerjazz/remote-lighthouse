@@ -1,6 +1,8 @@
 import React from 'react'
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
+
+import TabBar from '../components/menu/TabBar'
 import { setCurrentRemoteId, setModalVisible, setHeaderModal, setEditMode } from '../actions'
 import themes from '../constants/themes'
 
@@ -15,13 +17,6 @@ const Navigator = StackNavigator({
 
 export const createTabNavigator = (keys, Screen, theme) => {
 
-  const {
-    TAB_BACKGROUND_COLOR_ACTIVE,
-    TAB_BACKGROUND_COLOR_INACTIVE,
-    TAB_LABEL_COLOR_ACTIVE,
-    TAB_LABEL_COLOR_INACTIVE
-  } = themes[theme]
-
   const routeConfig = {}
   keys.forEach(key => {
     routeConfig[key] = { screen: Screen }
@@ -32,12 +27,7 @@ export const createTabNavigator = (keys, Screen, theme) => {
     swipeEnabled: true,
     animationEnabled: true,
     order: keys,
-    tabBarOptions: {
-      activeTintColor: TAB_LABEL_COLOR_ACTIVE,
-      inactiveTintColor: TAB_LABEL_COLOR_INACTIVE,
-      activeBackgroundColor: TAB_BACKGROUND_COLOR_ACTIVE,
-      inactiveBackgroundColor: TAB_BACKGROUND_COLOR_INACTIVE,
-    }
+    tabBarComponent: TabBar,
   }
 
   const onNavigationStateChange = function(prevState, newState){

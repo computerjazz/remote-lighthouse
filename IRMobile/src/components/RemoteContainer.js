@@ -35,20 +35,12 @@ class RemoteContainer extends Component {
     setBaseUrl: PropTypes.func.isRequired,
   }
 
-  static childContextTypes = {
-    theme: PropTypes.string,
-  }
-
-  getChildContext() {
-    return { theme: this.props.theme }
-  }
-
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
     // or theme has changed
     const remoteListHasChanged = nextProps.remotes.list.length !== this.props.remotes.list.length
-    const themeHasChanged = nextProps.theme !== this.props.theme
-    const shouldUpdate = remoteListHasChanged || themeHasChanged
+    //const themeHasChanged = nextProps.theme !== this.props.theme
+    const shouldUpdate = remoteListHasChanged
     return shouldUpdate
 
   }

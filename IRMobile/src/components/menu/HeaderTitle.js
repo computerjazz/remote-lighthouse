@@ -16,10 +16,6 @@ class HeaderTitleButton extends Component {
     title: PropTypes.string,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   renderTitleAsInput() {
     return (
       <TextInput
@@ -46,8 +42,8 @@ class HeaderTitleButton extends Component {
 
 
   render() {
-    const { editing } = this.props
-    const { HEADER_TITLE_BACKGROUND_EDITING } = themes[this.context.theme]
+    const { editing, theme } = this.props
+    const { HEADER_TITLE_BACKGROUND_EDITING } = themes[theme]
     return (
       <View style={[styles.container, editing && [styles.editing, { backgroundColor: HEADER_TITLE_BACKGROUND_EDITING }]]}>
         <View style={[styles.inner, !editing && styles.center]}>
@@ -59,6 +55,7 @@ class HeaderTitleButton extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   editing: state.app.editing,
 })
 

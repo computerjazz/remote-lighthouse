@@ -33,10 +33,6 @@ class ButtonPanel extends Component {
     transmitIRCode: PropTypes.func.isRequired,
   }
 
-  static contextTypes = {
-    theme: PropTypes.string,
-  }
-
   state = {
     status: null,
     editButtonModalVisible: false,
@@ -60,7 +56,7 @@ class ButtonPanel extends Component {
 
 
   renderButton = (buttonId, index, array) => {
-    const { PRIMARY_DARK } = themes[this.context.theme]
+    const { PRIMARY_DARK } = themes[this.props.theme]
     return (
       <RemoteButton
         key={buttonId}
@@ -77,8 +73,8 @@ class ButtonPanel extends Component {
   }
 
   render() {
-    const { buttons, editing } = this.props
-    const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[this.context.theme]
+    const { buttons, editing, theme } = this.props
+    const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[theme]
     return (
       <View style={styles.container}>
         {editing &&
@@ -119,6 +115,7 @@ ButtonPanel.defaultProps = {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+    theme: state.settings.theme,
     editing: state.app.editing,
     capturing: state.app.capturing,
     buttons: state.panels[ownProps.id].buttons,
