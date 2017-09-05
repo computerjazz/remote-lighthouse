@@ -59,7 +59,7 @@ class MainMenu extends Component {
         />
         <MenuItem
           icon="pencil"
-          text="Arrange"
+          text="Modify"
           onPress={() => {
             this.props.setEditMode(true)
             this.props.setHeaderMenu(false)
