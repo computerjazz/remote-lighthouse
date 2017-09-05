@@ -9,26 +9,23 @@ import {
 } from 'react-native'
 
 import { connect } from 'react-redux'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import TextButton from '../TextButton'
-import { updateRemote, setHeaderModal } from '../../actions'
+import { updateRemote, setHeaderModal, setTheme } from '../../actions'
 import { isAndroid } from '../../utils'
 
-import buttonCategories from '../../dictionaries/buttons'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
-import themes from '../../constants/themes'
+import themes, { list as themeList} from '../../constants/themes'
 
 class SelectRemoteIconModal extends Component {
 
   state = {
-    selectedIcon: null,
-    newTitle: '',
+    selectedTheme: '',
   }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
+    this.setState({ selectedTheme: this.props.theme })
   }
 
   captureAndroidBackPress = () => {
@@ -37,58 +34,32 @@ class SelectRemoteIconModal extends Component {
     return true
   }
 
-  componentDidMount() {
-    const { icon, title } = this.props.remote
-    this.setState({ selectedIcon: icon,  newTitle: title})
+  onDonePress = () => {
+    if (this.state.selectedTheme !== this.props.theme) this.props.setTheme(this.state.selectedTheme)
+    this.props.setHeaderModal(null)
+    this.props.onSubmit()
   }
 
-  renderIconButton = (iconName, index) => {
-    const selected = this.state.selectedIcon === iconName
-    const { MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR, ICON_SELECTED_BACKGROUND_COLOR } = themes[this.props.theme]
+  renderFakeButton = (themeName, index) => (
+    <View key={index} style={[styles.fakeButton, {backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR}]}>
+      <View style={[styles.fakeButtonInner, {backgroundColor: themes[themeName].BUTTON_ICON_COLOR}]} />
+    </View>
+  )
+
+  renderThemeOption = themeName => {
+    const { OPTION_SELECTED_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
-        key={index}
-        onPress={() => this.setState({ selectedIcon: iconName })}
-        style={[styles.icon, selected && { backgroundColor: ICON_SELECTED_BACKGROUND_COLOR}]}
+        key={themeName}
+        onPress={() => this.setState({ selectedTheme: themeName })}
+        style={[styles.option, { backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent'}]}
       >
-        <Icon
-          name={iconName}
-          size={30}
-          color={selected ? MODAL_BACKGROUND_COLOR : MODAL_TEXT_COLOR}
-        />
+        <View style={[styles.fakeButtonRow,{backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR}]}>
+          {[0,0,0].map((item, i) => this.renderFakeButton(themeName, i))}
+        </View>
+        <Text>{themeName}</Text>
       </TouchableOpacity>
     )
-  }
-
-  renderIconCategory = ({ title, icons }, key) => {
-    const { MODAL_TEXT_COLOR } = themes[this.props.theme]
-    return (
-      <View key={key}>
-        <Text
-          style={[styles.categoryTitle, { color: MODAL_TEXT_COLOR, borderBottomColor: MODAL_TEXT_COLOR }]}
-        >
-          {title}
-        </Text>
-        <View style={styles.iconContainer}>
-          { icons.map(this.renderIconButton) }
-        </View>
-      </View>
-    )
-  }
-
-  onOkPress = () => {
-    const updatedButton = {
-      ...this.props.remote,
-      icon: this.state.selectedIcon,
-    }
-    this.props.updateRemote(this.props.currentRemoteId, updatedButton)
-    this.props.setHeaderModal(null)
-    this.props.onSubmit()
-  }
-
-  onCancelPress = () => {
-    this.props.setHeaderModal(null)
-    this.props.onSubmit()
   }
 
   render() {
@@ -99,19 +70,14 @@ class SelectRemoteIconModal extends Component {
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
 
           <ScrollView style={styles.scrollView}>
-            { _.map(buttonCategories, this.renderIconCategory) }
+            {themeList.map(this.renderThemeOption)}
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>
             <TextButton
-              text="Cancel"
+              text="Done"
               buttonStyle={styles.confirmButton}
-              onPress={this.onCancelPress}
-            />
-            <TextButton
-              text="Ok"
-              buttonStyle={styles.confirmButton}
-              onPress={this.onOkPress}
+              onPress={this.onDonePress}
             />
           </View>
         </View>
@@ -133,6 +99,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   updateRemote: (remoteId, updatedRemote) => dispatch(updateRemote(remoteId, updatedRemote)),
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
+  setTheme: theme => dispatch(setTheme(theme)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
@@ -183,6 +150,9 @@ const styles = StyleSheet.create({
     flex: 6,
     padding: 10,
   },
+  option: {
+    padding: 10,
+  },
   textInput: {
     flex: 1,
     height: 45,
@@ -190,5 +160,27 @@ const styles = StyleSheet.create({
     marginBottom: 13,
     borderRadius: BUTTON_RADIUS,
     backgroundColor: 'rgba(0, 0, 0, .1)',
+  },
+  fakeButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: BUTTON_RADIUS
+  },
+  fakeButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    flex: 1,
+    margin: 10,
+    borderRadius: BUTTON_RADIUS,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30
+  },
+  fakeButtonInner: {
+    padding: 10,
+    borderRadius: 30
   }
 })

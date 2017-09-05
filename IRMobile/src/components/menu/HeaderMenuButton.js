@@ -8,16 +8,10 @@ import {
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode, setHeaderModalVisible } from '../../actions'
+import { stopRecord, setHeaderMenu, setEditMode, setCaptureMode, setHeaderModal } from '../../actions'
 
-import {
-  LIGHT_GREY,
-  PRIMARY_DARK_ANALOGOUS,
-  MENU_BACKGROUND_COLOR,
-  HEADER_ICON_EDITING,
-  HEADER_ICON_EDITING_BACKGROUND,
-} from '../../constants/colors'
-import { BUTTON_RADIUS } from '../../constants/dimensions'
+import themes from '../../constants/themes'
+import { REMOTE_OPTIONS } from '../../constants/ui'
 
 class HeaderMenuButton extends Component {
 
@@ -35,6 +29,7 @@ class HeaderMenuButton extends Component {
   }
 
   renderDots() {
+    const { PRIMARY_DARK_ANALOGOUS } = themes[this.props.theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -50,6 +45,7 @@ class HeaderMenuButton extends Component {
   }
 
   renderDoneButton() {
+    const { PRIMARY_DARK_ANALOGOUS, HEADER_TITLE_EDITING_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -60,20 +56,25 @@ class HeaderMenuButton extends Component {
           this.props.setEditMode(false)
         }}
       >
-        <Text style={[styles.text, { color: this.props.capturing ? PRIMARY_DARK_ANALOGOUS : LIGHT_GREY }]}>Done</Text>
+        <Text style={[styles.text, { color: this.props.capturing ? PRIMARY_DARK_ANALOGOUS : HEADER_TITLE_EDITING_COLOR }]}>Done</Text>
       </TouchableOpacity>
     )
   }
 
   renderIcon = () => {
-    const { remote, editing } = this.props
+    const { remote, editing, theme } = this.props
+    const {
+      PRIMARY_DARK_ANALOGOUS,
+      HEADER_ICON_EDITING,
+      HEADER_ICON_EDITING_BACKGROUND,
+    } = themes[theme]
 
     return (
       <TouchableOpacity
         disabled={!editing}
-        onPress={() => this.props.setHeaderModalVisible(true)}
+        onPress={() => this.props.setHeaderModal(REMOTE_OPTIONS)}
       >
-        <View style={[styles.icon, editing && styles.iconEditing]}>
+        <View style={[styles.icon, editing && { backgroundColor: HEADER_ICON_EDITING_BACKGROUND }]}>
           <Icon
             name={remote ? remote.icon : 'pencil'}
             color={editing ? HEADER_ICON_EDITING : PRIMARY_DARK_ANALOGOUS}
@@ -96,6 +97,7 @@ class HeaderMenuButton extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   editing: state.app.editing,
   capturing: state.app.capturing,
   modalVisible: state.app.modalVisible,
@@ -108,7 +110,7 @@ const mapDispatchToProps = dispatch => ({
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   setEditMode: editing => dispatch(setEditMode(editing)),
   setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
-  setHeaderModalVisible: visible => dispatch(setHeaderModalVisible(visible))
+  setHeaderModal: modal => dispatch(setHeaderModal(modal))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderMenuButton)
@@ -140,17 +142,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconEditing: {
-    backgroundColor: HEADER_ICON_EDITING_BACKGROUND,
-  },
-  menu: {
-    position: 'absolute',
-    zIndex: 999,
-    top: 15,
-    width: 50,
-    right: 5,
-    padding: 15,
-    backgroundColor: MENU_BACKGROUND_COLOR,
-    borderRadius: BUTTON_RADIUS,
-  }
 })

@@ -1,16 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import {
-  Animated,
-  LayoutAnimation,
   StyleSheet,
   TouchableOpacity,
   View,
-  UIManager
 } from 'react-native'
 import { connect } from 'react-redux'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { PRIMARY_DARK, PRIMARY_LIGHT, BUTTON_DELETE_COLOR } from '../constants/colors'
+import themes from '../constants/themes'
 
 import {
   captureIRCode,
@@ -59,6 +56,7 @@ class ButtonPanel extends Component {
 
 
   renderButton = (buttonId, index, array) => {
+    const { PRIMARY_DARK } = themes[this.props.theme]
     return (
       <RemoteButton
         key={buttonId}
@@ -75,7 +73,8 @@ class ButtonPanel extends Component {
   }
 
   render() {
-    const { buttons, editing } = this.props
+    const { buttons, editing, theme } = this.props
+    const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[theme]
     return (
       <View style={styles.container}>
         {editing &&
@@ -116,6 +115,7 @@ ButtonPanel.defaultProps = {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+    theme: state.settings.theme,
     editing: state.app.editing,
     capturing: state.app.capturing,
     buttons: state.panels[ownProps.id].buttons,

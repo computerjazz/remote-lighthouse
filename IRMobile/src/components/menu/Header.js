@@ -11,16 +11,16 @@ import { updateRemote } from '../../actions'
 import HeaderTitle from './HeaderTitle'
 import HeaderMenuButton from './HeaderMenuButton'
 
-import {
-  HEADER_TITLE_COLOR,
-  HEADER_TITLE_EDITING_COLOR ,
-  HEADER_BACKGROUND_COLOR,
-  HEADER_BACKGROUND_EDITING_COLOR,
-} from '../../constants/colors'
+import themes from '../../constants/themes'
 
 import { STATUS_BAR_HEIGHT } from '../../constants/dimensions'
 
 class Header extends Component {
+
+  static propTypes = {
+      remote: PropTypes.object,
+      theme: PropTypes.string,
+  }
 
   state = {
     title: '',
@@ -49,6 +49,14 @@ class Header extends Component {
 
   render() {
     const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible, rehydrated } = this.props
+
+    const {
+      HEADER_TITLE_COLOR,
+      HEADER_TITLE_EDITING_COLOR ,
+      HEADER_BACKGROUND_COLOR,
+      HEADER_BACKGROUND_EDITING_COLOR,
+    } = themes[this.props.theme]
+
     const headerBackgroundColor = editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR
     const headerTitleColor = editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
     const remoteTitle = remote && remote.title || ' '
@@ -73,6 +81,7 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
   editing: state.app.editing,

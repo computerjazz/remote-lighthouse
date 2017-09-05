@@ -6,7 +6,7 @@ import {
   SET_DRAGGING,
   SET_CURRENT_REMOTE_ID,
   SET_MODAL_VISIBLE,
-  SET_HEADER_MODAL_VISIBLE,
+  SET_HEADER_MODAL,
 } from '../constants/actions'
 
 const initialState = {
@@ -17,7 +17,7 @@ const initialState = {
   capturingButtonId: null,
   currentRemoteId: null,
   modalVisible: false,
-  headerModalVisible: false,
+  headerModal: null,
   rehydrated: false,
 }
 
@@ -40,11 +40,11 @@ export default (state = initialState, action) => {
         ...state,
         modalVisible: action.payload.visible,
       }
-    case SET_HEADER_MODAL_VISIBLE:
+    case SET_HEADER_MODAL:
       return {
         ...state,
-        modalVisible: action.payload.visible,
-        headerModalVisible: action.payload.visible,
+        modalVisible: !!action.payload.modal,
+        headerModal: action.payload.modal,
       }
 
     case SET_EDIT_MODE:

@@ -1,16 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import {
   BackHandler,
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native'
+import { connect } from 'react-redux'
+
 import _ from 'lodash'
 import TextButton from '../TextButton'
 
-import { LIGHT_GREY } from '../../constants/colors'
+import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 import panelDict from '../../dictionaries/panels'
 
@@ -38,10 +37,11 @@ class AddPanelModal extends Component {
   )
 
   render() {
-    const { onSubmit, remoteId } = this.props
+    const { onSubmit, remoteId, theme } = this.props
+    const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
           { _.map(panelDict, this.renderAddPanelOption) }
           <View style={styles.confirmButtonContainer}>
             <TextButton
@@ -60,7 +60,11 @@ AddPanelModal.defaultProps = {
   onSubmit: () => {},
 }
 
-export default AddPanelModal
+const mapStateToProps = state => ({
+  theme: state.settings.theme,
+})
+
+export default connect(mapStateToProps)(AddPanelModal)
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -73,8 +77,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '90%',
-    backgroundColor: LIGHT_GREY,
-    opacity: 0.9,
     borderRadius: BUTTON_RADIUS,
   },
   confirmButtonContainer: {

@@ -1,16 +1,12 @@
 import React from 'react'
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
-import { setCurrentRemoteId, setModalVisible, setHeaderModalVisible, setEditMode } from '../actions'
+
+import TabBar from '../components/menu/TabBar'
+import { setCurrentRemoteId, setModalVisible, setHeaderModal, setEditMode } from '../actions'
+import themes from '../constants/themes'
 
 import RemoteContainer from '../components/RemoteContainer'
-
-import {
-  TAB_BACKGROUND_COLOR_ACTIVE,
-  TAB_BACKGROUND_COLOR_INACTIVE,
-  TAB_LABEL_COLOR_ACTIVE,
-  TAB_LABEL_COLOR_INACTIVE
-} from '../constants/colors'
 
 const Navigator = StackNavigator({
   Remote: { screen: RemoteContainer },
@@ -19,7 +15,8 @@ const Navigator = StackNavigator({
   headerMode: 'float',
 })
 
-export const createTabNavigator = (keys, Screen) => {
+export const createTabNavigator = (keys, Screen, theme) => {
+
   const routeConfig = {}
   keys.forEach(key => {
     routeConfig[key] = { screen: Screen }
@@ -30,24 +27,19 @@ export const createTabNavigator = (keys, Screen) => {
     swipeEnabled: true,
     animationEnabled: true,
     order: keys,
-    tabBarOptions: {
-      activeTintColor: TAB_LABEL_COLOR_ACTIVE,
-      inactiveTintColor: TAB_LABEL_COLOR_INACTIVE,
-      activeBackgroundColor: TAB_BACKGROUND_COLOR_ACTIVE,
-      inactiveBackgroundColor: TAB_BACKGROUND_COLOR_INACTIVE,
-    }
+    tabBarComponent: TabBar,
   }
 
   const onNavigationStateChange = function(prevState, newState){
     console.log('STATE CHANGED', prevState, newState)
     if (this.setCurrentRemoteId) this.setCurrentRemoteId(newState.routes[newState.index].routeName)
-    if (this.setHeaderModalVisible) this.setHeaderModalVisible(false)
+    if (this.setHeaderModal) this.setHeaderModal(null)
   }
 
   const mapDispatchToProps = function(dispatch){
     return {
       setCurrentRemoteId: remoteId => dispatch(setCurrentRemoteId(remoteId)),
-      setHeaderModalVisible: visible => dispatch(setHeaderModalVisible(visible)),
+      setHeaderModal: modal => dispatch(setHeaderModal(modal)),
       setEditMode: editing => dispatch(setEditMode(editing))
     }
   }

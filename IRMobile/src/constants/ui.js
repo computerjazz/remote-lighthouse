@@ -6,10 +6,13 @@ export const CUSTOM_4 = 'CUSTOM_4'
 export const MEDIA_PLAYBACK = 'MEDIA_PLAYBACK'
 export const UP_DOWN = 'UP_DOWN'
 
-
 // Button icon categories
 export const GENERAL = 'GENERAL'
 export const DEVICE = 'DEVICE'
 export const MEDIA = 'MEDIA'
 export const AUDIO = 'AUDIO'
 export const SCREEN = 'SCREEN'
+
+// Modals
+export const GENERAL_SETTINGS = 'GENERAL_SETTINGS'
+export const REMOTE_OPTIONS = 'REMOTE_OPTIONS'

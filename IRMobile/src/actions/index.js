@@ -20,7 +20,8 @@ import {
   SET_RECORDING_BUTTON_ID,
   SET_DRAGGING,
   SET_MODAL_VISIBLE,
-  SET_HEADER_MODAL_VISIBLE,
+  SET_HEADER_MODAL,
+  SET_THEME,
 } from '../constants/actions'
 
 export function createRemote() {
@@ -52,12 +53,78 @@ export function deleteRemote(remoteId) {
   }
 }
 
+export function importRemote(nestedRemoteString) {
+  return dispatch => {
+    try {
+      const nestedRemote = JSON.parse(nestedRemoteString)
+      const remoteAction = dispatch(createRemote())
+      const { remoteId } = remoteAction.payload
+      dispatch(updateRemote(nestedRemote))
+
+      nestedRemote.panels.forEach(panel => {
+        const panelId = uuid.v1()
+        dispatch(createButtonPanelAction(remoteId, panelId, panel.type))
+
+        panel.buttons.forEach(button => {
+          const buttonAction = dispatch(createButton(button.icon, panelId))
+          const { buttonId } = buttonAction.payload
+          dispatch(editButton(buttonId, { title: button.title, icon: button.icon }))
+          if (button.type && button.value && button.length) {
+            dispatch(assignIRCode(buttonId, {
+              type: button.type,
+              value: button.value,
+              length: button.length,
+            }))
+
+          }
+        })
+      })
+
+      return {
+        type: 'xxx',
+        payload: nestedRemote,
+      }
+    } catch (err) {
+      console.log('## importRemote error,', err)
+    }
+  }
+
+
+}
+
+export function exportRemote(remoteId) {
+  return (dispatch, getState) => {
+    const { remotes, panels, buttons } = getState()
+    dispatch(importRemote(dummyRemote))
+    if (!remotes[remoteId]) alert('No remote found with this id ', remoteId)
+    let nestedRemote = {
+      ...remotes[remoteId],
+      panels: remotes[remoteId].panels.map(panelId => {
+        return {
+          ...panels[panelId],
+          buttons: panels[panelId].buttons.map(buttonId => ({...buttons[buttonId]}))
+        }
+      })
+    }
+    return nestedRemote
+  }
+}
+
 
 export function setCurrentRemoteId(remoteId) {
   return {
     type: SET_CURRENT_REMOTE_ID,
     payload: {
       remoteId,
+    }
+  }
+}
+
+export function setTheme(theme) {
+  return {
+    type: SET_THEME,
+    payload: {
+      theme,
     }
   }
 }
@@ -80,11 +147,11 @@ export function setModalVisible(visible) {
   }
 }
 
-export function setHeaderModalVisible(visible) {
+export function setHeaderModal(modal) {
   return {
-    type: SET_HEADER_MODAL_VISIBLE,
+    type: SET_HEADER_MODAL,
     payload: {
-      visible,
+      modal,
     }
   }
 }
