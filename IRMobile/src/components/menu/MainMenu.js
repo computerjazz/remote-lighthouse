@@ -9,6 +9,7 @@ import {
   createRemote,
   deleteRemote,
   exportRemote,
+  getShareRemoteUrl,
 } from '../../actions'
 import MenuItem from './MenuItem'
 
@@ -68,13 +69,15 @@ class MainMenu extends Component {
         <MenuItem
           icon="share-variant"
           text="Share"
-          onPress={() => {
+          onPress={async () => {
             this.props.setHeaderMenu(false)
             const nestedRemote = this.props.exportRemote(this.props.currentRemoteId)
+            const url = await this.props.getShareRemoteUrl(nestedRemote)
+            console.log('GOT A URL!!!!', url)
             console.log('SHARING REMOTE: ', JSON.stringify(nestedRemote, null, 2))
             Share.share({
               title: 'A remote has been shared with you!',
-              message: JSON.stringify(nestedRemote),
+              message: url,
             })
           }}
         />
@@ -130,7 +133,8 @@ const mapDispatchToProps = dispatch => ({
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   createRemote: () => dispatch(createRemote()),
   deleteRemote: remoteId => dispatch(deleteRemote(remoteId)),
-  exportRemote: remoteId => dispatch(exportRemote(remoteId))
+  exportRemote: remoteId => dispatch(exportRemote(remoteId)),
+  getShareRemoteUrl: nestedRemote => dispatch(getShareRemoteUrl(nestedRemote)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainMenu)

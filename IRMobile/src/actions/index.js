@@ -1,4 +1,5 @@
 import uuid from 'react-native-uuid'
+import branch from 'react-native-branch'
 
 import panelDefs from '../dictionaries/panels'
 
@@ -53,13 +54,13 @@ export function deleteRemote(remoteId) {
   }
 }
 
-export function importRemote(nestedRemoteString) {
+export function importRemote(nestedRemote) {
   return dispatch => {
     try {
-      const nestedRemote = JSON.parse(nestedRemoteString)
+      if (typeof nestedRemote === 'string') nestedRemote = JSON.parse(nestedRemote)
       const remoteAction = dispatch(createRemote())
       const { remoteId } = remoteAction.payload
-      dispatch(updateRemote(nestedRemote))
+      dispatch(updateRemote(remoteId, {title: nestedRemote.title, icon: nestedRemote.icon }))
 
       nestedRemote.panels.forEach(panel => {
         const panelId = uuid.v1()
@@ -88,14 +89,11 @@ export function importRemote(nestedRemoteString) {
       console.log('## importRemote error,', err)
     }
   }
-
-
 }
 
 export function exportRemote(remoteId) {
   return (dispatch, getState) => {
     const { remotes, panels, buttons } = getState()
-    dispatch(importRemote(dummyRemote))
     if (!remotes[remoteId]) alert('No remote found with this id ', remoteId)
     let nestedRemote = {
       ...remotes[remoteId],
@@ -107,6 +105,32 @@ export function exportRemote(remoteId) {
       })
     }
     return nestedRemote
+  }
+}
+
+export function getShareRemoteUrl(nestedRemote) {
+  return async () => {
+    let branchUniversalObject = await branch.createBranchUniversalObject(
+        'content/12345', // canonical identifier
+        {
+          contentDescription: 'New shared remote!',
+          metadata: {
+            remote: nestedRemote,
+          }
+        }
+      )
+
+    let linkProperties = {
+      channel: 'internal',
+    }
+
+    let controlParams = {
+      '$desktop_url': 'http://www.danielmerrill.com',
+      '$ios_url': 'irmobile://',
+      '$android_url': 'irmobile://',
+    }
+    let { url } = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
+    return url
   }
 }
 

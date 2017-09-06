@@ -7,6 +7,7 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
 import Navigator from './navigation'
+import LinkHandler from './components/LinkHandler'
 import MainMenu from './components/menu/MainMenu'
 import reducers from './reducers'
 
@@ -21,11 +22,12 @@ const store = createStore(
 
 persistStore(store, {
   storage: AsyncStorage,
-  blacklist: ['app', 'network'],
+  //blacklist: ['app', 'network', 'settings'],
 })
-//  .purge()
+ .purge()
 
 class App extends Component {
+
   render() {
     return (
       <Provider store={store}>
@@ -33,6 +35,7 @@ class App extends Component {
           <StatusBar backgroundColor="transparent" barStyle="dark-content" translucent />
           <Navigator />
           <MainMenu />
+          <LinkHandler />
         </View>
       </Provider>
     )
