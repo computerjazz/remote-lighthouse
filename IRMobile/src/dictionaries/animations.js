@@ -11,11 +11,11 @@ export const CustomLayoutSpring = {
       type: LayoutAnimation.Types.spring,
       springDamping: 0.7,
     },
-    delete: {
-      type: LayoutAnimation.Types.spring,
-      property: LayoutAnimation.Properties.scaleXY,
-      springDamping: 0.7,
-    },
+    // delete: {
+    //   type: LayoutAnimation.Types.spring,
+    //   property: LayoutAnimation.Properties.scaleXY,
+    //   springDamping: 0.7,
+    // },
   }
 
   export const CustomLayoutLinear = {

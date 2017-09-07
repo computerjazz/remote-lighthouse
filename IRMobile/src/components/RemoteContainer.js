@@ -57,7 +57,6 @@ class RemoteContainer extends Component {
 
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
       setParams({ theme: nextProps.theme })
-      console.log('SETTING THEME')
     }
 
     if (!this.props.rehydrated && nextProps.rehydrated) {

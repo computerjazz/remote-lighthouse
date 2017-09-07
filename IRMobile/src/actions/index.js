@@ -57,7 +57,6 @@ export function deleteRemote(remoteId) {
 export function importRemote(nestedRemote) {
   return dispatch => {
     try {
-      if (typeof nestedRemote === 'string') nestedRemote = JSON.parse(nestedRemote)
       const remoteAction = dispatch(createRemote())
       const { remoteId } = remoteAction.payload
       dispatch(updateRemote(remoteId, {title: nestedRemote.title, icon: nestedRemote.icon }))
@@ -110,12 +109,13 @@ export function exportRemote(remoteId) {
 
 export function getShareRemoteUrl(nestedRemote) {
   return async () => {
+
     let branchUniversalObject = await branch.createBranchUniversalObject(
         'content/12345', // canonical identifier
         {
           contentDescription: 'New shared remote!',
           metadata: {
-            remote: nestedRemote,
+            remote: isAndroid ? JSON.stringify(nestedRemote) : nestedRemote,
           }
         }
       )
