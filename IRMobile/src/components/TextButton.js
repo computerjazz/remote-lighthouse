@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import {
+  StyleSheet,
   Text,
   TouchableHighlight,
 } from 'react-native'
@@ -15,13 +16,12 @@ class TextButton extends Component {
 
   render() {
     const { color, text, onPress, textStyle, buttonStyle, theme } = this.props
-    const { MID_GREY } = themes[theme]
+    const { ICON_SELECTED_BACKGROUND_COLOR } = themes[theme]
     return (
       <TouchableHighlight
         onPress={onPress}
-        style={buttonStyle}
-        activeOpacity={0.5}
-        underlayColor={MID_GREY}
+        style={[styles.button, buttonStyle]}
+        underlayColor={ICON_SELECTED_BACKGROUND_COLOR}
       >
         <Text style={[{color}, textStyle]}>{text}</Text>
       </TouchableHighlight>
@@ -39,3 +39,11 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(TextButton)
+
+const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+})

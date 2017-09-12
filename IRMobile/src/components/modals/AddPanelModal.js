@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import {
   BackHandler,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -42,7 +43,10 @@ class AddPanelModal extends Component {
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
-          { _.map(panelDict, this.renderAddPanelOption) }
+          <ScrollView>
+            { _.map(panelDict, this.renderAddPanelOption) }
+          </ScrollView>
+
           <View style={styles.confirmButtonContainer}>
             <TextButton
               text="Cancel"

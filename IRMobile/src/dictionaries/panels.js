@@ -6,6 +6,7 @@ import {
   MEDIA_PLAYBACK,
   UP_DOWN,
   VOLUME,
+  POWER,
 } from '../constants/ui'
 
 export default {
@@ -36,5 +37,9 @@ export default {
   [VOLUME]: {
     title: 'Volume',
     icons: ['volume-medium', 'volume-high']
+  },
+  [POWER]: {
+    title: 'Power',
+    icons: ['power'],
   }
 }

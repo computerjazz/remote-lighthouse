@@ -24,7 +24,7 @@ persistStore(store, {
   storage: AsyncStorage,
   //blacklist: ['app', 'network', 'settings'],
 })
- .purge()
+ //.purge()
 
 class App extends Component {
 

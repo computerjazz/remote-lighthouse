@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import {
-  Animated,
   Text,
   StyleSheet,
+  View,
 } from 'react-native'
 import { connect } from 'react-redux'
 
@@ -10,31 +10,33 @@ import themes from '../../constants/themes'
 
 class TabLabel extends Component {
   render() {
-    const { title, theme, focused } = this.props
+    const { title, theme, focused, remote } = this.props
     const {
       TAB_LABEL_COLOR_ACTIVE,
       TAB_LABEL_COLOR_INACTIVE,
     } = themes[theme]
 
     return (
-      <Animated.View style={[styles.container]}>
-        <Text style={[styles.text, { color: focused ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE }]}>{title}</Text>
-      </Animated.View>
+      <View style={[styles.container]}>
+        <Text style={[styles.text, { color: focused ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE }]}>{remote.title}</Text>
+      </View>
     )
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   theme: state.settings.theme,
+  remote: state.remotes[ownProps.id]
 })
 
 export default connect(mapStateToProps)(TabLabel)
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flex: .5,
+    padding: 3,
   },
   text: {
     fontSize: 10,

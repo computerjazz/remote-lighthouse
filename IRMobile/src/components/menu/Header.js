@@ -18,8 +18,8 @@ import { STATUS_BAR_HEIGHT } from '../../constants/dimensions'
 class Header extends Component {
 
   static propTypes = {
-      remote: PropTypes.object,
-      theme: PropTypes.string,
+    remote: PropTypes.object,
+    theme: PropTypes.string,
   }
 
   state = {
@@ -44,7 +44,6 @@ class Header extends Component {
 
   onChangeText = text => {
     this.setState({ title: text }, this.onTitleUpdate)
-
   }
 
   render() {
@@ -55,10 +54,11 @@ class Header extends Component {
       HEADER_TITLE_EDITING_COLOR ,
       HEADER_BACKGROUND_COLOR,
       HEADER_BACKGROUND_EDITING_COLOR,
+      HEADER_BACKGROUND_CAPTURING_COLOR,
     } = themes[this.props.theme]
 
-    const headerBackgroundColor = editing ? HEADER_BACKGROUND_EDITING_COLOR : HEADER_BACKGROUND_COLOR
-    const headerTitleColor = editing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
+    const headerBackgroundColor = editing ? HEADER_BACKGROUND_EDITING_COLOR : capturing ? HEADER_BACKGROUND_CAPTURING_COLOR : HEADER_BACKGROUND_COLOR
+    const headerTitleColor = editing || capturing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
     const remoteTitle = remote && remote.title || ' '
     const headerTitle = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
     return (
@@ -67,7 +67,7 @@ class Header extends Component {
             <HeaderMenuButton left />
             <HeaderTitle
               style={[{ color: headerTitleColor }, titleStyle]}
-              title={this.state.title}
+              title={headerTitle}
               onChangeText={this.onChangeText}
               onBlur={this.onTitleUpdate}
             />

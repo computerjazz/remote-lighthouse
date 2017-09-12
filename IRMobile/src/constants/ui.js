@@ -5,6 +5,7 @@ export const CUSTOM_3 = 'CUSTOM_3'
 export const CUSTOM_4 = 'CUSTOM_4'
 export const MEDIA_PLAYBACK = 'MEDIA_PLAYBACK'
 export const UP_DOWN = 'UP_DOWN'
+export const POWER = 'POWER'
 
 // Button icon categories
 export const GENERAL = 'GENERAL'

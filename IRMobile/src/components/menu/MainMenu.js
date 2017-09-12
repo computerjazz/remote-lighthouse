@@ -1,7 +1,15 @@
 import React, { Component, PropTypes } from 'react'
-import { Animated, View, Share, StyleSheet } from 'react-native'
-import { connect } from 'react-redux'
 import {
+  Alert,
+  Animated,
+  View,
+  Share,
+  StyleSheet
+} from 'react-native'
+import { connect } from 'react-redux'
+
+import {
+  createButtonPanel,
   setHeaderMenu,
   setHeaderModal,
   setCaptureMode,
@@ -15,7 +23,7 @@ import MenuItem from './MenuItem'
 
 import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
-import { GENERAL_SETTINGS } from '../../constants/ui'
+import { GENERAL_SETTINGS, POWER } from '../../constants/ui'
 
 class MainMenu extends Component {
 
@@ -86,7 +94,9 @@ class MainMenu extends Component {
           text="Add Remote"
           onPress={() => {
             this.props.setHeaderMenu(false)
-            this.props.createRemote()
+            const newRemote = this.props.createRemote()
+            const { remoteId } = newRemote.payload
+            this.props.createButtonPanel(POWER, remoteId)
             this.props.setEditMode(true)
           }}
         />
@@ -104,8 +114,16 @@ class MainMenu extends Component {
               icon="delete"
               text="Delete"
               onPress={() => {
-                this.props.deleteRemote(this.props.currentRemoteId)
                 this.props.setHeaderMenu(false)
+                Alert.alert(
+                  'Delete Remote',
+                  'Are you sure?',
+                  [
+                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                    {text: 'Delete', onPress: () => this.props.deleteRemote(this.props.currentRemoteId), style: 'destructive'},
+                  ],
+                )
+
               }}
             />
           )
@@ -127,6 +145,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+  createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
   setEditMode: editing => dispatch(setEditMode(editing)),
   setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),

@@ -5,7 +5,6 @@ import themes from '../../constants/themes'
 
 class TabBar extends Component {
   render(){
-    console.log('TB PROPS!', this.props)
     const {
       TAB_BACKGROUND_COLOR_ACTIVE,
       TAB_BACKGROUND_COLOR_INACTIVE,

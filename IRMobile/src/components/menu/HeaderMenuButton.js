@@ -56,13 +56,13 @@ class HeaderMenuButton extends Component {
           this.props.setEditMode(false)
         }}
       >
-        <Text style={[styles.text, { color: this.props.capturing ? PRIMARY_DARK_ANALOGOUS : HEADER_TITLE_EDITING_COLOR }]}>Done</Text>
+        <Text style={[styles.text, { color: HEADER_TITLE_EDITING_COLOR }]}>Done</Text>
       </TouchableOpacity>
     )
   }
 
   renderIcon = () => {
-    const { remote, editing, theme } = this.props
+    const { remote, editing, capturing, theme } = this.props
     const {
       PRIMARY_DARK_ANALOGOUS,
       HEADER_ICON_EDITING,
@@ -74,10 +74,10 @@ class HeaderMenuButton extends Component {
         disabled={!editing}
         onPress={() => this.props.setHeaderModal(REMOTE_OPTIONS)}
       >
-        <View style={[styles.icon, editing && { backgroundColor: HEADER_ICON_EDITING_BACKGROUND }]}>
+        <View style={[styles.icon, (editing || capturing) && { backgroundColor: HEADER_ICON_EDITING_BACKGROUND }]}>
           <Icon
             name={remote ? remote.icon : 'pencil'}
-            color={editing ? HEADER_ICON_EDITING : PRIMARY_DARK_ANALOGOUS}
+            color={(editing || capturing) ? HEADER_ICON_EDITING : PRIMARY_DARK_ANALOGOUS}
             size={25}
           />
         </View>

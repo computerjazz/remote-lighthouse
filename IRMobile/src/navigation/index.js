@@ -15,11 +15,15 @@ const Navigator = StackNavigator({
   headerMode: 'float',
 })
 
-export const createTabNavigator = (keys, Screen, theme) => {
-
+export const createTabNavigator = (remotes, Screen) => {
+  const keys = remotes.list
   const routeConfig = {}
   keys.forEach(key => {
-    routeConfig[key] = { screen: Screen }
+    routeConfig[key] = {
+      screen: Screen,
+      // Providing navigationOptions seems to mess with setting them dynamically
+      // navigationOptions: { title: remotes[key].title }
+    }
   })
 
   const navigatorConfig = {

@@ -28,15 +28,14 @@ import EditButtonModal from './modals/EditButtonModal'
 import TabIcon from './menu/TabIcon'
 import TabLabel from './menu/TabLabel'
 
-import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
-
 class Remote extends Component {
 
   static navigationOptions = ({ navigation }) => {
+
     const title = navigation.state.params && navigation.state.params.title || ' '
     return {
       title,
-      //tabBarLabel: ({ focused, tintColor}) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
+      tabBarLabel: ({ focused, tintColor}) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
       tabBarIcon: ({ focused, tintColor}) => <TabIcon focused={focused} id={navigation.state.routeName}  />
     }
   }
@@ -57,6 +56,7 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
+    console.log('SETTING TITLE', this.props.remote.title)
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => false,
@@ -77,7 +77,13 @@ class Remote extends Component {
  componentWillReceiveProps(nextProps) {
    const { navigation, remote } = this.props
    if (!nextProps.remote) return
-   if (remote.title !== nextProps.remote.title) {
+   const titleHasChanged = remote.title !== nextProps.remote.title
+   const paramsNotSet = !this.props.navigation.state.params && !nextProps.navigation.state.params
+   console.log('REMOTE', nextProps.remote)
+   console.log('THISPROPS', this.props.navigation.state.params)
+   console.log('NEXTPROPS', nextProps.navigation.state.params)
+   if (titleHasChanged || paramsNotSet) {
+     console.log('SETTING PARAMS', nextProps.remote.title)
      navigation.setParams({ title: nextProps.remote.title })
    }
 
@@ -219,7 +225,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonPanelList: {
-    flex: 1,
+    flex: 0,
   },
   sortRow: {
       opacity: 1.0,
