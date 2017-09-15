@@ -8,14 +8,12 @@
 ESP32WebServer server(80);
 
 //IR init
-int RED_PIN = 5;
-int GREEN_PIN = 6;
-int BLUE_PIN = 10;
-
-int RECV_PIN = 11;
-int SEND_PIN = 4;
-
+int RECV_PIN = 19;
 String lastIRCodeReceived = "";
+
+int RED_PIN = 21;
+int GREEN_PIN = 22;
+int BLUE_PIN = 23;
 
 boolean recording = false;
 boolean redBlinkState = HIGH;
@@ -89,20 +87,27 @@ void sendCode() {
   for (int i = 0; i < server.args(); i++) {
     message += server.argName(i) + ":" + server.arg(i) + ",";
   }
+
+  Serial.println("Sending " + message);
   
-  String irCodeType = getValueOfQueryParam("type", message);
-  String irCodeValStr  = getValueOfQueryParam("value", message);
-  String irCodeLengthStr = getValueOfQueryParam("length", message);
+  String irCodeType = getValueOfQueryParam("type:", message);
+  Serial.println("Code type:" + irCodeType);
+  
+  String irCodeValStr  = getValueOfQueryParam("value:", message);
+  Serial.println("code value:" + irCodeValStr);
+  unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
+
+  String irCodeLengthStr = getValueOfQueryParam("length:", message);
+  Serial.println("code length: " + irCodeLengthStr);
   int irCodeLength = irCodeLengthStr.toInt();
 
-  unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
   transmitCode(irCodeType, irCodeValue, irCodeLength);
       
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
 
 String getValueOfQueryParam(String key, String s) {
-  int beginIndex = s.indexOf(key + ":") + key.length();
+  int beginIndex = s.indexOf(key) + key.length();
   int endIndex = s.indexOf(",", beginIndex);
   return s.substring(beginIndex, endIndex);
  }

@@ -12,8 +12,6 @@ void blinkCheck() {
   }
 }
 
-
-// && results.value != UNKNOWN && results.value != REPEAT
 void processIR() {
   if (irrecv.decode(&results)) {
     if (recording) {
@@ -38,6 +36,7 @@ int codeLen; // The length of the code
 int toggle = 0; // The RC5/6 toggle state
 
 boolean storeCode(decode_results *results) {
+  Serial.println("storing code!");
   codeType = results->decode_type;
   int count = results->rawlen;
    // TODO: add LED green blink feedback on successful storage of supported code
@@ -79,6 +78,7 @@ boolean storeCode(decode_results *results) {
 }
 
 void transmitCode(String codeType, unsigned long codeValue, int codeLen) {
+  Serial.println("Transmitting: " + codeType + " " + String(codeValue, HEX) + " " + codeLen);
   if (codeType == "NEC") {
     irsend.sendNEC(codeValue, codeLen);
   } else if (codeType == "SONY") {
