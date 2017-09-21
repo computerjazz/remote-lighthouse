@@ -3752,11 +3752,9 @@ react-native-sortable-list@^0.0.16:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-sortable-listview@0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-sortable-listview/-/react-native-sortable-listview-0.2.2.tgz#f0405ddc52b3dda5e7faaac8314068a1734a0773"
-  dependencies:
-    react-timer-mixin "^0.13.3"
+react-native-sortable-listview@0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/react-native-sortable-listview/-/react-native-sortable-listview-0.2.6.tgz#d1ed6bb552fa5190994e507c03de5a2921688ca6"
 
 react-native-tab-view@^0.0.65:
   version "0.0.65"
@@ -3902,7 +3900,7 @@ react-test-renderer@16.0.0-alpha.12:
     fbjs "^0.8.9"
     object-assign "^4.1.0"
 
-react-timer-mixin@^0.13.2, react-timer-mixin@^0.13.3:
+react-timer-mixin@^0.13.2:
   version "0.13.3"
   resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.3.tgz#0da8b9f807ec07dc3e854d082c737c65605b3d22"
 

@@ -299,36 +299,38 @@ export function setBaseUrl(url) {
   }
 }
 
-export async function findDevicesOnNetwork(phoneIpAddress) {
-  const networkAddress = phoneIpAddress.substring(0, phoneIpAddress.lastIndexOf('.'))
-  const arr = []
-  for (let i = 0; i < 255; i++) {
-    arr[i] = new Promise(async (resolve) => {
-      try {
-        setTimeout(() => resolve('TOOK TOO LONG!'), 5000)
-        let result = await fetch(`http://${networkAddress}.${i}/marco`)
-        if (result.ok && result.status === 200) {
-          result = await result.json()
-          result.success = true
-          result.ip = `http://${networkAddress}.${i}`
-          // Add to device list
+export function findDevicesOnNetwork(phoneIpAddress) {
+  return async (dispatch) => {
+    const networkAddress = phoneIpAddress.substring(0, phoneIpAddress.lastIndexOf('.'))
+    const arr = []
+    for (let i = 0; i < 255; i++) {
+      arr[i] = new Promise(async (resolve) => {
+        try {
+          setTimeout(() => resolve('TOOK TOO LONG!'), 5000)
+          let result = await fetch(`http://${networkAddress}.${i}/marco`)
+          if (result.ok && result.status === 200) {
+            result = await result.json()
+            result.success = true
+            result.ip = `http://${networkAddress}.${i}`
+            // Add to device list
+            dispatch(setBaseUrl(result.ip))
+          }
+          resolve(result)
+        } catch (err) {
+          resolve('ERROR!')
         }
-        resolve(result)
-      } catch (err) {
-        resolve('ERROR!')
-      }
 
-    })
+      })
+    }
+    try {
+      console.log('ARRAY:', arr)
+      const responses = await Promise.all(arr)
+      console.log('DEVICES:', responses.filter(response => response.success))
+    } catch (err) {
+      console.log('## findDevicesOnNetwork error:', err)
+    }
   }
-  try {
-    console.log('ARRAY:', arr)
-    const responses = await Promise.all(arr)
-    console.log('DEVICES:', responses.filter(response => response.success))
-  } catch (err) {
-    console.log('## findDevicesOnNetwork error:', err)
   }
-
-}
 
 let pollInterval
 
@@ -430,7 +432,7 @@ export function transmitIRCode(buttonId) {
     const { type, value, length } = getState().buttons[buttonId]
     console.log('TRANSMITTING CODE', value)
 
-    const response = await fetch(`${baseUrl}/send?len=${length}&val=${value}&type=${type}`)
+    const response = await fetch(`${baseUrl}/send?length=${length}&value=${value}&type=${type}`)
     const text = await response.text()
     console.log(text)
   }

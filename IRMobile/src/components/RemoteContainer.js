@@ -18,7 +18,7 @@ import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 
 import { createTabNavigator } from '../navigation'
-import { createRemote, setBaseUrl, setEditMode, createButtonPanel, findDevicesOnNetwork } from '../actions'
+import { createRemote, setEditMode, createButtonPanel, findDevicesOnNetwork } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
@@ -36,7 +36,6 @@ class RemoteContainer extends Component {
     createRemote: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     setEditMode: PropTypes.func.isRequired,
-    setBaseUrl: PropTypes.func.isRequired,
   }
 
   shouldComponentUpdate(nextProps) {
@@ -45,27 +44,15 @@ class RemoteContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.setBaseUrl('http://192.168.86.136')
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
 
   }
 
   componentDidMount() {
-    // Get Local IP
     NetworkInfo.getIPAddress(ip => {
       console.log('IP:', ip)
-      findDevicesOnNetwork(ip)
-    });
-
-    // Get SSID
-    NetworkInfo.getSSID(ssid => {
-      console.log('SSID:', ssid)
-    });
-
-    // Get BSSID
-    NetworkInfo.getBSSID(ssid => {
-      console.log('BSSID:', ssid)
-    });
+      this.props.findDevicesOnNetwork(ip)
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -132,7 +119,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
   createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
-  setBaseUrl: url => dispatch(setBaseUrl(url)),
+  findDevicesOnNetwork: (ip) => dispatch(findDevicesOnNetwork(ip)),
   setEditMode: editing => dispatch(setEditMode(editing)),
 })
 

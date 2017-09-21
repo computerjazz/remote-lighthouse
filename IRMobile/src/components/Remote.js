@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 
 import { connect } from 'react-redux'
-import SortableListView from 'react-native-sortable-list'
+import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
@@ -174,11 +174,9 @@ class Remote extends Component {
               return acc
             }, {})}
             order={this.props.remote.panels}
-            renderRow={({key, index, data, disabled, active}) => this.renderButtonPanel(data)}
-            onChangeOrder={this.onRowMoved}
+            renderRow={this.renderButtonPanel}
+            onRowMoved={this.onRowMoved}
             sortRowStyle={styles.sortRow}
-            onActivateRow={() => this.props.setDragging(true)}
-            onReleaseRow={() => this.props.setDragging(false)}
             limitScrolling
           />
 

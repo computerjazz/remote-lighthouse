@@ -14,7 +14,7 @@
 		"react-native-branch": "^2.0.0",
 		"react-native-network-info": "^3.0.0",
 		"react-native-sortable-list": "^0.0.16",
-		"react-native-sortable-listview": "0.2.2",
+		"react-native-sortable-listview": "0.2.6",
 		"react-native-uuid": "^1.4.9",
 		"react-native-vector-icons": "^4.3.0",
 		"react-navigation": "^1.0.0-beta.11",
