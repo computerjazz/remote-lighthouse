@@ -1,11 +1,11 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <ESP32WebServer.h>
+#include <WebServer.h>
 #include <ESPmDNS.h>
 #include <IRremote.h>
 
 // Web server object. Will be listening in port 80 (default for HTTP)
-ESP32WebServer server(80);
+WebServer server(80);
 
 //IR init
 int RECV_PIN = 19;
