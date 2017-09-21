@@ -2,6 +2,7 @@ import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
 
 import panelDefs from '../dictionaries/panels'
+import { isAndroid } from '../utils'
 
 import {
   ASSIGN_IR_CODE,
@@ -296,6 +297,37 @@ export function setBaseUrl(url) {
     type: SET_BASE_URL,
     payload: url,
   }
+}
+
+export async function findDevicesOnNetwork(phoneIpAddress) {
+  const networkAddress = phoneIpAddress.substring(0, phoneIpAddress.lastIndexOf('.'))
+  const arr = []
+  for (let i = 0; i < 255; i++) {
+    arr[i] = new Promise(async (resolve) => {
+      try {
+        setTimeout(() => resolve('TOOK TOO LONG!'), 5000)
+        let result = await fetch(`http://${networkAddress}.${i}/marco`)
+        if (result.ok && result.status === 200) {
+          result = await result.json()
+          result.success = true
+          result.ip = `http://${networkAddress}.${i}`
+          // Add to device list
+        }
+        resolve(result)
+      } catch (err) {
+        resolve('ERROR!')
+      }
+
+    })
+  }
+  try {
+    console.log('ARRAY:', arr)
+    const responses = await Promise.all(arr)
+    console.log('DEVICES:', responses.filter(response => response.success))
+  } catch (err) {
+    console.log('## findDevicesOnNetwork error:', err)
+  }
+
 }
 
 let pollInterval

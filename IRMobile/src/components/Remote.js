@@ -7,11 +7,12 @@ import {
 } from 'react-native'
 
 import { connect } from 'react-redux'
-import SortableListView from 'react-native-sortable-listview'
+import SortableListView from 'react-native-sortable-list'
 
 import {
   createButtonPanel,
   setBaseUrl,
+  setDragging,
   setHeaderMenu,
   setModalVisible,
   stopRecord,
@@ -154,7 +155,7 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, remote, headerModal, theme } = this.props
+    const { editing, dragging, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
     const GeneralModal = modals[headerModal]
     if (!remote) return null
@@ -173,12 +174,15 @@ class Remote extends Component {
               return acc
             }, {})}
             order={this.props.remote.panels}
-            renderRow={this.renderButtonPanel}
-            onRowMoved={this.onRowMoved}
+            renderRow={({key, index, data, disabled, active}) => this.renderButtonPanel(data)}
+            onChangeOrder={this.onRowMoved}
             sortRowStyle={styles.sortRow}
+            onActivateRow={() => this.props.setDragging(true)}
+            onReleaseRow={() => this.props.setDragging(false)}
+            limitScrolling
           />
 
-          { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
+          { editing && !dragging && <CirclePlusButton onPress={this.showAddPanelModal} />}
 
         </View>
         { addPanelModalVisible &&
@@ -202,6 +206,7 @@ const mapStateToProps = (state, ownProps) => ({
   theme: state.settings.theme,
   remote: state.remotes[ownProps.navigation.state.routeName],
   currentRemoteId: state.app.currentRemoteId,
+  dragging: state.app.dragging,
   editing: state.app.editing,
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
@@ -212,6 +217,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),
     setBaseUrl: url => dispatch(setBaseUrl(url)),
+    setDragging: dragging => dispatch(setDragging(dragging)),
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),

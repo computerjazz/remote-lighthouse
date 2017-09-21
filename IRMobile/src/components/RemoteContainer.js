@@ -8,6 +8,8 @@ import {
 
 import { connect } from 'react-redux'
 
+import { NetworkInfo } from 'react-native-network-info';
+
 import { POWER } from '../constants/ui'
 
 import Remote from './Remote'
@@ -16,7 +18,7 @@ import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 
 import { createTabNavigator } from '../navigation'
-import { createRemote, setBaseUrl, setEditMode, createButtonPanel } from '../actions'
+import { createRemote, setBaseUrl, setEditMode, createButtonPanel, findDevicesOnNetwork } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
@@ -39,17 +41,31 @@ class RemoteContainer extends Component {
 
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
-    // or theme has changed
-    const remoteListHasChanged = nextProps.remotes.list.length !== this.props.remotes.list.length
-    //const themeHasChanged = nextProps.theme !== this.props.theme
-    const shouldUpdate = remoteListHasChanged
-    return shouldUpdate
-
+    return nextProps.remotes.list.length !== this.props.remotes.list.length
   }
 
   componentWillMount() {
     this.props.setBaseUrl('http://192.168.86.136')
-    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
+
+  }
+
+  componentDidMount() {
+    // Get Local IP
+    NetworkInfo.getIPAddress(ip => {
+      console.log('IP:', ip)
+      findDevicesOnNetwork(ip)
+    });
+
+    // Get SSID
+    NetworkInfo.getSSID(ssid => {
+      console.log('SSID:', ssid)
+    });
+
+    // Get BSSID
+    NetworkInfo.getBSSID(ssid => {
+      console.log('BSSID:', ssid)
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,6 +118,7 @@ class RemoteContainer extends Component {
 }
 
 const mapStateToProps = state => ({
+  dragging: state.app.dragging,
   theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,

@@ -4,7 +4,6 @@
 #include <ESPmDNS.h>
 #include <IRremote.h>
 
-// Web server object. Will be listening in port 80 (default for HTTP)
 WebServer server(80);
 
 //IR init
@@ -26,9 +25,9 @@ decode_results results;
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("2MuchFun", "burgerbelly"); //Connect to the WiFi network
+  WiFi.begin("2MuchFun", "burgerbelly");
 
-  while (WiFi.status() != WL_CONNECTED) { //Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Waiting to connect…");
   }
@@ -42,6 +41,7 @@ void setup() {
   server.on("/clear", clearState);
   server.on("/send", sendCode);
   server.on("/test", test);
+  server.on("/marco", sayPolo);
 
 
   server.begin();
@@ -89,10 +89,10 @@ void sendCode() {
   }
 
   Serial.println("Sending " + message);
-  
+
   String irCodeType = getValueOfQueryParam("type:", message);
   Serial.println("Code type:" + irCodeType);
-  
+
   String irCodeValStr  = getValueOfQueryParam("value:", message);
   Serial.println("code value:" + irCodeValStr);
   unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
@@ -102,7 +102,7 @@ void sendCode() {
   int irCodeLength = irCodeLengthStr.toInt();
 
   transmitCode(irCodeType, irCodeValue, irCodeLength);
-      
+
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
 
@@ -120,3 +120,6 @@ void test() {
   server.send(200, "application/json", "{\"args\":" + message + ", \"ircode\":" + lastIRCodeReceived + "}");
 }
 
+void sayPolo() {
+  server.send(200, "application/json", "{\"message\":\"polo\"}");
+}
