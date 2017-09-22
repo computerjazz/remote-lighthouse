@@ -1,5 +1,6 @@
 import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
+import { NetworkInfo } from 'react-native-network-info'
 
 import panelDefs from '../dictionaries/panels'
 import { isAndroid } from '../utils'
@@ -14,7 +15,7 @@ import {
   UPDATE_REMOTE,
   DELETE_REMOTE,
   DELETE_BUTTON,
-  SET_BASE_URL,
+  SET_BASE_URLS,
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
@@ -23,6 +24,7 @@ import {
   SET_DRAGGING,
   SET_MODAL_VISIBLE,
   SET_HEADER_MODAL,
+  SET_SCANNING,
   SET_THEME,
 } from '../constants/actions'
 
@@ -207,6 +209,15 @@ export function setDragging(dragging) {
   }
 }
 
+export function setScanning(scanning) {
+  return {
+    type: SET_SCANNING,
+    payload: {
+      scanning,
+    }
+  }
+}
+
 export function setcapturingButtonId(buttonId) {
   return {
     type: SET_RECORDING_BUTTON_ID,
@@ -292,17 +303,27 @@ export function deleteButtonPanel(panelId, remoteId) {
   }
 }
 
-export function setBaseUrl(url) {
+export function setbaseUrls(urls) {
   return {
-    type: SET_BASE_URL,
-    payload: url,
+    type: SET_BASE_URLS,
+    payload: {
+      urls
+    },
   }
 }
 
-export function findDevicesOnNetwork(phoneIpAddress) {
+export function findDevicesOnNetwork() {
   return async (dispatch) => {
-    const networkAddress = phoneIpAddress.substring(0, phoneIpAddress.lastIndexOf('.'))
+    dispatch(setScanning(true))
+    const ip = await new Promise((resolve, reject) => {
+      NetworkInfo.getIPAddress(ip => {
+        resolve(ip)
+      })
+    })
+    const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
     const arr = []
+
+    // Loop through all 256 possible ip addresses looking for a lighthouse :)
     for (let i = 0; i < 255; i++) {
       arr[i] = new Promise(async (resolve) => {
         try {
@@ -312,30 +333,33 @@ export function findDevicesOnNetwork(phoneIpAddress) {
             result = await result.json()
             result.success = true
             result.ip = `http://${networkAddress}.${i}`
-            // Add to device list
-            dispatch(setBaseUrl(result.ip))
           }
           resolve(result)
         } catch (err) {
           resolve('ERROR!')
         }
-
       })
     }
+
     try {
-      console.log('ARRAY:', arr)
       const responses = await Promise.all(arr)
-      console.log('DEVICES:', responses.filter(response => response.success))
+      const deviceIPs = responses.filter(response => response.success).map(device => device.ip)
+      console.log('Addresses:', deviceIPs)
+      dispatch(setbaseUrls(deviceIPs))
+      dispatch(setScanning(false))
+
+
     } catch (err) {
       console.log('## findDevicesOnNetwork error:', err)
+      dispatch(setScanning(false))
     }
   }
-  }
+}
 
 let pollInterval
 
 export function captureIRCode(buttonId, onStatusChanged) {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     console.log('CAPTURING!!', buttonId)
     try {
       const response = await dispatch(startRecord(buttonId))
@@ -343,7 +367,7 @@ export function captureIRCode(buttonId, onStatusChanged) {
         dispatch(checkForCapturedCode(buttonId, onStatusChanged))
       }
     } catch (err) {
-      console.log('## startRecord err', err)
+      console.log('## caputreIRCode err', err)
       if (pollInterval) clearInterval(pollInterval)
     }
   }
@@ -353,18 +377,22 @@ export function startRecord(buttonId) {
   return async (dispatch, getState) => {
     console.log('START RECORD')
     dispatch(setcapturingButtonId(buttonId))
-    const { baseUrl } = getState().network
-    const response = await fetch(`${baseUrl}/rec`)
-    return response
+    const { baseUrls } = getState().network
+    try {
+      const response = await fetch(`${baseUrls[0]}/rec`)
+      return response
+    } catch (err) {
+      console.log('## startRecord error', err)
+    }
   }
 }
 
 export function stopRecord() {
   return async (dispatch, getState) => {
-    const { baseUrl } = getState().network
+    const { baseUrls } = getState().network
     try {
       dispatch(setcapturingButtonId(null))
-      fetch(`${baseUrl}/stop`)
+      fetch(`${baseUrls[0]}/stop`)
       if (pollInterval) clearInterval(pollInterval)
     } catch (err) {
       console.log('## stopRecord err', err)
@@ -374,9 +402,9 @@ export function stopRecord() {
 
 export function clearRecordingState() {
   return async (dispatch, getState) => {
-    const { baseUrl } = getState().network
+    const { baseUrls } = getState().network
     try {
-      fetch(`${baseUrl}/clear`)
+      fetch(`${baseUrls[0]}/clear`)
     } catch (err) {
       console.log('## clearRecordingState err', err)
     }
@@ -389,7 +417,7 @@ const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 5
 
 export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
   return async (dispatch, getState) => {
-    const { baseUrl } = getState().network
+    const { baseUrls } = getState().network
     try {
 
       if (pollInterval) clearInterval(pollInterval)
@@ -399,7 +427,7 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
 
         console.log('Checking...', pollCounter)
 
-        const response = await fetch(`${baseUrl}/check`)
+        const response = await fetch(`${baseUrls[0]}/check`)
         const codeData = await response.json()
         if (codeData && codeData.value) {
           console.log('GOT A CODE!', codeData)
@@ -427,12 +455,12 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
 
 export function transmitIRCode(buttonId) {
   return async (dispatch, getState) => {
-    const { baseUrl } = getState().network
+    const { baseUrls } = getState().network
     console.log(getState().buttons)
     const { type, value, length } = getState().buttons[buttonId]
     console.log('TRANSMITTING CODE', value)
 
-    const response = await fetch(`${baseUrl}/send?length=${length}&value=${value}&type=${type}`)
+    const response = await fetch(`${baseUrls[0]}/send?length=${length}&value=${value}&type=${type}`)
     const text = await response.text()
     console.log(text)
   }

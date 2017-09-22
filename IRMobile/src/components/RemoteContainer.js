@@ -8,8 +8,6 @@ import {
 
 import { connect } from 'react-redux'
 
-import { NetworkInfo } from 'react-native-network-info';
-
 import { POWER } from '../constants/ui'
 
 import Remote from './Remote'
@@ -45,14 +43,7 @@ class RemoteContainer extends Component {
 
   componentWillMount() {
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
-
-  }
-
-  componentDidMount() {
-    NetworkInfo.getIPAddress(ip => {
-      console.log('IP:', ip)
-      this.props.findDevicesOnNetwork(ip)
-    })
+    this.props.findDevicesOnNetwork()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -119,7 +110,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
   createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
-  findDevicesOnNetwork: (ip) => dispatch(findDevicesOnNetwork(ip)),
+  findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
   setEditMode: editing => dispatch(setEditMode(editing)),
 })
 

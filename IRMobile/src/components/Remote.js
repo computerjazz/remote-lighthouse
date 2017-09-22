@@ -11,7 +11,6 @@ import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
-  setBaseUrl,
   setDragging,
   setHeaderMenu,
   setModalVisible,
@@ -43,7 +42,6 @@ class Remote extends Component {
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
-    setBaseUrl: PropTypes.func.isRequired,
     stopRecord: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     remote: PropTypes.object.isRequired,
@@ -80,11 +78,8 @@ class Remote extends Component {
    if (!nextProps.remote) return
    const titleHasChanged = remote.title !== nextProps.remote.title
    const paramsNotSet = !this.props.navigation.state.params && !nextProps.navigation.state.params
-   console.log('REMOTE', nextProps.remote)
-   console.log('THISPROPS', this.props.navigation.state.params)
-   console.log('NEXTPROPS', nextProps.navigation.state.params)
+
    if (titleHasChanged || paramsNotSet) {
-     console.log('SETTING PARAMS', nextProps.remote.title)
      navigation.setParams({ title: nextProps.remote.title })
    }
 
@@ -214,7 +209,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),
-    setBaseUrl: url => dispatch(setBaseUrl(url)),
     setDragging: dragging => dispatch(setDragging(dragging)),
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
