@@ -11,6 +11,7 @@ WebServer server(80);
 
 //IR init
 int RECV_PIN = 19;
+int PORTAL_MODE_PIN = 18;
 String lastIRCodeReceived = "";
 
 int RED_PIN = 21;
@@ -28,13 +29,20 @@ decode_results results;
 
 void setup() {
   Serial.begin(115200);
+  pinMode(PORTAL_MODE_PIN, INPUT);
 
   //Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wifiManager;
   //reset saved settings
   //wifiManager.resetSettings();
-  
-  wifiManager.autoConnect("RemoteLighthouse");
+
+  // Start in wifi portal mode if button is pressed
+  if (digitalRead(PORTAL_MODE_PIN) == HIGH) {
+    Serial.println("Starting in portal mode");
+    wifiManager.startConfigPortal("RemoteLighthouse");
+  } else {
+    wifiManager.autoConnect("RemoteLighthouse");
+  }
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
@@ -48,8 +56,6 @@ void setup() {
   server.on("/send", sendCode);
   server.on("/test", test);
   server.on("/marco", sayPolo);
-  server.on("/forget", forgetNetwork);
-
 
   server.begin();
   Serial.println("Server listening");
@@ -129,9 +135,5 @@ void test() {
 
 void sayPolo() {
   server.send(200, "application/json", "{\"message\":\"polo\"}");
-}
-
-void forgetNetwork() {
-  server.send(200, "application/json", "{\"message\":\"disconnecting\"}");
 }
 
