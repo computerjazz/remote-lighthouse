@@ -172,7 +172,6 @@ class Remote extends Component {
             renderRow={this.renderButtonPanel}
             onRowMoved={this.onRowMoved}
             sortRowStyle={styles.sortRow}
-            limitScrolling
           />
 
           { editing && !dragging && <CirclePlusButton onPress={this.showAddPanelModal} />}
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonPanelList: {
-    flex: 0,
+    flex: 1,
   },
   sortRow: {
       opacity: 1.0,

@@ -1,8 +1,11 @@
-#include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <IRremote.h>
+#include <WiFiManager.h>
+#include <WiFi.h>
+#include <ESP.h>
+
 
 WebServer server(80);
 
@@ -25,16 +28,19 @@ decode_results results;
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("2MuchFun", "burgerbelly");
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.println("Waiting to connect…");
-  }
+  //Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wifiManager;
+  //reset saved settings
+  //wifiManager.resetSettings();
+  
+  wifiManager.autoConnect("RemoteLighthouse");
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+  
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
   server.on("/check", checkIRCode);
@@ -42,6 +48,7 @@ void setup() {
   server.on("/send", sendCode);
   server.on("/test", test);
   server.on("/marco", sayPolo);
+  server.on("/forget", forgetNetwork);
 
 
   server.begin();
@@ -123,3 +130,8 @@ void test() {
 void sayPolo() {
   server.send(200, "application/json", "{\"message\":\"polo\"}");
 }
+
+void forgetNetwork() {
+  server.send(200, "application/json", "{\"message\":\"disconnecting\"}");
+}
+

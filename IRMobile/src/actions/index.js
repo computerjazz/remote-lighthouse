@@ -375,11 +375,12 @@ export function captureIRCode(buttonId, onStatusChanged) {
 
 export function startRecord(buttonId) {
   return async (dispatch, getState) => {
+    const { baseUrls } = getState().network
     console.log('START RECORD')
     dispatch(setcapturingButtonId(buttonId))
-    const { baseUrls } = getState().network
     try {
-      const response = await fetch(`${baseUrls[0]}/rec`)
+      const response = await Promise.race(baseUrls.map(url => fetch(url + '/rec')))
+      console.log('START RECORD::response', response)
       return response
     } catch (err) {
       console.log('## startRecord error', err)
@@ -392,7 +393,7 @@ export function stopRecord() {
     const { baseUrls } = getState().network
     try {
       dispatch(setcapturingButtonId(null))
-      fetch(`${baseUrls[0]}/stop`)
+      baseUrls.forEach(url => fetch(url + '/stop'))
       if (pollInterval) clearInterval(pollInterval)
     } catch (err) {
       console.log('## stopRecord err', err)
@@ -404,7 +405,7 @@ export function clearRecordingState() {
   return async (dispatch, getState) => {
     const { baseUrls } = getState().network
     try {
-      fetch(`${baseUrls[0]}/clear`)
+      baseUrls.forEach(url => fetch(url + '/clear'))
     } catch (err) {
       console.log('## clearRecordingState err', err)
     }
@@ -427,8 +428,10 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
 
         console.log('Checking...', pollCounter)
 
-        const response = await fetch(`${baseUrls[0]}/check`)
-        const codeData = await response.json()
+        const responses = await Promise.all(baseUrls.map(url => fetch(url + '/check')))
+        const parsedResponses = await Promise.all(responses.map(response => response.json()))
+        console.log('RESPONSES', parsedResponses)
+        const codeData = parsedResponses.find(item => item.value)
         if (codeData && codeData.value) {
           console.log('GOT A CODE!', codeData)
           clearInterval(pollInterval)
@@ -460,8 +463,8 @@ export function transmitIRCode(buttonId) {
     const { type, value, length } = getState().buttons[buttonId]
     console.log('TRANSMITTING CODE', value)
 
-    const response = await fetch(`${baseUrls[0]}/send?length=${length}&value=${value}&type=${type}`)
-    const text = await response.text()
+    const responses = await Promise.all(baseUrls.map(url => fetch(`${url}/send?length=${length}&value=${value}&type=${type}`)))
+    const text = await Promise.all(responses.map(response => response.text()))
     console.log(text)
   }
 }
