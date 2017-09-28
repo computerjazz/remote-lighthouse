@@ -55,7 +55,6 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
-    console.log('SETTING TITLE', this.props.remote.title)
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => false,
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonPanelList: {
-    flex: 1,
+    // flex: 1,
   },
   sortRow: {
       opacity: 1.0,

@@ -29,11 +29,24 @@ class RemoteContainer extends Component {
     }
 
   static propTypes = {
-    theme: PropTypes.string.isRequired,
-    remotes: PropTypes.object.isRequired,
+    capturing: PropTypes.bool.isRequired,
+    capturingButtonId: PropTypes.string,
+    createButtonPanel: PropTypes.func.isRequired,
     createRemote: PropTypes.func.isRequired,
+    currentRemoteId: PropTypes.string,
+    editing: PropTypes.bool.isRequired,
+    findDevicesOnNetwork: PropTypes.func.isRequired,
+    modalVisible: PropTypes.bool.isRequired,
     navigation: PropTypes.object.isRequired,
+    rehydrated: PropTypes.bool.isRequired,
+    remotes: PropTypes.object.isRequired,
     setEditMode: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
+  }
+
+  static defaultProps = {
+    capturingButtonId: null,
+    currentRemoteId: null,
   }
 
   shouldComponentUpdate(nextProps) {
