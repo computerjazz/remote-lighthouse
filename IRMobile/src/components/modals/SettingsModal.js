@@ -1,23 +1,29 @@
 import React, { Component, PropTypes } from 'react'
 import {
+  ActivityIndicator,
   BackHandler,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   View,
 } from 'react-native'
 
 import { connect } from 'react-redux'
 
 import TextButton from '../TextButton'
-import { updateRemote, setHeaderModal, setTheme } from '../../actions'
+import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme } from '../../actions'
 import { isAndroid } from '../../utils'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 import themes, { list as themeList} from '../../constants/themes'
 
 class SelectRemoteIconModal extends Component {
+
+  static propTypes = {
+    baseUrls: PropTypes.array,
+  }
 
   state = {
     selectedTheme: '',
@@ -35,14 +41,14 @@ class SelectRemoteIconModal extends Component {
   }
 
   onDonePress = () => {
-    if (this.state.selectedTheme !== this.props.theme) this.props.setTheme(this.state.selectedTheme)
+
     this.props.setHeaderModal(null)
     this.props.onSubmit()
   }
 
-  renderFakeButton = (themeName, index) => (
-    <View key={index} style={[styles.fakeButton, {backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR}]}>
-      <View style={[styles.fakeButtonInner, {backgroundColor: themes[themeName].BUTTON_ICON_COLOR}]} />
+  renderThemeDemoButton = (themeName, index) => (
+    <View key={index} style={[styles.themeDemoButton, {backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR}]}>
+      <View style={[styles.themeDemoButtonInner, {backgroundColor: themes[themeName].BUTTON_ICON_COLOR}]} />
     </View>
   )
 
@@ -51,25 +57,47 @@ class SelectRemoteIconModal extends Component {
     return (
       <TouchableOpacity
         key={themeName}
-        onPress={() => this.setState({ selectedTheme: themeName })}
+        onPress={() => {
+          this.setState({ selectedTheme: themeName })
+          this.props.setTheme(themeName)
+        }}
         style={[styles.option, { backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent'}]}
       >
-        <View style={[styles.fakeButtonRow,{backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR}]}>
-          {[0,0,0].map((item, i) => this.renderFakeButton(themeName, i))}
+        <View style={[styles.themeDemoButtonRow,{backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR}]}>
+          {[0,0,0].map((item, i) => this.renderThemeDemoButton(themeName, i))}
         </View>
-        <Text>{themeName}</Text>
       </TouchableOpacity>
     )
   }
 
   render() {
-    const { onSubmit, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR } = themes[theme]
+    const { baseUrls, onSubmit, scanning, theme } = this.props
+    const { MODAL_BACKGROUND_COLOR, BUTTON_EDIT_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
 
           <ScrollView style={styles.scrollView}>
+
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 15, }}>{`${baseUrls.length} lighthouse${baseUrls.length > 1 ? 's' : ''} connected:`}</Text>
+              {baseUrls.map(url => <Text key={url}>{url}</Text>)}
+            </View>
+
+
+            <TouchableHighlight
+              activeOpacity={0.5}
+              style={[styles.scanButton, { backgroundColor: BUTTON_EDIT_COLOR }]}
+              underlayColor={MODAL_BACKGROUND_COLOR}
+              onPress={this.props.findDevicesOnNetwork}
+            >
+              {scanning ?
+                <ActivityIndicator small color={TEXT_COLOR_LIGHT} /> :
+                <Text style={{color: TEXT_COLOR_LIGHT}}>Scan Network</Text>
+              }
+            </TouchableHighlight>
+
+
             {themeList.map(this.renderThemeOption)}
           </ScrollView>
 
@@ -91,12 +119,15 @@ SelectRemoteIconModal.defaultProps = {
 }
 
 const mapStateToProps = state => ({
+  baseUrls: state.network.baseUrls,
+  scanning: state.network.scanning,
   theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
 })
 
 const mapDispatchToProps = (dispatch) => ({
+  findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
   updateRemote: (remoteId, updatedRemote) => dispatch(updateRemote(remoteId, updatedRemote)),
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   setTheme: theme => dispatch(setTheme(theme)),
@@ -146,6 +177,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     borderRadius: BUTTON_RADIUS,
   },
+  scanButton: {
+    height: 40,
+    padding: 10,
+    margin: 10,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: BUTTON_RADIUS,
+  },
   scrollView: {
     flex: 6,
     padding: 10,
@@ -161,14 +201,14 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_RADIUS,
     backgroundColor: 'rgba(0, 0, 0, .1)',
   },
-  fakeButtonRow: {
+  themeDemoButtonRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
     borderRadius: BUTTON_RADIUS
   },
-  fakeButton: {
+  themeDemoButton: {
     paddingHorizontal: 10,
     paddingVertical: 15,
     flex: 1,
@@ -179,7 +219,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30
   },
-  fakeButtonInner: {
+  themeDemoButtonInner: {
     padding: 10,
     borderRadius: 30
   }

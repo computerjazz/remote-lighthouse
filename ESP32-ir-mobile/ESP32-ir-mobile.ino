@@ -1,14 +1,17 @@
-#include <WiFi.h>
 #include <WiFiClient.h>
-#include <ESP32WebServer.h>
+#include <WebServer.h>
 #include <ESPmDNS.h>
 #include <IRremote.h>
+#include <WiFiManager.h>
+#include <WiFi.h>
+#include <ESP.h>
 
-// Web server object. Will be listening in port 80 (default for HTTP)
-ESP32WebServer server(80);
+
+WebServer server(80);
 
 //IR init
 int RECV_PIN = 19;
+int PORTAL_MODE_PIN = 18;
 String lastIRCodeReceived = "";
 
 int RED_PIN = 21;
@@ -26,23 +29,33 @@ decode_results results;
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("2MuchFun", "burgerbelly"); //Connect to the WiFi network
+  pinMode(PORTAL_MODE_PIN, INPUT);
 
-  while (WiFi.status() != WL_CONNECTED) { //Wait for connection
-    delay(500);
-    Serial.println("Waiting to connect…");
+  //Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wifiManager;
+  //reset saved settings
+  //wifiManager.resetSettings();
+
+  // Start in wifi portal mode if button is pressed
+  if (digitalRead(PORTAL_MODE_PIN) == HIGH) {
+    Serial.println("Starting in portal mode");
+    wifiManager.startConfigPortal("RemoteLighthouse");
+  } else {
+    wifiManager.autoConnect("RemoteLighthouse");
   }
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+  
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
   server.on("/check", checkIRCode);
   server.on("/clear", clearState);
   server.on("/send", sendCode);
   server.on("/test", test);
-
+  server.on("/marco", sayPolo);
 
   server.begin();
   Serial.println("Server listening");
@@ -89,10 +102,10 @@ void sendCode() {
   }
 
   Serial.println("Sending " + message);
-  
+
   String irCodeType = getValueOfQueryParam("type:", message);
   Serial.println("Code type:" + irCodeType);
-  
+
   String irCodeValStr  = getValueOfQueryParam("value:", message);
   Serial.println("code value:" + irCodeValStr);
   unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
@@ -102,7 +115,7 @@ void sendCode() {
   int irCodeLength = irCodeLengthStr.toInt();
 
   transmitCode(irCodeType, irCodeValue, irCodeLength);
-      
+
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
 
@@ -118,5 +131,9 @@ void test() {
     message += server.argName(i) + ":" + server.arg(i) + ",";
   }
   server.send(200, "application/json", "{\"args\":" + message + ", \"ircode\":" + lastIRCodeReceived + "}");
+}
+
+void sayPolo() {
+  server.send(200, "application/json", "{\"message\":\"polo\"}");
 }
 

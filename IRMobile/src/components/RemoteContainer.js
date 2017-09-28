@@ -16,7 +16,7 @@ import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 
 import { createTabNavigator } from '../navigation'
-import { createRemote, setBaseUrl, setEditMode, createButtonPanel } from '../actions'
+import { createRemote, setEditMode, createButtonPanel, findDevicesOnNetwork } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
@@ -29,27 +29,34 @@ class RemoteContainer extends Component {
     }
 
   static propTypes = {
-    theme: PropTypes.string.isRequired,
-    remotes: PropTypes.object.isRequired,
+    capturing: PropTypes.bool.isRequired,
+    capturingButtonId: PropTypes.string,
+    createButtonPanel: PropTypes.func.isRequired,
     createRemote: PropTypes.func.isRequired,
+    currentRemoteId: PropTypes.string,
+    editing: PropTypes.bool.isRequired,
+    findDevicesOnNetwork: PropTypes.func.isRequired,
+    modalVisible: PropTypes.bool.isRequired,
     navigation: PropTypes.object.isRequired,
+    rehydrated: PropTypes.bool.isRequired,
+    remotes: PropTypes.object.isRequired,
     setEditMode: PropTypes.func.isRequired,
-    setBaseUrl: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
+  }
+
+  static defaultProps = {
+    capturingButtonId: null,
+    currentRemoteId: null,
   }
 
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
-    // or theme has changed
-    const remoteListHasChanged = nextProps.remotes.list.length !== this.props.remotes.list.length
-    //const themeHasChanged = nextProps.theme !== this.props.theme
-    const shouldUpdate = remoteListHasChanged
-    return shouldUpdate
-
+    return nextProps.remotes.list.length !== this.props.remotes.list.length
   }
 
   componentWillMount() {
-    this.props.setBaseUrl('http://192.168.86.136')
-    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
+    this.props.findDevicesOnNetwork()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,6 +109,7 @@ class RemoteContainer extends Component {
 }
 
 const mapStateToProps = state => ({
+  dragging: state.app.dragging,
   theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,
@@ -115,7 +123,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
   createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
-  setBaseUrl: url => dispatch(setBaseUrl(url)),
+  findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
   setEditMode: editing => dispatch(setEditMode(editing)),
 })
 

@@ -11,7 +11,7 @@ import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
-  setBaseUrl,
+  setDragging,
   setHeaderMenu,
   setModalVisible,
   stopRecord,
@@ -42,7 +42,6 @@ class Remote extends Component {
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
-    setBaseUrl: PropTypes.func.isRequired,
     stopRecord: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     remote: PropTypes.object.isRequired,
@@ -56,7 +55,6 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
-    console.log('SETTING TITLE', this.props.remote.title)
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => false,
@@ -79,11 +77,8 @@ class Remote extends Component {
    if (!nextProps.remote) return
    const titleHasChanged = remote.title !== nextProps.remote.title
    const paramsNotSet = !this.props.navigation.state.params && !nextProps.navigation.state.params
-   console.log('REMOTE', nextProps.remote)
-   console.log('THISPROPS', this.props.navigation.state.params)
-   console.log('NEXTPROPS', nextProps.navigation.state.params)
+
    if (titleHasChanged || paramsNotSet) {
-     console.log('SETTING PARAMS', nextProps.remote.title)
      navigation.setParams({ title: nextProps.remote.title })
    }
 
@@ -154,7 +149,7 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, remote, headerModal, theme } = this.props
+    const { editing, dragging, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
     const GeneralModal = modals[headerModal]
     if (!remote) return null
@@ -178,7 +173,7 @@ class Remote extends Component {
             sortRowStyle={styles.sortRow}
           />
 
-          { editing && <CirclePlusButton onPress={this.showAddPanelModal} />}
+          { editing && !dragging && <CirclePlusButton onPress={this.showAddPanelModal} />}
 
         </View>
         { addPanelModalVisible &&
@@ -202,6 +197,7 @@ const mapStateToProps = (state, ownProps) => ({
   theme: state.settings.theme,
   remote: state.remotes[ownProps.navigation.state.routeName],
   currentRemoteId: state.app.currentRemoteId,
+  dragging: state.app.dragging,
   editing: state.app.editing,
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
@@ -211,7 +207,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),
-    setBaseUrl: url => dispatch(setBaseUrl(url)),
+    setDragging: dragging => dispatch(setDragging(dragging)),
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),
@@ -225,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonPanelList: {
-    flex: 0,
+    // flex: 1,
   },
   sortRow: {
       opacity: 1.0,

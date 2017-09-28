@@ -130,7 +130,6 @@ const mapDispatchToProps = dispatch => ({
   setcapturingButtonId: buttonId => dispatch(setcapturingButtonId(buttonId)),
   setEditButtonModalVisible: visible => dispatch(setEditButtonModalVisible(visible)),
   setEditButtonId: buttonId => dispatch(setEditButtonId(buttonId)),
-  setDragging: dragging => dispatch(setDragging(dragging)),
   deleteButtonPanel: (panelId, remoteId) => dispatch(deleteButtonPanel(panelId, remoteId)),
 })
 
