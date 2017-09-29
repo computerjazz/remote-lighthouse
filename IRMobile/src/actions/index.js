@@ -1,3 +1,4 @@
+import { Platform } from 'react-native'
 import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
 import { NetworkInfo } from 'react-native-network-info'
@@ -15,7 +16,7 @@ import {
   UPDATE_REMOTE,
   DELETE_REMOTE,
   DELETE_BUTTON,
-  SET_BASE_URLS,
+  SET_DEVICE_URLS,
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
@@ -303,9 +304,9 @@ export function deleteButtonPanel(panelId, remoteId) {
   }
 }
 
-export function setbaseUrls(urls) {
+export function setDeviceUrls(urls) {
   return {
-    type: SET_BASE_URLS,
+    type: SET_DEVICE_URLS,
     payload: {
       urls
     },
@@ -315,11 +316,11 @@ export function setbaseUrls(urls) {
 export function findDevicesOnNetwork() {
   return async (dispatch) => {
     dispatch(setScanning(true))
-    const ip = await new Promise((resolve, reject) => {
-      NetworkInfo.getIPAddress(ip => {
-        resolve(ip)
-      })
-    })
+    // ios doesn't have a getIPV4Address function, returns ipv4 by default
+    const getIPAddress = Platform.OS === 'android' ? NetworkInfo.getIPV4Address : NetworkInfo.getIPAddress
+    const ip = await new Promise(getIPAddress)
+    console.log('My IP Address: ', ip)
+    if (ip.length < 5) return
     const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
     const arr = []
 
@@ -345,7 +346,7 @@ export function findDevicesOnNetwork() {
       const responses = await Promise.all(arr)
       const deviceIPs = responses.filter(response => response.success).map(device => device.ip)
       console.log('Addresses:', deviceIPs)
-      dispatch(setbaseUrls(deviceIPs))
+      dispatch(setDeviceUrls(deviceIPs))
       dispatch(setScanning(false))
 
 

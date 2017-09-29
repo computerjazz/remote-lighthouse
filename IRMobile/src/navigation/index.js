@@ -2,7 +2,7 @@ import React from 'react'
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
 
-import TabBar from '../components/menu/TabBar'
+import TabBar from '../components/nav/TabBar'
 import { setCurrentRemoteId, setModalVisible, setHeaderModal, setEditMode } from '../actions'
 import themes from '../constants/themes'
 
@@ -28,7 +28,7 @@ export const createTabNavigator = (remotes, Screen) => {
 
   const navigatorConfig = {
     initialRouteName: keys[keys.length-1],
-    swipeEnabled: false,
+    // swipeEnabled: false,
     animationEnabled: true,
     order: keys,
     tabBarComponent: TabBar,

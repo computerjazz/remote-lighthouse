@@ -1,17 +1,16 @@
-# ir-mobile
+# Remote Lighthouse
 
-## React Native App + Arduino Uno + ESP8266 WiFi module
+## React Native App + Arduino Uno + ESP32 WiFi module
 
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
 ### Hardware
 - Arduino Uno
-- ESP8266 WiFi Module
-- 3.3v USB to TTL adapter (for providing correct voltage to ESP8266 — I used [this one](https://www.amazon.com/gp/product/B01HXT8DZ4/ref=oh_aui_detailpage_o04_s00?ie=UTF8&psc=1))
-- 4 1kΩ resistors
-- 2 2kΩ resistors
-- IR Transmitter LED
+- ESP32 WiFi/Bluetooth Module
+- IR Transmitter LEDs
 - IR receiver component
+- rgbLED
+- various resistors/transistors
 
 
 ### You will need to install
@@ -33,7 +32,7 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 ```
 
 
-Where `ESP_IP_ADDRESS` is the address of the ESP8266 on your network, for example `192.168.86.99`
+Where `ESP_IP_ADDRESS` is the address of the ESP on your network, for example `192.168.86.99`
 
 ### Wiring
 ![esp32 pinout](https://i.imgur.com/OJ5QfC6.jpg)

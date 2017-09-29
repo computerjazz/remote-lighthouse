@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import { POWER } from '../constants/ui'
 
 import Remote from './Remote'
-import Header from './menu/Header'
+import Header from './nav/Header'
 import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 

@@ -3,7 +3,7 @@ import {
 } from '../constants/actions'
 
 const initialState = {
-  theme: 'dark',
+  theme: 'retro',
 }
 
 export default (state = initialState, action) => {

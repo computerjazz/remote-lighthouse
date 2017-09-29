@@ -16,3 +16,6 @@ export const POMEGRANATE = '#c0392b'
 export const POMEGRANATE_ANALOGOUS = tinycolor(POMEGRANATE).complement().toString()
 export const WHITE = 'white'
 export const WHITE_TRANSLUCENT = 'rgba(255, 255, 255, 0.9)'
+export const SILVER = '#bdc3c7'
+export const CLOUDS = '#ecf0f1'
+export const PETER_RIVER = '#3498db'

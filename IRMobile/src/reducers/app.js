@@ -35,11 +35,13 @@ export default (state = initialState, action) => {
         ...state,
         headerMenuVisible: action.payload.visible,
       }
+      
     case SET_MODAL_VISIBLE:
       return {
         ...state,
         modalVisible: action.payload.visible,
       }
+
     case SET_HEADER_MODAL:
       return {
         ...state,

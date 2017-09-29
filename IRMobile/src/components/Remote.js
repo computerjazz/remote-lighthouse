@@ -25,8 +25,8 @@ import ButtonPanel from './ButtonPanel'
 import CirclePlusButton from './CirclePlusButton'
 import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
-import TabIcon from './menu/TabIcon'
-import TabLabel from './menu/TabLabel'
+import TabIcon from './nav/TabIcon'
+import TabLabel from './nav/TabLabel'
 
 class Remote extends Component {
 

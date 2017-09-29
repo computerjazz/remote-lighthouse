@@ -29,7 +29,7 @@ class HeaderMenuButton extends Component {
   }
 
   renderDots() {
-    const { PRIMARY_DARK_ANALOGOUS } = themes[this.props.theme]
+    const { HEADER_ICON_COLOR } = themes[this.props.theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -38,7 +38,7 @@ class HeaderMenuButton extends Component {
         <Icon
           name="dots-vertical"
           size={30}
-          color={PRIMARY_DARK_ANALOGOUS}
+          color={HEADER_ICON_COLOR}
         />
       </TouchableOpacity>
     )
@@ -64,7 +64,7 @@ class HeaderMenuButton extends Component {
   renderIcon = () => {
     const { remote, editing, capturing, theme } = this.props
     const {
-      PRIMARY_DARK_ANALOGOUS,
+      HEADER_ICON_COLOR,
       HEADER_ICON_EDITING,
       HEADER_ICON_EDITING_BACKGROUND,
     } = themes[theme]
@@ -77,7 +77,7 @@ class HeaderMenuButton extends Component {
         <View style={[styles.icon, (editing || capturing) && { backgroundColor: HEADER_ICON_EDITING_BACKGROUND }]}>
           <Icon
             name={remote ? remote.icon : 'pencil'}
-            color={(editing || capturing) ? HEADER_ICON_EDITING : PRIMARY_DARK_ANALOGOUS}
+            color={(editing || capturing) ? HEADER_ICON_EDITING : HEADER_ICON_COLOR}
             size={25}
           />
         </View>

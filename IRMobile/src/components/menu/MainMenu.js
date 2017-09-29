@@ -3,6 +3,7 @@ import {
   Alert,
   Animated,
   View,
+  LayoutAnimation,
   Share,
   StyleSheet
 } from 'react-native'
@@ -21,43 +22,23 @@ import {
 } from '../../actions'
 import MenuItem from './MenuItem'
 
+import { CustomLayoutLinear } from '../../dictionaries/animations'
+
 import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
 import { GENERAL_SETTINGS, POWER } from '../../constants/ui'
 
 class MainMenu extends Component {
 
-  state = {
-    forceShowMenu: false,
-  }
-
-  animVal = new Animated.Value(0)
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.headerMenuVisible && !this.props.headerMenuVisible) {
-      this.animateMenuVisible(false)
-    }
-    if (!prevProps.headerMenuVisible && this.props.headerMenuVisible) {
-      this.animateMenuVisible(true)
-    }
-  }
-
-  animateMenuVisible = menuVisible => {
-    const toValue = menuVisible ? 1 : 0
-    this.setState({ forceShowMenu: true })
-    Animated.timing(this.animVal, {
-      toValue,
-      duration: 250,
-    }).start(() => {
-      this.setState({ forceShowMenu: false })
-    })
+  componentWillReceiveProps(nextProps) {
+    if (this.headerMenuVisible !== nextProps.headerMenuVisible) LayoutAnimation.configureNext(CustomLayoutLinear)
   }
 
   renderMainMenu = () => {
     const { MENU_BACKGROUND_COLOR } = themes[this.props.theme]
 
     return (
-      <Animated.View style={[styles.menu, { backgroundColor: MENU_BACKGROUND_COLOR }, { opacity: this.animVal }]}>
+      <Animated.View style={[styles.menu, { backgroundColor: MENU_BACKGROUND_COLOR }]}>
         <MenuItem
           icon="remote"
           text="Capture"
@@ -71,7 +52,8 @@ class MainMenu extends Component {
           text="Modify"
           onPress={() => {
             this.props.setEditMode(true)
-            this.props.setHeaderMenu(false)
+            // this.props.setHeaderMenu(false)
+            setTimeout(() => this.props.setHeaderMenu(false), 10)
           }}
         />
         <MenuItem
@@ -133,7 +115,7 @@ class MainMenu extends Component {
   }
 
   render() {
-    return (this.props.headerMenuVisible || this.state.forceShowMenu) ? this.renderMainMenu() : null
+    return this.props.headerMenuVisible ? this.renderMainMenu() : null
   }
 }
 
