@@ -27,6 +27,8 @@ IRrecv irrecv(RECV_PIN);
 IRsend irsend;
 decode_results results;
 
+boolean enteredConfig = false;
+
 void setup() {
   Serial.begin(115200);
   pinMode(PORTAL_MODE_PIN, INPUT);
@@ -35,20 +37,32 @@ void setup() {
   WiFiManager wifiManager;
   //reset saved settings
   //wifiManager.resetSettings();
+  wifiManager.setAPCallback(configModeCallback);
 
   // Start in wifi portal mode if button is pressed
   if (digitalRead(PORTAL_MODE_PIN) == HIGH) {
     Serial.println("Starting in portal mode");
     wifiManager.startConfigPortal("RemoteLighthouse");
+    
   } else {
     wifiManager.autoConnect("RemoteLighthouse");
   }
+
+  if (enteredConfig) {    
+    // fixes bug where starting in config mode will connect to wifi
+    // but not actually be functional until hard reset
+    ESP.restart();
+  }
+  
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
-  
+
+  delay(1000);
+
+  Serial.println("setting up server");
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
   server.on("/check", checkIRCode);
@@ -72,6 +86,11 @@ void loop() {
   server.handleClient();
   processIR();
   blinkCheck();
+}
+
+void configModeCallback (WiFiManager *myWiFiManager) {
+  Serial.println("Entered config mode");
+  enteredConfig = true;
 }
 
 void startRecord() {

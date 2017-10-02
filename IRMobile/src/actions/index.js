@@ -320,7 +320,7 @@ export function findDevicesOnNetwork() {
     const getIPAddress = Platform.OS === 'android' ? NetworkInfo.getIPV4Address : NetworkInfo.getIPAddress
     const ip = await new Promise(getIPAddress)
     console.log('My IP Address: ', ip)
-    if (ip.length < 5) return
+    if (!ip || ip.length < 5) return
     const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
     const arr = []
 
@@ -344,6 +344,7 @@ export function findDevicesOnNetwork() {
 
     try {
       const responses = await Promise.all(arr)
+      console.log('RESPONSES', responses)
       const deviceIPs = responses.filter(response => response.success).map(device => device.ip)
       console.log('Addresses:', deviceIPs)
       dispatch(setDeviceUrls(deviceIPs))

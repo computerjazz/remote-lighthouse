@@ -14,8 +14,9 @@ Replace every remote control in your house with a single app. ir-mobile will lis
 
 
 ### You will need to install
-- [ESP8266 library](https://github.com/esp8266/Arduino#installing-with-boards-manager)
+
 - [Arduino IRemote library](https://github.com/z3t0/Arduino-IRremote#irremote-arduino-library)
+- [bbx10's esp32 ports](https://github.com/tzapu/WiFiManager/issues/241#issuecomment-307559253p)
 
 ### API
 - GET `ESP_IP_ADDRESS/rec`: puts hardware in 'listening' mode for IR codes
