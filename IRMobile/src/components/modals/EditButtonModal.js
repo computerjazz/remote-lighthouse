@@ -28,7 +28,16 @@ class EditButtonModal extends Component {
     newTitle: '',
   }
 
+  static propTypes = {
+    button: PropTypes.object.isRequired,
+    onSubmit: PropTypes.func.isRequried,
+    theme: PropTypes.string.isRequired,
+    editButton: PropTypes.func.isRequired,
+  }
+
   componentWillMount() {
+    const { icon, title } = this.props.button
+    this.setState({ selectedIcon: icon,  newTitle: title})
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
   }
 
@@ -38,13 +47,8 @@ class EditButtonModal extends Component {
     return true
   }
 
-  componentDidMount() {
-    const { icon, title } = this.props.button
-    this.setState({ selectedIcon: icon,  newTitle: title})
-  }
-
   renderIconButton = (iconName, index) => {
-    const { ICON_SELECTED_BACKGROUND_COLOR, TEXT_COLOR_DARK, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.props.theme]
+    const { ICON_SELECTED_BACKGROUND_COLOR, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.props.theme]
     const selected = this.state.selectedIcon === iconName
     return (
       <TouchableOpacity
@@ -84,7 +88,7 @@ class EditButtonModal extends Component {
   }
 
   render() {
-    const { onSubmit, button } = this.props
+    const { onSubmit } = this.props
     const { PRIMARY_DARK, MODAL_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <View style={styles.wrapper}>

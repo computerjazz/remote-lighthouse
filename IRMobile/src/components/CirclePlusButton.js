@@ -13,6 +13,7 @@ class CirclePlusButton extends Component {
   static propTypes = {
     onPress: PropTypes.func,
     dragging: PropTypes.bool,
+    theme: PropTypes.string.isRequired,
   }
 
   render() {

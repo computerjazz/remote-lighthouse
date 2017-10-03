@@ -27,7 +27,18 @@ class SelectRemoteIconModal extends Component {
     newTitle: '',
   }
 
+  static propTypes = {
+    currentRemoteId: PropTypes.string.isRequired,
+    remote: PropTypes.object.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
+    updateRemote: PropTypes.func.isRequired,
+    setHeaderModal: PropTypes.func.isRequired,
+  }
+
   componentWillMount() {
+    const { icon, title } = this.props.remote
+    this.setState({ selectedIcon: icon,  newTitle: title})
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
   }
 
@@ -35,11 +46,6 @@ class SelectRemoteIconModal extends Component {
     this.props.onSubmit()
     BackHandler.removeEventListener('hardwareBackPress', this.captureAndroidBackPress)
     return true
-  }
-
-  componentDidMount() {
-    const { icon, title } = this.props.remote
-    this.setState({ selectedIcon: icon,  newTitle: title})
   }
 
   renderIconButton = (iconName, index) => {
@@ -92,7 +98,7 @@ class SelectRemoteIconModal extends Component {
   }
 
   render() {
-    const { onSubmit, theme } = this.props
+    const { theme } = this.props
     const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>

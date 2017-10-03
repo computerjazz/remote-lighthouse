@@ -3,6 +3,7 @@ import {
   BackHandler,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -20,6 +21,11 @@ import panelDict from '../../dictionaries/panels'
 import { isAndroid } from '../../utils'
 
 class AddPanelModal extends Component {
+
+  static propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
+  }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
@@ -51,13 +57,14 @@ class AddPanelModal extends Component {
     return (
       <TouchableOpacity
         key={key}
+        style={{padding: 10, alignItems: 'center'}}
         onPress={() => this.props.onSubmit(key)}
       >
-        <TextButton
-          text={title}
-          buttonStyle={styles.confirmButton}
-          // onPress={}
-        />
+        <Text
+          style={styles.confirmButton}
+        >
+          {title}
+        </Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
           {icons.map(this.renderButton)}
         </View>
@@ -67,7 +74,7 @@ class AddPanelModal extends Component {
   }
 
   render() {
-    const { onSubmit, remoteId, theme } = this.props
+    const { onSubmit, theme } = this.props
     const { MODAL_BACKGROUND_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
@@ -124,8 +131,10 @@ const styles = StyleSheet.create({
   },
   confirmButtonContainer: {
     flex: 0,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#ccc',
   },

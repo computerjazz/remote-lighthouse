@@ -7,6 +7,7 @@ import panelDefs from '../dictionaries/panels'
 import { isAndroid } from '../utils'
 
 import {
+  ADD_DEVICE_URL,
   ASSIGN_IR_CODE,
   CREATE_BUTTON,
   UPDATE_BUTTON,
@@ -313,6 +314,15 @@ export function setDeviceUrls(urls) {
   }
 }
 
+export function addDeviceUrl(url) {
+  return {
+    type: ADD_DEVICE_URL,
+    payload: {
+      url,
+    },
+  }
+}
+
 export function findDevicesOnNetwork() {
   return async (dispatch) => {
     dispatch(setScanning(true))
@@ -323,17 +333,19 @@ export function findDevicesOnNetwork() {
     if (!ip || ip.length < 5) return
     const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
     const arr = []
-
+    dispatch(setDeviceUrls([]))
     // Loop through all 256 possible ip addresses looking for a lighthouse :)
     for (let i = 0; i < 255; i++) {
       arr[i] = new Promise(async (resolve) => {
         try {
-          setTimeout(() => resolve('TOOK TOO LONG!'), 5000)
+           setTimeout(() => resolve('TOOK TOO LONG!'), 10000)
           let result = await fetch(`http://${networkAddress}.${i}/marco`)
           if (result.ok && result.status === 200) {
             result = await result.json()
             result.success = true
             result.ip = `http://${networkAddress}.${i}`
+            console.log('adding ', result.ip)
+            dispatch(addDeviceUrl(result.ip))
           }
           resolve(result)
         } catch (err) {

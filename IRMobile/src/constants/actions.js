@@ -1,3 +1,4 @@
+export const ADD_DEVICE_URL = 'ADD_DEVICE_URL'
 export const ASSIGN_IR_CODE = 'ASSIGN_IR_CODE'
 export const CREATE_BUTTON = 'CREATE_BUTTON'
 export const DELETE_BUTTON = 'DELETE_BUTTON'

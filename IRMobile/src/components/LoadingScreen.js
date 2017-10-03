@@ -6,6 +6,10 @@ import themes from '../constants/themes'
 
 class LoadingScreen extends Component {
 
+  static propTypes = {
+    theme: PropTypes.string.isRequired,
+  }
+
   render() {
     const { REMOTE_BACKGROUND_COLOR, BUTTON_BACKGROUND_COLOR } = themes[this.props.theme]
     return (

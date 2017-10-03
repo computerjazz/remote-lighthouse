@@ -35,8 +35,8 @@ class Remote extends Component {
     const title = navigation.state.params && navigation.state.params.title || ' '
     return {
       title,
-      tabBarLabel: ({ focused, tintColor}) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
-      tabBarIcon: ({ focused, tintColor}) => <TabIcon focused={focused} id={navigation.state.routeName}  />
+      tabBarLabel: ({ focused }) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
+      tabBarIcon: ({ focused }) => <TabIcon focused={focused} id={navigation.state.routeName}  />
     }
   }
 

@@ -5,7 +5,6 @@
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
 ### Hardware
-- Arduino Uno
 - ESP32 WiFi/Bluetooth Module
 - IR Transmitter LEDs
 - IR receiver component

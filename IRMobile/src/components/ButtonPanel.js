@@ -25,9 +25,11 @@ class ButtonPanel extends Component {
 
   static propTypes = {
     buttons: PropTypes.array,
+    capturing: PropTypes.bool.isRequired,
     captureIRCode: PropTypes.func.isRequired,
     editing: PropTypes.bool.isRequired,
     onPress: PropTypes.func,
+    theme: PropTypes.string.isRequired,
     capturingButtonId: PropTypes.string,
     stopRecord: PropTypes.func.isRequired,
     transmitIRCode: PropTypes.func.isRequired,
@@ -53,7 +55,6 @@ class ButtonPanel extends Component {
   onStatusChanged = status => this.setState({ status })
 
   onStatusChangeEnd = () => this.setState({ status: null })
-
 
   renderButton = (buttonId, index, array) => {
     const { PRIMARY_DARK } = themes[this.props.theme]

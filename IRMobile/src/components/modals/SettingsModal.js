@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableHighlight,
   View,
 } from 'react-native'
 
@@ -22,7 +21,13 @@ import themes, { list as themeList} from '../../constants/themes'
 class SelectRemoteIconModal extends Component {
 
   static propTypes = {
-    baseUrls: PropTypes.array,
+    baseUrls: PropTypes.array.isRequired,
+    findDevicesOnNetwork: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    scanning: PropTypes.bool.isRequired,
+    setHeaderModal: PropTypes.func.isRequired,
+    setTheme: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
   }
 
   state = {
@@ -71,7 +76,7 @@ class SelectRemoteIconModal extends Component {
   }
 
   render() {
-    const { baseUrls, onSubmit, scanning, theme } = this.props
+    const { baseUrls, scanning, theme } = this.props
     const { MODAL_BACKGROUND_COLOR, BUTTON_EDIT_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
     return (
       <View style={styles.wrapper}>
@@ -85,18 +90,15 @@ class SelectRemoteIconModal extends Component {
             </View>
 
 
-            <TouchableHighlight
-              activeOpacity={0.5}
+            <TouchableOpacity
               style={[styles.scanButton, { backgroundColor: BUTTON_EDIT_COLOR }]}
-              underlayColor={MODAL_BACKGROUND_COLOR}
               onPress={this.props.findDevicesOnNetwork}
             >
               {scanning ?
                 <ActivityIndicator small color={TEXT_COLOR_LIGHT} /> :
                 <Text style={{color: TEXT_COLOR_LIGHT}}>Scan Network</Text>
               }
-            </TouchableHighlight>
-
+            </TouchableOpacity>
 
             {themeList.map(this.renderThemeOption)}
           </ScrollView>

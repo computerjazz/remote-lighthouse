@@ -3,6 +3,7 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
+  TouchableHighlight,
   Text,
   View,
 }  from 'react-native'
@@ -105,15 +106,18 @@ class RemoteButton extends Component {
         <Animated.View
           style={[styles.animatedContainer, { backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]}
         >
-          <TouchableOpacity
+          <TouchableHighlight
+            underlayColor={BUTTON_ICON_COLOR}
+            activeOpacity={0.85}
             onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
             style={styles.touchable}
           >
-            { !!iconName && <Icon name={iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
-            { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
+            <View style={[ styles.touchableInner, { backgroundColor: BUTTON_BACKGROUND_COLOR }]}>
+              { !!iconName && <Icon name={iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
+              { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
+            </View>
 
-          </TouchableOpacity>
-
+          </TouchableHighlight>
         </Animated.View>
         { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
@@ -138,6 +142,11 @@ const styles = StyleSheet.create({
   },
   touchable: {
     flex: 1,
+    borderRadius: BUTTON_RADIUS,
+  },
+  touchableInner : {
+    borderRadius: BUTTON_RADIUS,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -147,8 +156,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
   },
   animatedContainer: {
-    flex: 1,
     margin: 15,
+    flex: 1,
     height: 75,
     borderRadius: BUTTON_RADIUS,
   },
