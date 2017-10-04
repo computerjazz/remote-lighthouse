@@ -1,4 +1,5 @@
 import {
+  CHANNEL_VOLUME,
   CUSTOM_1,
   CUSTOM_2,
   CUSTOM_3,
@@ -29,7 +30,17 @@ export default {
   },
   [MEDIA_PLAYBACK]: {
     title: 'Media Playback',
-    icons: ['rewind', 'play', 'pause', 'fast-forward'],
+    icons: [
+      ['record', 'play', 'pause', 'stop'],
+      ['skip-backward', 'fast-forward', 'rewind', 'skip-forward'],
+    ]
+  },
+  [CHANNEL_VOLUME]: {
+    title: 'Channel/Volume',
+    icons: [
+      ['chevron-up', 'volume-high'],
+      ['chevron-down', 'volume-medium'],
+    ]
   },
   [UP_DOWN]: {
     title: 'Down/Up',
