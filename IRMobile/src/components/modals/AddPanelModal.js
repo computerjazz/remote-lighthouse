@@ -38,6 +38,8 @@ class AddPanelModal extends Component {
   }
 
   renderButton = (name, i) => {
+    // Support 2D button panel arrays
+    if (typeof name === 'object') return (<View key={i} style={{flexDirection: 'row', }}>{name.map(this.renderButton)}</View>)
     const { BUTTON_BACKGROUND_COLOR, BUTTON_ICON_COLOR } = themes[this.props.theme]
     return (
       <View
@@ -57,7 +59,7 @@ class AddPanelModal extends Component {
     return (
       <TouchableOpacity
         key={key}
-        style={{padding: 10, alignItems: 'center'}}
+        style={{ padding: 10, alignItems: 'center'}}
         onPress={() => this.props.onSubmit(key)}
       >
         <Text
@@ -65,7 +67,13 @@ class AddPanelModal extends Component {
         >
           {title}
         </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+        <View style={{
+          flex: 1,
+          width: '100%',
+          flexDirection: typeof icons[0] === 'string' ? 'row' : 'column',
+          justifyContent: 'space-around'
+        }}
+        >
           {icons.map(this.renderButton)}
         </View>
 

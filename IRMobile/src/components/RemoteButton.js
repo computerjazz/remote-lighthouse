@@ -112,7 +112,7 @@ class RemoteButton extends Component {
             onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
             style={styles.touchable}
           >
-            <View style={[ styles.touchableInner, { backgroundColor: BUTTON_BACKGROUND_COLOR }]}>
+            <View style={[ styles.touchableInner, !isRecording && !hasStatus && { backgroundColor: BUTTON_BACKGROUND_COLOR }]}>
               { !!iconName && <Icon name={iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
               { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
             </View>

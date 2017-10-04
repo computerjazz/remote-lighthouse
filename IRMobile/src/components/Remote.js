@@ -117,7 +117,7 @@ class Remote extends Component {
   dismissEditButtonModal = () => {
     this.setState({ editButtonModalVisible: false })
     this.props.setModalVisible(false)
-}
+  }
 
   dismissAll = () => {
     this.dismissMenu()

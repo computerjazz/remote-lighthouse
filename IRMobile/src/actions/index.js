@@ -286,12 +286,26 @@ const createButtonPanelAction = (remoteId, panelId, type) => ({
 
 export function createButtonPanel(type, remoteId) {
   return async (dispatch) => {
-    const panelId = uuid.v1()
     if (!panelDefs[type]) return
-    await dispatch(createButtonPanelAction(remoteId, panelId, type))
-    panelDefs[type].icons.forEach(iconName => {
-      dispatch(createButton(iconName, panelId))
-    })
+
+    // Support 2D arrays of panels (Number Pad, etc)
+    if (typeof panelDefs[type].icons[0] === 'object') {
+      panelDefs[type].icons.forEach((panel, i) => {
+        const panelId = uuid.v1()
+        dispatch(createButtonPanelAction(remoteId, panelId, type))
+        panelDefs[type].icons[i].forEach(iconName => {
+          dispatch(createButton(iconName, panelId))
+        })
+      })
+
+
+    } else {
+      const panelId = uuid.v1()
+      dispatch(createButtonPanelAction(remoteId, panelId, type))
+      panelDefs[type].icons.forEach(iconName => {
+        dispatch(createButton(iconName, panelId))
+      })
+    }
   }
 }
 

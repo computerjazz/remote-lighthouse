@@ -22,10 +22,8 @@ import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animatio
 
 class RemoteContainer extends Component {
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-        header: <Header />,
-      }
+  static navigationOptions = {
+      header: <Header />,
     }
 
   static propTypes = {

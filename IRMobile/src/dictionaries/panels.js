@@ -7,6 +7,7 @@ import {
   UP_DOWN,
   VOLUME,
   POWER,
+  NUMBER_PAD,
 } from '../constants/ui'
 
 export default {
@@ -41,5 +42,14 @@ export default {
   [POWER]: {
     title: 'Power',
     icons: ['power'],
+  },
+  [NUMBER_PAD]: {
+    title: 'Number pad',
+    icons: [
+      ['numeric-1-box', 'numeric-2-box', 'numeric-3-box'],
+      ['numeric-4-box', 'numeric-5-box', 'numeric-6-box'],
+      ['numeric-7-box', 'numeric-8-box', 'numeric-9-box'],
+      ['cat', 'numeric-0-box', 'cat'],
+    ]
   }
 }

@@ -30,7 +30,7 @@ class EditButtonModal extends Component {
 
   static propTypes = {
     button: PropTypes.object.isRequired,
-    onSubmit: PropTypes.func.isRequried,
+    onSubmit: PropTypes.func.isRequired,
     theme: PropTypes.string.isRequired,
     editButton: PropTypes.func.isRequired,
   }
