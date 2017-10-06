@@ -60,8 +60,6 @@ void setup() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  delay(1000);
-
   Serial.println("setting up server");
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
@@ -80,6 +78,21 @@ void setup() {
   digitalWrite(RED_PIN, HIGH);
   digitalWrite(GREEN_PIN, HIGH);
   digitalWrite(BLUE_PIN, HIGH);
+
+ blockingBlink(false, false, true, 100, 100, 2);
+}
+
+void blockingBlink(boolean r, boolean g, boolean b, int onTime, int offTime, int numBlinks) {
+  for (int i = 0; i < numBlinks; i++) {
+      if (r) { digitalWrite(RED_PIN, LOW); }
+      if (g) { digitalWrite(GREEN_PIN, LOW); }
+      if (b) { digitalWrite(BLUE_PIN, LOW); }
+      delay(onTime);
+      if (r) { digitalWrite(RED_PIN, HIGH); }
+      if (g) { digitalWrite(GREEN_PIN, HIGH); }
+      if (b) { digitalWrite(BLUE_PIN, HIGH); }
+      delay(offTime);
+  }
 }
 
 void loop() {

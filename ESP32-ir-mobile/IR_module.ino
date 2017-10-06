@@ -19,9 +19,7 @@ void processIR() {
       if (successful) {
         recording = false;
         digitalWrite(RED_PIN, HIGH);
-        digitalWrite(GREEN_PIN, LOW);
-        delay(250);
-        digitalWrite(GREEN_PIN, HIGH);
+        blockingBlink(false, true, false, 250, 0, 1);
       }
      }
     irrecv.resume(); // resume receiver
@@ -103,19 +101,6 @@ void transmitCode(String codeType, unsigned long codeValue, int codeLen) {
   irrecv.enableIRIn(); // Re-enable receiver
 
   // TODO: Write non-blocking blink method
-  digitalWrite(BLUE_PIN, LOW);
-  digitalWrite(RED_PIN, LOW);
-
-  delay(50);
-  digitalWrite(BLUE_PIN, HIGH);
-  digitalWrite(RED_PIN, HIGH);
-
-  delay(50);
-  digitalWrite(BLUE_PIN, LOW);
-  digitalWrite(RED_PIN, LOW);
-
-  delay(50);
-  digitalWrite(BLUE_PIN, HIGH);
-  digitalWrite(RED_PIN, HIGH);
+  blockingBlink(true, false, true, 50, 50, 2);
 
 }
