@@ -14,6 +14,7 @@ import CircleEditButton from './CircleEditButton'
 
 import themes from '../constants/themes'
 
+import { BLANK_SPACE } from '../constants/ui'
 import { BUTTON_RADIUS } from '../constants/dimensions'
 
 const PULSE_RATE = 750
@@ -101,20 +102,21 @@ class RemoteButton extends Component {
       })
     }
 
+
     return (
-      <View style={styles.wrapper}>
+      <View style={[styles.wrapper]}>
         <Animated.View
-          style={[styles.animatedContainer, { backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]}
+          style={[styles.animatedContainer, iconName !== BLANK_SPACE && { backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]}
         >
           <TouchableHighlight
             underlayColor={BUTTON_ICON_COLOR}
             activeOpacity={0.85}
             onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
-            style={styles.touchable}
+            style={[styles.touchable, iconName === BLANK_SPACE && { opacity: 0 }]}
           >
             {/* React native bug  in TouchableHighlight -- child component must have a backgroundColor*/}
             <View style={[ styles.touchableInner, !isRecording && !hasStatus && { backgroundColor: BUTTON_BACKGROUND_COLOR }]}>
-              { !!iconName && <Icon name={iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
+              { !!iconName && <Icon name={iconName === BLANK_SPACE ? 'cat' : iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
               { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
             </View>
 
@@ -152,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    fontWeight: "300",
+    fontWeight: '300',
     fontSize: 15,
     paddingHorizontal: 7,
   },

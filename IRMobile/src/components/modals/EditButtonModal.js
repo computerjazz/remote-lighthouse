@@ -19,6 +19,7 @@ import { isAndroid } from '../../utils'
 
 import buttonCategories from '../../dictionaries/buttons'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
+import { BLANK_SPACE } from '../../constants/ui'
 import themes from '../../constants/themes'
 
 class EditButtonModal extends Component {
@@ -87,6 +88,19 @@ class EditButtonModal extends Component {
     this.props.onSubmit()
   }
 
+  renderBlankSpaceOption = () => {
+    const { ICON_SELECTED_BACKGROUND_COLOR, MODAL_BACKGROUND_COLOR, MODAL_TEXT_COLOR } = themes[this.props.theme]
+    const selected = this.state.selectedIcon === BLANK_SPACE
+    return (
+      <TouchableOpacity
+        onPress={() => this.setState({ selectedIcon: BLANK_SPACE })}
+        style={[ selected && { backgroundColor: ICON_SELECTED_BACKGROUND_COLOR}, styles.blankSpaceButton]}
+      >
+        <Text style={{ fontWeight: 'bold', color: selected ? MODAL_BACKGROUND_COLOR : MODAL_TEXT_COLOR }}>Blank Space</Text>
+      </TouchableOpacity>
+    )
+  }
+
   render() {
     const { onSubmit } = this.props
     const { PRIMARY_DARK, MODAL_BACKGROUND_COLOR } = themes[this.props.theme]
@@ -104,6 +118,8 @@ class EditButtonModal extends Component {
               placeholder="button label"
             />
             { _.map(buttonCategories, this.renderIconCategory) }
+            {this.renderBlankSpaceOption()}
+
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>
@@ -142,6 +158,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(EditButtonModal)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
     borderRadius: BUTTON_RADIUS,
   },
   wrapper: {
@@ -154,6 +171,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
   confirmButtonContainer: {
+    flex: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -182,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_RADIUS,
   },
   scrollView: {
-    flex: 6,
+    flex: 1,
     padding: 10,
   },
   textInput: {
@@ -192,5 +210,14 @@ const styles = StyleSheet.create({
     marginBottom: 13,
     borderRadius: BUTTON_RADIUS,
     backgroundColor: 'rgba(0, 0, 0, .1)',
-  }
+  },
+  blankSpaceButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: BUTTON_RADIUS,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20
+  },
 })

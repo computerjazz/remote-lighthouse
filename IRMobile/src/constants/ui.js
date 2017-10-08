@@ -20,3 +20,6 @@ export const SCREEN = 'SCREEN'
 // Modals
 export const GENERAL_SETTINGS = 'GENERAL_SETTINGS'
 export const REMOTE_OPTIONS = 'REMOTE_OPTIONS'
+
+// Button vars
+export const BLANK_SPACE = 'BLANK_SPACE'

@@ -1,4 +1,5 @@
 import {
+  BLANK_SPACE,
   CHANNEL_VOLUME,
   CUSTOM_1,
   CUSTOM_2,
@@ -61,7 +62,7 @@ export default {
       ['numeric-1-box', 'numeric-2-box', 'numeric-3-box'],
       ['numeric-4-box', 'numeric-5-box', 'numeric-6-box'],
       ['numeric-7-box', 'numeric-8-box', 'numeric-9-box'],
-      ['cat', 'numeric-0-box', 'cat'],
+      [BLANK_SPACE, 'numeric-0-box', BLANK_SPACE],
     ],
     style: {
       padding: 20,
@@ -70,9 +71,9 @@ export default {
   [ARROW_PAD]: {
     title: 'Arrow Pad',
     icons: [
-      ['cat', 'chevron-up', 'cat'],
+      [BLANK_SPACE, 'chevron-up', BLANK_SPACE],
       ['chevron-left', 'menu', 'chevron-right'],
-      ['cat', 'chevron-down', 'cat'],
+      [BLANK_SPACE, 'chevron-down', BLANK_SPACE],
     ],
     style: {
       padding: 20,

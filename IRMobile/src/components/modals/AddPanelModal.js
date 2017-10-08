@@ -15,6 +15,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import TextButton from '../TextButton'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
+import { BLANK_SPACE } from '../../constants/ui'
+
 import themes from '../../constants/themes'
 import panelDict from '../../dictionaries/panels'
 
@@ -41,13 +43,14 @@ class AddPanelModal extends Component {
     // Support 2D button panel arrays
     if (typeof item === 'object') return (<View key={i} style={{flexDirection: 'row', }}>{item.map(this.renderButton)}</View>)
     const { BUTTON_BACKGROUND_COLOR, BUTTON_ICON_COLOR } = themes[this.props.theme]
+    const isBlank = item === BLANK_SPACE
     return (
       <View
         key={i}
-        style={[styles.button, { backgroundColor: BUTTON_BACKGROUND_COLOR }]}
+        style={[styles.button, { backgroundColor: BUTTON_BACKGROUND_COLOR }, isBlank && { opacity: 0 }]}
       >
         <Icon
-          name={item}
+          name={isBlank ? 'cat' : item}
           color={BUTTON_ICON_COLOR}
           size={20}
         />
