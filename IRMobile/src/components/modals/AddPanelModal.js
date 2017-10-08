@@ -37,9 +37,9 @@ class AddPanelModal extends Component {
     return true
   }
 
-  renderButton = (name, i) => {
+  renderButton = (item, i) => {
     // Support 2D button panel arrays
-    if (typeof name === 'object') return (<View key={i} style={{flexDirection: 'row', }}>{name.map(this.renderButton)}</View>)
+    if (typeof item === 'object') return (<View key={i} style={{flexDirection: 'row', }}>{item.map(this.renderButton)}</View>)
     const { BUTTON_BACKGROUND_COLOR, BUTTON_ICON_COLOR } = themes[this.props.theme]
     return (
       <View
@@ -47,7 +47,7 @@ class AddPanelModal extends Component {
         style={[styles.button, { backgroundColor: BUTTON_BACKGROUND_COLOR }]}
       >
         <Icon
-          name={name}
+          name={item}
           color={BUTTON_ICON_COLOR}
           size={20}
         />

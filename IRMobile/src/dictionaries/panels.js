@@ -61,6 +61,9 @@ export default {
       ['numeric-4-box', 'numeric-5-box', 'numeric-6-box'],
       ['numeric-7-box', 'numeric-8-box', 'numeric-9-box'],
       ['cat', 'numeric-0-box', 'cat'],
-    ]
+    ],
+    style: {
+      padding: 20,
+    }
   }
 }

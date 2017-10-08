@@ -1,6 +1,7 @@
 import { Platform } from 'react-native'
 import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
+import _ from 'lodash'
 import { NetworkInfo } from 'react-native-network-info'
 
 import panelDefs from '../dictionaries/panels'
@@ -288,25 +289,14 @@ export function createButtonPanel(type, remoteId) {
   return async (dispatch) => {
     if (!panelDefs[type]) return
 
-    // Support 2D arrays of panels (Number Pad, etc)
-    if (typeof panelDefs[type].icons[0] === 'object') {
-      panelDefs[type].icons.forEach((panel, i) => {
-        const panelId = uuid.v1()
-        dispatch(createButtonPanelAction(remoteId, panelId, type))
-        panelDefs[type].icons[i].forEach(iconName => {
-          dispatch(createButton(iconName, panelId))
-        })
-      })
-
-
-    } else {
-      const panelId = uuid.v1()
-      dispatch(createButtonPanelAction(remoteId, panelId, type))
-      panelDefs[type].icons.forEach(iconName => {
-        dispatch(createButton(iconName, panelId))
-      })
-    }
+    const panelId = uuid.v1()
+    dispatch(createButtonPanelAction(remoteId, panelId, type))
+    const icons = _.flatten(panelDefs[type].icons)
+    icons.forEach(iconName => {
+      dispatch(createButton(iconName, panelId))
+    })
   }
+
 }
 
 export function deleteButtonPanel(panelId, remoteId) {

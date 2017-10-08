@@ -5,9 +5,10 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-
+import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import themes from '../constants/themes'
+import panelDefs from '../dictionaries/panels'
 
 import {
   captureIRCode,
@@ -33,6 +34,7 @@ class ButtonPanel extends Component {
     capturingButtonId: PropTypes.string,
     stopRecord: PropTypes.func.isRequired,
     transmitIRCode: PropTypes.func.isRequired,
+    type: PropTypes.string.isRequired,
   }
 
   state = {
@@ -56,13 +58,13 @@ class ButtonPanel extends Component {
 
   onStatusChangeEnd = () => this.setState({ status: null })
 
-  renderButton = (buttonId, index, array) => {
+  renderButton = (buttonId, index, row) => {
     const { PRIMARY_DARK } = themes[this.props.theme]
     return (
       <RemoteButton
         key={buttonId}
-        iconSize={array.length > 3 ? 20 : 30}
-        style={array.length > 3  ? styles.smallButton : styles.bigButton}
+        iconSize={row.length > 3 ? 20 : 30}
+        style={row.length > 3  ? styles.smallButton : styles.bigButton}
         onPress={this.onPress}
         color={PRIMARY_DARK}
         onEditPress={this.props.onEditPress}
@@ -73,8 +75,28 @@ class ButtonPanel extends Component {
     )
   }
 
+  renderPanel(type, buttons) {
+    const panelDef = panelDefs[type]
+    if (buttons.length !== _.flatten(panelDef.icons).length) return
+    const isMultiPane = typeof panelDef.icons[0] === 'object'
+    if (isMultiPane) {
+      let buttonIndex = 0
+      return (
+        <View style={[panelDef.style, { flexDirection: 'column', flex: 1 }]} key={`buttonPanel-${buttons[0]}`}>
+          { panelDef.icons.map((paneDef) => (
+            <View key={`buttonPanel-${buttons[buttonIndex]}`} style={{flex: 1, flexDirection: 'row'}}>
+              { paneDef.map((defaultButtonType, j, arr) => this.renderButton(buttons[buttonIndex++], j, arr)) }
+            </View>
+          ))
+          }
+        </View>
+      )
+    } else return buttons.map(this.renderButton)
+  }
+
   render() {
-    const { buttons, editing, theme } = this.props
+    const { buttons, type, editing, theme } = this.props
+    console.log('PANEL PROPS', this.props)
     const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[theme]
     return (
       <View style={styles.container}>
@@ -90,7 +112,7 @@ class ButtonPanel extends Component {
             />
           </TouchableOpacity>}
 
-        {buttons.map(this.renderButton)}
+        {this.renderPanel(type, buttons)}
 
         {editing &&
           <TouchableOpacity
