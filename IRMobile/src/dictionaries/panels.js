@@ -8,6 +8,7 @@ import {
   UP_DOWN,
   VOLUME,
   POWER,
+  ARROW_PAD,
   NUMBER_PAD,
 } from '../constants/ui'
 
@@ -55,7 +56,7 @@ export default {
     icons: ['power'],
   },
   [NUMBER_PAD]: {
-    title: 'Number pad',
+    title: 'Number Pad',
     icons: [
       ['numeric-1-box', 'numeric-2-box', 'numeric-3-box'],
       ['numeric-4-box', 'numeric-5-box', 'numeric-6-box'],
@@ -64,6 +65,17 @@ export default {
     ],
     style: {
       padding: 20,
-    }
-  }
+    },
+  },
+  [ARROW_PAD]: {
+    title: 'Arrow Pad',
+    icons: [
+      ['cat', 'chevron-up', 'cat'],
+      ['chevron-left', 'menu', 'chevron-right'],
+      ['cat', 'chevron-down', 'cat'],
+    ],
+    style: {
+      padding: 20,
+    },
+  },
 }

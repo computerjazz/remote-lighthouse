@@ -8,6 +8,7 @@ export const MEDIA_PLAYBACK = 'MEDIA_PLAYBACK'
 export const UP_DOWN = 'UP_DOWN'
 export const POWER = 'POWER'
 export const NUMBER_PAD = 'NUMBER_PAD'
+export const ARROW_PAD = 'ARROW_PAD'
 
 // Button icon categories
 export const GENERAL = 'GENERAL'
