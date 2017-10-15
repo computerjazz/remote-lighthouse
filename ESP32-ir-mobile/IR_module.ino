@@ -101,6 +101,8 @@ void transmitCode(String codeType, unsigned long codeValue, int codeLen) {
   irrecv.enableIRIn(); // Re-enable receiver
 
   // TODO: Write non-blocking blink method
-  blockingBlink(true, false, true, 50, 50, 2);
+  if (testing) {
+      blockingBlink(true, false, true, 50, 50, 2);
+   }
 
 }

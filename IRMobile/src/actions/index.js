@@ -29,6 +29,7 @@ import {
   SET_HEADER_MODAL,
   SET_SCANNING,
   SET_THEME,
+  SET_TESTING,
 } from '../constants/actions'
 
 export function createRemote() {
@@ -328,7 +329,8 @@ export function addDeviceUrl(url) {
 }
 
 export function findDevicesOnNetwork() {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { baseUrls } = getState().network
     dispatch(setScanning(true))
     // ios doesn't have a getIPV4Address function, returns ipv4 by default
     const getIPAddress = Platform.OS === 'android' ? NetworkInfo.getIPV4Address : NetworkInfo.getIPAddress
@@ -337,7 +339,6 @@ export function findDevicesOnNetwork() {
     if (!ip || ip.length < 5) return
     const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
     const arr = []
-    dispatch(setDeviceUrls([]))
     // Loop through all 256 possible ip addresses looking for a lighthouse :)
     for (let i = 0; i < 255; i++) {
       arr[i] = new Promise(async (resolve) => {
@@ -349,7 +350,7 @@ export function findDevicesOnNetwork() {
             result.success = true
             result.ip = `http://${networkAddress}.${i}`
             console.log('adding ', result.ip)
-            dispatch(addDeviceUrl(result.ip))
+            if (baseUrls.indexOf(result.ip) === -1) dispatch(addDeviceUrl(result.ip))
           }
           resolve(result)
         } catch (err) {
@@ -419,6 +420,26 @@ export function stopRecord() {
   }
 }
 
+export function setTestingMode(isTesting) {
+  return async (dispatch, getState) => {
+    const { baseUrls } = getState().network
+    try {
+      const response = await Promise.race(baseUrls.map(url => fetch(url + `/${isTesting ? 'test' : 'testStop'}`)))
+      if (response.ok) {
+        const { testing } = await response.json()
+        dispatch({
+          type: SET_TESTING,
+          payload: {
+            testing
+          }
+        })
+      }
+    } catch (err) {
+      console.log('## setTestingMode err', err)
+    }
+  }
+}
+
 export function clearRecordingState() {
   return async (dispatch, getState) => {
     const { baseUrls } = getState().network
@@ -432,7 +453,7 @@ export function clearRecordingState() {
 
 // Check for IR code every second
 const POLL_INTERVAL = 1000
-const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 5
+const MAX_TIMES_TO_CHECK_FOR_NEW_CODE = 10
 
 export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
   return async (dispatch, getState) => {

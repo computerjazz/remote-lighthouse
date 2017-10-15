@@ -19,6 +19,7 @@ int GREEN_PIN = 22;
 int BLUE_PIN = 23;
 
 boolean recording = false;
+boolean testing = false;
 boolean redBlinkState = HIGH;
 int redBlinkRate = 750;
 unsigned long milliCounter = 0;
@@ -67,6 +68,7 @@ void setup() {
   server.on("/clear", clearState);
   server.on("/send", sendCode);
   server.on("/test", test);
+  server.on("/testStop", testStop);
   server.on("/marco", sayPolo);
 
   server.begin();
@@ -158,14 +160,27 @@ String getValueOfQueryParam(String key, String s) {
  }
 
 void test() {
-  String message = "";
-  for (int i = 0; i < server.args(); i++) {
-    message += server.argName(i) + ":" + server.arg(i) + ",";
-  }
-  server.send(200, "application/json", "{\"args\":" + message + ", \"ircode\":" + lastIRCodeReceived + "}");
+  testing = true;
+  String message = testing ? "true" : "false";
+  server.send(200, "application/json", "{\"testing\":" + message + "}");
+}
+
+void testStop() {
+  testing = false;
+  String message = testing ? "true" : "false";
+  server.send(200, "application/json", "{\"testing\":" + message + "}");
 }
 
 void sayPolo() {
   server.send(200, "application/json", "{\"message\":\"polo\"}");
+  if (testing) {
+    blockingBlink(true, false, false, 100, 0, 1);
+    blockingBlink(true, true, false, 100, 0, 1);
+    blockingBlink(false, true, false, 100, 0, 1);
+    blockingBlink(false, true, true, 100, 0, 1);
+    blockingBlink(false, false, true, 100, 0, 1);
+    blockingBlink(true, false, true, 100, 0, 1);
+   }
+
 }
 

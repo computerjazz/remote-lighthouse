@@ -4,6 +4,7 @@ import {
   BackHandler,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -12,7 +13,7 @@ import {
 import { connect } from 'react-redux'
 
 import TextButton from '../TextButton'
-import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme } from '../../actions'
+import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode } from '../../actions'
 import { isAndroid } from '../../utils'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
@@ -27,16 +28,25 @@ class SelectRemoteIconModal extends Component {
     scanning: PropTypes.bool.isRequired,
     setHeaderModal: PropTypes.func.isRequired,
     setTheme: PropTypes.func.isRequired,
+    testing: PropTypes.bool.isRequired,
+    setTestingMode: PropTypes.func.isRequired,
     theme: PropTypes.string.isRequired,
   }
 
   state = {
     selectedTheme: '',
+    testingValue: this.props.testing,
   }
 
   componentWillMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
     this.setState({ selectedTheme: this.props.theme })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.testing !== this.props.testing) {
+      this.setState({ testingValue: nextProps.testing })
+    }
   }
 
   captureAndroidBackPress = () => {
@@ -101,6 +111,19 @@ class SelectRemoteIconModal extends Component {
             </TouchableOpacity>
 
             {themeList.map(this.renderThemeOption)}
+            <View style={{paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <View style={{flexDirection: 'column'}}>
+                <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 14}}>Testing Mode</Text>
+                <Text style={{color: TEXT_COLOR_DARK, fontSize: 12}}>Blink LED on transmit & discovery</Text>
+              </View>
+              <Switch
+                onValueChange={() => {
+                  this.setState({ testingValue: !this.props.testing })
+                  this.props.setTestingMode(!this.props.testing)
+                }}
+                value={this.state.testingValue}
+              />
+            </View>
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>
@@ -126,6 +149,7 @@ const mapStateToProps = state => ({
   theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
+  testing: state.network.testing,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -133,6 +157,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateRemote: (remoteId, updatedRemote) => dispatch(updateRemote(remoteId, updatedRemote)),
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   setTheme: theme => dispatch(setTheme(theme)),
+  setTestingMode: isTesting => dispatch(setTestingMode(isTesting)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
