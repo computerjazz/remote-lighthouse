@@ -19,7 +19,7 @@ export default (state = initialState, action) => {
         ...state,
         list: newList,
         [action.payload.remoteId]: {
-          title: ' ',
+          title: '',
           icon: 'cat',
           panels: [],
         }
