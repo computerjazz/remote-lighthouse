@@ -28,10 +28,11 @@ export const createTabNavigator = (remotes, Screen) => {
 
   const navigatorConfig = {
     initialRouteName: keys[keys.length-1],
-    // swipeEnabled: false,
+    swipeEnabled: true,
     animationEnabled: true,
     order: keys,
     tabBarComponent: TabBar,
+    tabBarPosition: 'bottom',
   }
 
   const onNavigationStateChange = function(prevState, newState){

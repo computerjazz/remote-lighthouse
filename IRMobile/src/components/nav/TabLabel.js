@@ -10,7 +10,7 @@ import themes from '../../constants/themes'
 
 class TabLabel extends Component {
   render() {
-    const { title, theme, focused, remote } = this.props
+    const { title = ' ', theme, focused, remote } = this.props
     const {
       TAB_LABEL_COLOR_ACTIVE,
       TAB_LABEL_COLOR_INACTIVE,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: .5,
+    flex: 0,
     padding: 3,
   },
   text: {
