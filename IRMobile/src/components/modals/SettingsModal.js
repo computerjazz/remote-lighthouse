@@ -109,8 +109,6 @@ class SelectRemoteIconModal extends Component {
                 <Text style={{color: TEXT_COLOR_LIGHT}}>Scan Network</Text>
               }
             </TouchableOpacity>
-
-            {themeList.map(this.renderThemeOption)}
             <View style={{paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <View style={{flexDirection: 'column'}}>
                 <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 14}}>Testing Mode</Text>
@@ -124,6 +122,9 @@ class SelectRemoteIconModal extends Component {
                 value={this.state.testingValue}
               />
             </View>
+            <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 14}}>Theme</Text>
+            {themeList.map(this.renderThemeOption)}
+
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>

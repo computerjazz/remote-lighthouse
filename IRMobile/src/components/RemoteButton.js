@@ -102,11 +102,12 @@ class RemoteButton extends Component {
       })
     }
 
+    const isBlank = iconName === BLANK_SPACE
 
     return (
       <View style={[styles.wrapper]}>
         <Animated.View
-          style={[styles.animatedContainer, iconName !== BLANK_SPACE && { backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]}
+          style={[styles.animatedContainer, !isBlank && [{ backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]]}
         >
           <TouchableHighlight
             underlayColor={BUTTON_ICON_COLOR}
