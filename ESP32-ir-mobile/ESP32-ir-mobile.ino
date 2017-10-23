@@ -10,19 +10,21 @@
 WebServer server(80);
 
 //IR init
-int RECV_PIN = 19;
-int PORTAL_MODE_PIN = 18;
-String lastIRCodeReceived = "";
+// SEND_PIN = 25 // configured in boarddefs.h
+int RECV_PIN = 33;
+int PORTAL_MODE_PIN = 32;
 
-int RED_PIN = 21;
-int GREEN_PIN = 22;
-int BLUE_PIN = 23;
+int RED_PIN = 26;
+int GREEN_PIN = 27;
+int BLUE_PIN = 14;
 
 boolean recording = false;
 boolean testing = false;
 boolean redBlinkState = HIGH;
 int redBlinkRate = 750;
 unsigned long milliCounter = 0;
+String lastIRCodeReceived = "";
+
 
 IRrecv irrecv(RECV_PIN);
 IRsend irsend;
