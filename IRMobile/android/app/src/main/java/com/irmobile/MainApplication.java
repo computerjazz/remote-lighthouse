@@ -11,6 +11,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.microsoft.codepush.react.CodePush;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,15 @@ import java.util.List;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+
+    // Override the getJSBundleFile method in order to let
+    // the CodePush runtime determine where to get the JS
+    // bundle location from on each app start
+    @Override
+    protected String getJSBundleFile() {
+      return CodePush.getJSBundleFile();
+    }
+
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -29,7 +40,9 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new RNNetworkInfoPackage(),
           new RNBranchPackage(),
-          new VectorIconsPackage()
+          new VectorIconsPackage(),
+          new CodePush("Cr6N5wURpWky14lMcVpIwff1yRjOfc5fc98b-7620-40bb-852a-4c126fc95f78", MainApplication.this, BuildConfig.DEBUG)
+
       );
     }
   };
