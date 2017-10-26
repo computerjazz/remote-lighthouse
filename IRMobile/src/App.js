@@ -5,11 +5,17 @@ import { Provider } from 'react-redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
+import codePush from "react-native-code-push";
 
 import Navigator from './navigation'
 import LinkHandler from './components/LinkHandler'
 import MainMenu from './components/menu/MainMenu'
 import reducers from './reducers'
+
+const codePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.ON_NEXT_RESUME
+}
 
 const store = createStore(
   reducers,
@@ -42,4 +48,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default codePush(codePushOptions)(App)

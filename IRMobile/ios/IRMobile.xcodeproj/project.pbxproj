@@ -1346,6 +1346,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODEPUSH_KEY = "";
 				CODE_SIGN_ENTITLEMENTS = IRMobile/IRMobile.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -1373,6 +1374,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODEPUSH_KEY = "HYPmP_xzaqYt_ePSaVdbXid7EBT0fc5fc98b-7620-40bb-852a-4c126fc95f78";
 				CODE_SIGN_ENTITLEMENTS = IRMobile/IRMobile.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JNAX5PL9BN;
