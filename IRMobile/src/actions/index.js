@@ -116,7 +116,6 @@ export function exportRemote(remoteId) {
 
 export function getShareRemoteUrl(nestedRemote) {
   return async () => {
-
     let branchUniversalObject = await branch.createBranchUniversalObject(
         'content/12345', // canonical identifier
         {
@@ -330,7 +329,7 @@ export function addDeviceUrl(url) {
 
 export function findDevicesOnNetwork() {
   return async (dispatch, getState) => {
-    const { baseUrls } = getState().network
+
     dispatch(setScanning(true))
     // ios doesn't have a getIPV4Address function, returns ipv4 by default
     const getIPAddress = Platform.OS === 'android' ? NetworkInfo.getIPV4Address : NetworkInfo.getIPAddress
@@ -349,8 +348,7 @@ export function findDevicesOnNetwork() {
             result = await result.json()
             result.success = true
             result.ip = `http://${networkAddress}.${i}`
-            console.log('adding ', result.ip)
-            if (baseUrls.indexOf(result.ip) === -1) dispatch(addDeviceUrl(result.ip))
+            if (!getState().network.baseUrls.includes(result.ip)) dispatch(addDeviceUrl(result.ip))
           }
           resolve(result)
         } catch (err) {
@@ -361,9 +359,7 @@ export function findDevicesOnNetwork() {
 
     try {
       const responses = await Promise.all(arr)
-      console.log('RESPONSES', responses)
       const deviceIPs = responses.filter(response => response.success).map(device => device.ip)
-      console.log('Addresses:', deviceIPs)
       dispatch(setDeviceUrls(deviceIPs))
       dispatch(setScanning(false))
 
