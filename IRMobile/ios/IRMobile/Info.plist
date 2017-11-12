@@ -32,6 +32,8 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CodePushDeploymentKey</key>
+	<string>Cr6N5wURpWky14lMcVpIwff1yRjOfc5fc98b-7620-40bb-852a-4c126fc95f78</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -53,7 +55,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Zocial.ttf</string>
