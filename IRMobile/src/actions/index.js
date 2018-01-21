@@ -18,6 +18,7 @@ import {
   UPDATE_REMOTE,
   DELETE_REMOTE,
   DELETE_BUTTON,
+  REMOVE_DEVICE_URL,
   SET_DEVICE_URLS,
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
@@ -324,6 +325,28 @@ export function addDeviceUrl(url) {
     payload: {
       url,
     },
+  }
+}
+
+export function removeDeviceUrl(url) {
+  return {
+    type: REMOVE_DEVICE_URL,
+    payload: {
+      url,
+    }
+  }
+}
+
+export function pingKnownDevices() {
+  return async (dispatch, getState) => {
+    const { baseUrls } = getState().network
+    const responses = await Promise.all(baseUrls.map(url => fetch(`${url}/marco`)))
+    const results = responses.map((result, i) => {
+      if (result.ok && result.status === 200) {
+        return baseUrls[i]
+      } else dispatch(removeDeviceUrl(baseUrls[i]))
+    })
+    return results
   }
 }
 

@@ -16,7 +16,13 @@ import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 
 import { createTabNavigator } from '../navigation'
-import { createRemote, setEditMode, createButtonPanel, findDevicesOnNetwork } from '../actions'
+import {
+  createRemote,
+  setEditMode,
+  createButtonPanel,
+  findDevicesOnNetwork,
+  pingKnownDevices
+} from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
 
@@ -34,6 +40,7 @@ class RemoteContainer extends Component {
     currentRemoteId: PropTypes.string,
     editing: PropTypes.bool.isRequired,
     findDevicesOnNetwork: PropTypes.func.isRequired,
+    pingKnownDevices: PropTypes.func.isRequired,
     modalVisible: PropTypes.bool.isRequired,
     navigation: PropTypes.object.isRequired,
     rehydrated: PropTypes.bool.isRequired,
@@ -54,19 +61,24 @@ class RemoteContainer extends Component {
 
   componentWillMount() {
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
-    this.props.findDevicesOnNetwork()
+  }
+
+  async checkLighthouseStatus() {
+    const deviceUrls = await this.props.pingKnownDevices()
+    if (!deviceUrls.length) this.props.findDevicesOnNetwork()
   }
 
   componentWillReceiveProps(nextProps) {
     const { navigation } = this.props
     const { setParams } = navigation
 
-
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
       setParams({ theme: nextProps.theme })
     }
 
     if (!this.props.rehydrated && nextProps.rehydrated) {
+      this.checkLighthouseStatus()
+
       if (!nextProps.remotes.list.length) {
         // First time in, create a remote
         const newRemote = this.props.createRemote()
@@ -122,6 +134,7 @@ const mapDispatchToProps = dispatch => ({
   createRemote: () => dispatch(createRemote()),
   createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
   findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
+  pingKnownDevices: () => dispatch(pingKnownDevices()),
   setEditMode: editing => dispatch(setEditMode(editing)),
 })
 

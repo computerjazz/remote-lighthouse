@@ -10,13 +10,13 @@
 WebServer server(80);
 
 //IR init
-// SEND_PIN = 25 // configured in boarddefs.h
+// SEND_PIN = 14 // configured in boarddefs.h
 int RECV_PIN = 33;
 int PORTAL_MODE_PIN = 32;
 
-int RED_PIN = 26;
-int GREEN_PIN = 27;
-int BLUE_PIN = 14;
+int RED_PIN = 25;
+int GREEN_PIN = 26;
+int BLUE_PIN = 27;
 
 boolean recording = false;
 boolean testing = false;
