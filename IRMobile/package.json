@@ -21,7 +21,7 @@
 		"react-redux": "^5.0.6",
 		"redux": "^3.7.2",
 		"redux-logger": "^3.0.6",
-		"redux-persist": "^4.8.3",
+		"redux-persist": "^5.0.0",
 		"redux-thunk": "^2.2.0",
 		"tinycolor2": "^1.4.1"
 	},
