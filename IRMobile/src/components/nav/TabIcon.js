@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import { View, StyleSheet } from 'react-native'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { View, Platform, StyleSheet, Text } from 'react-native'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -12,9 +13,10 @@ class TabIcon extends Component {
     const { TAB_LABEL_COLOR_ACTIVE, TAB_LABEL_COLOR_INACTIVE } = themes[theme]
     const color = id === currentRemoteId ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE
     return (
-      <View style={{flex: 1, padding: 5 }}>
+      <View style={[Platform.OS === 'ios' && { height: 40 }]}>
         <Icon name={remote.icon} color={color} size={hasTitle ? 23 : 30} />
-      </View>)
+      </View>
+    )
   }
 }
 

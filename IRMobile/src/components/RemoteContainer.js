@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   View,
   UIManager,
@@ -43,7 +44,6 @@ class RemoteContainer extends Component {
     pingKnownDevices: PropTypes.func.isRequired,
     modalVisible: PropTypes.bool.isRequired,
     navigation: PropTypes.object.isRequired,
-    rehydrated: PropTypes.bool.isRequired,
     remotes: PropTypes.object.isRequired,
     setEditMode: PropTypes.func.isRequired,
     theme: PropTypes.string.isRequired,
@@ -63,6 +63,17 @@ class RemoteContainer extends Component {
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
   }
 
+  componentDidMount() {
+    this.checkLighthouseStatus()
+    if (!this.props.remotes.list.length) {
+      // First time in, create a remote
+      const newRemote = this.props.createRemote()
+      const { remoteId } = newRemote.payload
+      this.props.createButtonPanel(POWER, remoteId)
+      this.props.setEditMode(true)
+    }
+  }
+
   async checkLighthouseStatus() {
     const deviceUrls = await this.props.pingKnownDevices()
     if (!deviceUrls.length) this.props.findDevicesOnNetwork()
@@ -74,18 +85,6 @@ class RemoteContainer extends Component {
 
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
       setParams({ theme: nextProps.theme })
-    }
-
-    if (!this.props.rehydrated && nextProps.rehydrated) {
-      this.checkLighthouseStatus()
-
-      if (!nextProps.remotes.list.length) {
-        // First time in, create a remote
-        const newRemote = this.props.createRemote()
-        const { remoteId } = newRemote.payload
-        this.props.createButtonPanel(POWER, remoteId)
-        this.props.setEditMode(true)
-      }
     }
 
     const thisRemote = this.props.remotes[this.props.currentRemoteId]

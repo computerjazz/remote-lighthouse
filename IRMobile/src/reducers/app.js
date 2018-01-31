@@ -1,3 +1,4 @@
+import { REHYDRATE } from 'redux-persist'
 import {
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
@@ -24,7 +25,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
 
-    case 'persist/REHYDRATE':
+    case REHYDRATE:
       return {
         ...state,
         rehydrated: true,
@@ -35,7 +36,7 @@ export default (state = initialState, action) => {
         ...state,
         headerMenuVisible: action.payload.visible,
       }
-      
+
     case SET_MODAL_VISIBLE:
       return {
         ...state,

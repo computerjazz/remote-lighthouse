@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   Animated,
   PanResponder,
@@ -150,7 +151,7 @@ class Remote extends Component {
 
   render() {
     const { editing, dragging, remote, headerModal, theme } = this.props
-    const { addPanelModalVisible, editButtonModalVisible, editingButtonId } = this.state
+    const { addPanelModalVisible, editButtonModalVisible, editingButtonId, listViewKey } = this.state
     const GeneralModal = modals[headerModal]
     if (!remote) return null
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]

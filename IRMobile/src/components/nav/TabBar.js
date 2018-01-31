@@ -1,10 +1,18 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
 import { connect } from 'react-redux'
 import { TabBarBottom } from 'react-navigation'
 import themes from '../../constants/themes'
 
 class TabBar extends Component {
+
+  static propTypes = {
+      theme: PropTypes.string.isRequired,
+  }
+
   render(){
+    console.log('TABBAR', this.props)
     const {
       TAB_BACKGROUND_COLOR_ACTIVE,
       TAB_BACKGROUND_COLOR_INACTIVE,
