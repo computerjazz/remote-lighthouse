@@ -23,7 +23,7 @@ import themes, { list as themeList} from '../../constants/themes'
 class SelectRemoteIconModal extends Component {
 
   static propTypes = {
-    baseUrls: PropTypes.array.isRequired,
+    ipAddresses: PropTypes.array.isRequired,
     findDevicesOnNetwork: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     scanning: PropTypes.bool.isRequired,
@@ -87,7 +87,7 @@ class SelectRemoteIconModal extends Component {
   }
 
   render() {
-    const { baseUrls, scanning, theme } = this.props
+    const { ipAddresses, scanning, theme } = this.props
     const { MODAL_BACKGROUND_COLOR, BUTTON_EDIT_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
     return (
       <View style={styles.wrapper}>
@@ -96,8 +96,8 @@ class SelectRemoteIconModal extends Component {
           <ScrollView style={styles.scrollView}>
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 15, }}>{`${baseUrls.length} lighthouse${baseUrls.length > 1 ? 's' : ''} connected:`}</Text>
-              {baseUrls.map(url => <Text key={url}>{url}</Text>)}
+              <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length > 1 ? 's' : ''} connected:`}</Text>
+              {ipAddresses.map(url => <Text key={url}>{url}</Text>)}
             </View>
 
 
@@ -146,7 +146,7 @@ SelectRemoteIconModal.defaultProps = {
 }
 
 const mapStateToProps = state => ({
-  baseUrls: state.network.baseUrls,
+  ipAddresses: state.network.ipAddresses,
   scanning: state.network.scanning,
   theme: state.settings.theme,
   currentRemoteId: state.app.currentRemoteId,
