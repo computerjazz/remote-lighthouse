@@ -3,6 +3,7 @@ package com.irmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.balthazargronon.RCTZeroconf.ZeroconfReactPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import io.branch.rnbranch.RNBranchPackage;
 import io.branch.referral.Branch;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new ZeroconfReactPackage(),
           new RNNetworkInfoPackage(),
           new RNBranchPackage(),
           new VectorIconsPackage(),

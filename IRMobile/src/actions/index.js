@@ -1,6 +1,7 @@
 import { Platform } from 'react-native'
 import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
+import Zeroconf from 'react-native-zeroconf'
 import _ from 'lodash'
 import { NetworkInfo } from 'react-native-network-info'
 
@@ -32,6 +33,8 @@ import {
   SET_THEME,
   SET_TESTING,
 } from '../constants/actions'
+
+const zeroconf = new Zeroconf()
 
 export function createRemote() {
   const remoteId = uuid.v1()
@@ -350,47 +353,40 @@ export function pingKnownDevices() {
   }
 }
 
+
+
+
+let _zeroconfSetup = false
+let _foundLighthouses = []
+
 export function findDevicesOnNetwork() {
   return async (dispatch, getState) => {
+    zeroconf.stop()
+    _foundLighthouses = []
 
-    dispatch(setScanning(true))
-    // ios doesn't have a getIPV4Address function, returns ipv4 by default
-    const getIPAddress = Platform.OS === 'android' ? NetworkInfo.getIPV4Address : NetworkInfo.getIPAddress
-    const ip = await new Promise(getIPAddress)
-    console.log('My IP Address: ', ip)
-    if (!ip || ip.length < 5) return
-    const networkAddress = ip.substring(0, ip.lastIndexOf('.'))
-    const arr = []
-    // Loop through all 256 possible ip addresses looking for a lighthouse :)
-    for (let i = 0; i < 255; i++) {
-      arr[i] = new Promise(async (resolve) => {
-        try {
-           setTimeout(() => resolve('TOOK TOO LONG!'), 10000)
-          let result = await fetch(`http://${networkAddress}.${i}/marco`)
-          if (result.ok && result.status === 200) {
-            result = await result.json()
-            result.success = true
-            result.ip = `http://${networkAddress}.${i}`
-            if (!getState().network.baseUrls.includes(result.ip)) dispatch(addDeviceUrl(result.ip))
-          }
-          resolve(result)
-        } catch (err) {
-          resolve('ERROR!')
+    if (!_zeroconfSetup) {
+
+      zeroconf.on('resolved', data => {
+        console.log('RESOLVED', data)
+        if (data.txt && data.txt.app === 'remotelighthouse') {
+          const lighthouseUrl = `http://${data.addresses[0]}`
+          console.log('FOUND A LIGHTHOUSE at: ', lighthouseUrl)
+          if (!_foundLighthouses.includes(lighthouseUrl)) _foundLighthouses.push(lighthouseUrl)
         }
       })
+
+      zeroconf.on('stop', () => {
+        dispatch(setScanning(false))
+        dispatch(setDeviceUrls(_foundLighthouses))
+      })
+
+      _zeroconfSetup = true
     }
 
-    try {
-      const responses = await Promise.all(arr)
-      const deviceIPs = responses.filter(response => response.success).map(device => device.ip)
-      dispatch(setDeviceUrls(deviceIPs))
-      dispatch(setScanning(false))
+    zeroconf.scan('http', 'tcp', 'local.')
+    setTimeout(() => zeroconf.stop(), 2000)
+    dispatch(setScanning(true))
 
-
-    } catch (err) {
-      console.log('## findDevicesOnNetwork error:', err)
-      dispatch(setScanning(false))
-    }
   }
 }
 
@@ -521,8 +517,13 @@ export function transmitIRCode(buttonId) {
     const { type, value, length } = getState().buttons[buttonId]
     console.log('TRANSMITTING CODE', value)
 
-    const responses = await Promise.all(baseUrls.map(url => fetch(`${url}/send?length=${length}&value=${value}&type=${type}`)))
-    const text = await Promise.all(responses.map(response => response.text()))
-    console.log(text)
+    const responses = await Promise.all(baseUrls.map(url => {
+      const endpoint = `${url}/send?length=${length}&value=${value}&type=${type}`
+      console.log('HITTING ENDPOING', endpoint)
+      return fetch(endpoint)
+    }))
+
+    // const text = await Promise.all(responses.map(response => response.text()))
+    // console.log(text)
   }
 }

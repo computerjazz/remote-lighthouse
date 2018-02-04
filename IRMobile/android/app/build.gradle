@@ -135,6 +135,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-zeroconf')
     compile project(':react-native-network-info')
     compile project(':react-native-branch')
     compile fileTree(include: ['*.jar'], dir: 'libs')

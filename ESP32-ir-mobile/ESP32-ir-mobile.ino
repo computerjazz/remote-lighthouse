@@ -5,6 +5,7 @@
 #include <WiFiManager.h>
 #include <WiFi.h>
 #include <ESP.h>
+#include <ESPmDNS.h>
 
 
 WebServer server(80);
@@ -17,6 +18,7 @@ int PORTAL_MODE_PIN = 32;
 int RED_PIN = 25;
 int GREEN_PIN = 26;
 int BLUE_PIN = 27;
+int BUILTIN_LED_PIN = 2;
 
 boolean recording = false;
 boolean testing = false;
@@ -63,6 +65,19 @@ void setup() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
+  Serial.println("Setting up mDNS");
+  if (!MDNS.begin("remotelighthouse")) {
+    Serial.println("Error setting up MDNS responder!");
+    while(1) {
+        delay(1000);
+    }
+  }
+
+  MDNS.setInstanceName("Remote Lighthouse");
+  MDNS.addService("_http", "_tcp", 80);
+  MDNS.addServiceTxt("_http", "_tcp", "app", "remotelighthouse");
+  Serial.println("mDNS responder started");
+
   Serial.println("setting up server");
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
@@ -79,9 +94,11 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
+  pinMode(BUILTIN_LED_PIN, OUTPUT);
   digitalWrite(RED_PIN, HIGH);
   digitalWrite(GREEN_PIN, HIGH);
   digitalWrite(BLUE_PIN, HIGH);
+  digitalWrite(BUILTIN_LED_PIN, LOW);
 
  blockingBlink(false, false, true, 100, 100, 2);
 }
@@ -91,10 +108,12 @@ void blockingBlink(boolean r, boolean g, boolean b, int onTime, int offTime, int
       if (r) { digitalWrite(RED_PIN, LOW); }
       if (g) { digitalWrite(GREEN_PIN, LOW); }
       if (b) { digitalWrite(BLUE_PIN, LOW); }
+      digitalWrite(BUILTIN_LED_PIN, HIGH);
       delay(onTime);
       if (r) { digitalWrite(RED_PIN, HIGH); }
       if (g) { digitalWrite(GREEN_PIN, HIGH); }
       if (b) { digitalWrite(BLUE_PIN, HIGH); }
+      digitalWrite(BUILTIN_LED_PIN, LOW);
       delay(offTime);
   }
 }
