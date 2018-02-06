@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { View, StyleSheet, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
@@ -15,7 +15,7 @@ class LoadingScreen extends Component {
     const { REMOTE_BACKGROUND_COLOR, BUTTON_BACKGROUND_COLOR } = themes[this.props.theme]
     return (
       <View style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}>
-        <ActivityIndicator color={BUTTON_BACKGROUND_COLOR} size="large" />
+        {/* <ActivityIndicator color={BUTTON_BACKGROUND_COLOR} size="large" /> */}
       </View>
     )
   }
