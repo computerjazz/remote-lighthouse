@@ -66,16 +66,23 @@ void setup() {
   Serial.println(WiFi.SSID());
 
   Serial.println("Setting up mDNS");
-  if (!MDNS.begin("remotelighthouse")) {
+  String mac = String(WiFi.macAddress());
+  String mDnsString = String("remotelighthouse-" + mac.substring(mac.length() / 2));
+  mDnsString.replace(":", "");
+  Serial.println(mDnsString);
+  char mDnsChar[mDnsString.length()];
+  mDnsString.toCharArray(mDnsChar, mDnsString.length());
+  if (!MDNS.begin(mDnsChar)) {
     Serial.println("Error setting up MDNS responder!");
     while(1) {
         delay(1000);
     }
   }
 
-  MDNS.setInstanceName("Remote Lighthouse");
+  MDNS.setInstanceName("Remote Lighthouse - " + WiFi.macAddress());
   MDNS.addService("_http", "_tcp", 80);
   MDNS.addServiceTxt("_http", "_tcp", "app", "remotelighthouse");
+  
   Serial.println("mDNS responder started");
 
   Serial.println("setting up server");
