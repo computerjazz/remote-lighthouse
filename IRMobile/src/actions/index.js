@@ -360,7 +360,7 @@ let _zeroconfSetup = false
 let _foundLighthouses = []
 
 export function findDevicesOnNetwork() {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     zeroconf.stop()
     _foundLighthouses = []
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   StyleSheet,
@@ -9,22 +9,27 @@ import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import themes from '../constants/themes'
 
-class CirclePlusButton extends Component {
+class CircleButton extends Component {
 
   static propTypes = {
     onPress: PropTypes.func,
-    dragging: PropTypes.bool,
     theme: PropTypes.string.isRequired,
+    style: PropTypes.object,
+    icon: PropTypes.string,
+    iconColor: PropTypes.string,
+    buttonColor: PropTypes.string,
   }
 
   render() {
-    const { dragging, onPress, theme } = this.props
-    const { CIRCLE_PLUS_ICON_COLOR, CIRCLE_PLUS_BUTTON_COLOR, BUTTON_TRASH_COLOR } = themes[theme]
+    let { onPress, theme, style, icon, iconColor, buttonColor } = this.props
+    const { CIRCLE_PLUS_ICON_COLOR, CIRCLE_PLUS_BUTTON_COLOR } = themes[theme]
+    if (!iconColor) iconColor = CIRCLE_PLUS_ICON_COLOR
+    if (!buttonColor) buttonColor = CIRCLE_PLUS_BUTTON_COLOR
     return (
-      <TouchableOpacity style={[styles.container, { backgroundColor: CIRCLE_PLUS_BUTTON_COLOR }, dragging && {backgroundColor: BUTTON_TRASH_COLOR}]} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: buttonColor }, style]} onPress={onPress}>
         <Icon
-          color={CIRCLE_PLUS_ICON_COLOR}
-          name={'plus'}
+          color={iconColor}
+          name={icon}
           size={35}
         />
       </TouchableOpacity>
@@ -32,19 +37,17 @@ class CirclePlusButton extends Component {
   }
 }
 
-CirclePlusButton.defaultProps = {
+CircleButton.defaultProps = {
   onPress: () => {},
-  dragging: false,
 }
 
 const mapStateToProps = state => ({
   theme: state.settings.theme,
-  dragging: state.app.dragging,
 })
 
 export default connect(
   mapStateToProps,
-)(CirclePlusButton)
+)(CircleButton)
 
 const styles = StyleSheet.create({
   container: {
@@ -58,10 +61,10 @@ const styles = StyleSheet.create({
     right: 20,
     elevation: 5,
     shadowColor: 'black',
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.2,
     shadowOffset: {
-      width: 3,
-      height: 3,
+      width: 2,
+      height: 2,
     },
     shadowRadius: 3,
   },

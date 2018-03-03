@@ -12,7 +12,9 @@ import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
+  setCaptureMode,
   setDragging,
+  setEditMode,
   setHeaderMenu,
   setModalVisible,
   stopRecord,
@@ -23,7 +25,7 @@ import themes from '../constants/themes'
 import modals from './modals'
 
 import ButtonPanel from './ButtonPanel'
-import CirclePlusButton from './CirclePlusButton'
+import CircleButton from './CircleButton'
 import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
 import TabIcon from './nav/TabIcon'
@@ -120,6 +122,15 @@ class Remote extends Component {
     this.props.setModalVisible(false)
   }
 
+  setCaptureMode = () => {
+    this.props.setEditMode(false)
+    this.props.setCaptureMode(true)
+  }
+  setEditMode = () => {
+    this.props.setCaptureMode(false)
+    this.props.setEditMode(true)
+  }
+
   dismissAll = () => {
     this.dismissMenu()
     this.dismissRecording()
@@ -150,7 +161,7 @@ class Remote extends Component {
   }
 
   render() {
-    const { editing, dragging, remote, headerModal, theme } = this.props
+    const { capturing, editing, dragging, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId, listViewKey } = this.state
     const GeneralModal = modals[headerModal]
     if (!remote) return null
@@ -174,7 +185,9 @@ class Remote extends Component {
             sortRowStyle={styles.sortRow}
           />
 
-          { editing && !dragging && <CirclePlusButton onPress={this.showAddPanelModal} />}
+          { editing && <CircleButton icon="remote" onPress={this.setCaptureMode} />}
+          { capturing && <CircleButton icon="arrange-bring-forward" onPress={this.setEditMode} />}
+          { editing && <CircleButton icon="plus" style={{ right: 100 }} onPress={this.showAddPanelModal} />}
 
         </View>
         { addPanelModalVisible &&
@@ -200,6 +213,7 @@ const mapStateToProps = (state, ownProps) => ({
   currentRemoteId: state.app.currentRemoteId,
   dragging: state.app.dragging,
   editing: state.app.editing,
+  capturing: state.app.capturing,
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
   headerMenuVisible: state.app.headerMenuVisible,
@@ -211,6 +225,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     setDragging: dragging => dispatch(setDragging(dragging)),
     stopRecord: () => dispatch(stopRecord()),
     setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
+    setEditMode: editMode => dispatch(setEditMode(editMode)),
+    setCaptureMode: captureMode => dispatch(setCaptureMode(captureMode)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),
     updateRemote: updatedRemote => dispatch(updateRemote(ownProps.navigation.state.routeName, updatedRemote)),
 })

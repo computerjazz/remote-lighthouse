@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Alert,
@@ -49,8 +49,8 @@ class MainMenu extends Component {
           }}
         />
         <MenuItem
-          icon="pencil"
-          text="Layout"
+          icon="arrange-bring-forward"
+          text="Arrange"
           onPress={() => {
             this.props.setEditMode(true)
             // this.props.setHeaderMenu(false)

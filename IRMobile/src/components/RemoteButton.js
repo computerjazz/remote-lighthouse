@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Animated,
@@ -118,7 +118,7 @@ class RemoteButton extends Component {
           >
             {/* React native bug  in TouchableHighlight -- child component must have a backgroundColor*/}
             <View style={[ styles.touchableInner, !isRecording && !hasStatus && { backgroundColor: BUTTON_BACKGROUND_COLOR }]}>
-              { !!iconName && <Icon name={iconName === BLANK_SPACE ? 'cat' : iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
+              { !!iconName && <Icon name={iconName === BLANK_SPACE ? 'checkbox-blank-outline' : iconName} size={iconSize} color={BUTTON_ICON_COLOR} /> }
               { !!title && <Text style={[styles.text, { color: BUTTON_TEXT_COLOR }]} numberOfLines={1}>{title}</Text> }
             </View>
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   BackHandler,
@@ -51,7 +51,7 @@ class AddPanelModal extends Component {
         style={[styles.button, { backgroundColor: BUTTON_BACKGROUND_COLOR }, isBlank && { opacity: 0 }]}
       >
         <Icon
-          name={isBlank ? 'cat' : item}
+          name={isBlank ? 'checkbox-blank-outline' : item}
           color={BUTTON_ICON_COLOR}
           size={20}
         />

@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
         list: newList,
         [action.payload.remoteId]: {
           title: '',
-          icon: 'cat',
+          icon: 'checkbox-blank-outline',
           panels: [],
         }
       }

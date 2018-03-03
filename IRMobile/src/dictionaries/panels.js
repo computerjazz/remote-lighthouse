@@ -16,19 +16,19 @@ import {
 export default {
   [CUSTOM_1]: {
       title: 'Custom (1)',
-      icons: ['cat'],
+      icons: ['checkbox-blank-outline'],
   },
   [CUSTOM_2]: {
     title: 'Custom (2)',
-    icons: ['cat', 'cat'],
+    icons: ['checkbox-blank-outline', 'checkbox-blank-outline'],
   },
   [CUSTOM_3]: {
     title: 'Custom (3)',
-    icons: ['cat', 'cat', 'cat'],
+    icons: ['checkbox-blank-outline', 'checkbox-blank-outline', 'checkbox-blank-outline'],
   },
   [CUSTOM_4]: {
     title: 'Custom (4)',
-    icons: ['cat', 'cat', 'cat', 'cat'],
+    icons: ['checkbox-blank-outline', 'checkbox-blank-outline', 'checkbox-blank-outline', 'checkbox-blank-outline'],
   },
   [MEDIA_PLAYBACK]: {
     title: 'Media Playback',

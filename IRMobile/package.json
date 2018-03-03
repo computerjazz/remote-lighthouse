@@ -10,6 +10,7 @@
 	"dependencies": {
 		"buffer": "^5.0.7",
 		"lodash": "^4.17.4",
+		"prop-types": "^15.6.1",
 		"react": "16.2.0",
 		"react-native": "0.52.2",
 		"react-native-branch": "^2.0.0",
