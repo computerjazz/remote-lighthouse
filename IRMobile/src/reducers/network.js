@@ -1,4 +1,4 @@
-import { ADD_DEVICE_URL, SET_DEVICE_URLS, SET_SCANNING, SET_TESTING } from '../constants/actions'
+import { ADD_DEVICE_URL, REMOVE_DEVICE_URL, SET_DEVICE_URLS, SET_SCANNING, SET_TESTING } from '../constants/actions'
 
 const initialState = {
   ipAddresses: [],
@@ -16,6 +16,8 @@ export default (state = initialState, action) => {
       return { ...state, scanning: action.payload.scanning }
     case SET_TESTING:
       return {...state, testing: action.payload.testing }
+    case REMOVE_DEVICE_URL:
+      return { ...state, ipAddresses: state.ipAddresses.filter(ipAddress => ipAddress !== action.payload.url)}
     default:
       return state
   }

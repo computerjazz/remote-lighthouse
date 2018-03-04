@@ -340,17 +340,23 @@ export function removeDeviceUrl(url) {
 export function pingKnownDevices() {
   return async (dispatch, getState) => {
     const { ipAddresses } = getState().network
-    const responses = await Promise.all(ipAddresses.map(ipAddress => fetch(`http://${ipAddress}/marco`)))
-    const results = responses.map((result, i) => {
-      if (result.ok && result.status === 200) {
-        return ipAddresses[i]
-      } else dispatch(removeDeviceUrl(ipAddresses[i]))
-    })
-    return results
+    ipAddresses.push('192.168.33.33')
+    try {
+      const responses = await Promise.all(ipAddresses.map(ipAddress => new Promise(res => {
+        setTimeout(() => res({ ok: false, status: 400 }), 2000)
+        fetch(`http://${ipAddress}/marco`).then(res).catch(res)
+      })))
+      const results = responses.map((result, i) => {
+        if (result.ok && result.status === 200) {
+          return ipAddresses[i]
+        } else dispatch(removeDeviceUrl(ipAddresses[i]))
+      })
+      return results
+    } catch (err) {
+      console.log('## pingKnownDevices error', err)
+    }
   }
 }
-
-
 
 
 let _zeroconfSetup = false
