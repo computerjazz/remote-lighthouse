@@ -340,7 +340,6 @@ export function removeDeviceUrl(url) {
 export function pingKnownDevices() {
   return async (dispatch, getState) => {
     const { ipAddresses } = getState().network
-    ipAddresses.push('192.168.33.33')
     try {
       const responses = await Promise.all(ipAddresses.map(ipAddress => new Promise(res => {
         setTimeout(() => res({ ok: false, status: 400 }), 2000)
