@@ -97,7 +97,6 @@ class ButtonPanel extends Component {
 
   render() {
     const { buttons, type, editing, theme } = this.props
-    console.log('PANEL PROPS', this.props)
     const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[theme]
     return (
       <View style={styles.container}>

@@ -1,9 +1,7 @@
-import { Platform } from 'react-native'
 import uuid from 'react-native-uuid'
 import branch from 'react-native-branch'
 import Zeroconf from 'react-native-zeroconf'
 import _ from 'lodash'
-import { NetworkInfo } from 'react-native-network-info'
 
 import panelDefs from '../dictionaries/panels'
 import { isAndroid } from '../utils'
@@ -135,7 +133,7 @@ export function getShareRemoteUrl(nestedRemote) {
     }
 
     let controlParams = {
-      '$desktop_url': 'http://www.danielmerrill.com',
+      '$desktop_url': 'http://www.remotelighthouse.com',
       '$ios_url': 'irmobile://',
       '$android_url': 'irmobile://',
     }
@@ -235,7 +233,6 @@ export function setcapturingButtonId(buttonId) {
 }
 
 export function assignIRCode(buttonId, codeData) {
-  console.log('ASSIGNING IR CODE TO BUTTON', buttonId, codeData)
   const { type, value, length } = codeData
   return {
     type: ASSIGN_IR_CODE,
@@ -367,10 +364,8 @@ export function findDevicesOnNetwork() {
     if (!_zeroconfSetup) {
 
       zeroconf.on('resolved', data => {
-        console.log('RESOLVED', data)
         if (data.txt && data.txt.app === 'remotelighthouse') {
           const lighthouseIp = data.addresses[0]
-          console.log('FOUND A LIGHTHOUSE at: ', lighthouseIp)
           if (!_foundLighthouses.includes(lighthouseIp)) _foundLighthouses.push(lighthouseIp)
         }
       })
@@ -386,7 +381,6 @@ export function findDevicesOnNetwork() {
     zeroconf.scan('http', 'tcp', 'local.')
     setTimeout(() => zeroconf.stop(), 2000)
     dispatch(setScanning(true))
-
   }
 }
 
@@ -394,7 +388,6 @@ let pollInterval
 
 export function captureIRCode(buttonId, onStatusChanged) {
   return async dispatch => {
-    console.log('CAPTURING!!', buttonId)
     try {
       const response = await dispatch(startRecord(buttonId))
       if (response.ok) {
@@ -410,11 +403,9 @@ export function captureIRCode(buttonId, onStatusChanged) {
 export function startRecord(buttonId) {
   return async (dispatch, getState) => {
     const { ipAddresses } = getState().network
-    console.log('START RECORD')
     dispatch(setcapturingButtonId(buttonId))
     try {
       const response = await Promise.race(ipAddresses.map(ipAddress => fetch(`http://${ipAddress}/rec`)))
-      console.log('START RECORD::response', response)
       return response
     } catch (err) {
       console.log('## startRecord error', err)
@@ -480,14 +471,10 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
       let pollCounter = 0
       pollInterval = setInterval(async () => {
 
-        console.log('Checking...', pollCounter)
-
         const responses = await Promise.all(ipAddresses.map(ipAddress => fetch(`http://${ipAddress}/check`)))
         const parsedResponses = await Promise.all(responses.map(response => response.json()))
-        console.log('RESPONSES', parsedResponses)
         const codeData = parsedResponses.find(item => item.value)
         if (codeData && codeData.value) {
-          console.log('GOT A CODE!', codeData)
           clearInterval(pollInterval)
           dispatch(assignIRCode(buttonId, codeData))
           onStatusChanged(true)
@@ -497,13 +484,12 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
           clearInterval(pollInterval)
           onStatusChanged(false)
           dispatch(stopRecord())
-          console.log('MAX REACTHED, GIVING UP')
         }
         pollCounter++
       }, POLL_INTERVAL)
     } catch (err) {
       pollInterval && clearInterval(pollInterval)
-      console.log('ERR!!!')
+      console.log('## checkForCapturedCode err', err)
       onStatusChanged(false)
       dispatch(stopRecord())
     }
@@ -513,16 +499,18 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
 export function transmitIRCode(buttonId) {
   return async (dispatch, getState) => {
     const { ipAddresses } = getState().network
-    console.log(getState().buttons)
     const { type, value, length } = getState().buttons[buttonId]
-    console.log('TRANSMITTING CODE', value)
+    try {
+      const responses = await Promise.all(ipAddresses.map(ipAddress => {
+        const endpoint = `http://${ipAddress}/send?length=${length}&value=${value}&type=${type}`
+        return fetch(endpoint)
+      }))
 
-    const responses = await Promise.all(ipAddresses.map(ipAddress => {
-      const endpoint = `http://${ipAddress}/send?length=${length}&value=${value}&type=${type}`
-      return fetch(endpoint)
-    }))
+      const text = await Promise.all(responses.map(response => response.text()))
+      return text
+    } catch (err) {
+      console.log('## transmitIRCode err', err)
+    }
 
-    const text = await Promise.all(responses.map(response => response.text()))
-    console.log(text)
   }
 }

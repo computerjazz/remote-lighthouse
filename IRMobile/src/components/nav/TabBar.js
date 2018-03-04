@@ -12,7 +12,6 @@ class TabBar extends Component {
   }
 
   render(){
-    console.log('TABBAR', this.props)
     const {
       TAB_BACKGROUND_COLOR_ACTIVE,
       TAB_BACKGROUND_COLOR_INACTIVE,

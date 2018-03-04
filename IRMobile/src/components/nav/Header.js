@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   View,
@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import { updateRemote } from '../../actions'
 
 import HeaderTitle from './HeaderTitle'
+import HeaderSubTitle from './HeaderSubTitle'
 import HeaderMenuButton from './HeaderMenuButton'
 
 import themes from '../../constants/themes'
@@ -62,6 +63,7 @@ class Header extends Component {
     const headerTitleColor = editing || capturing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
     const remoteTitle = remote && remote.title || ' '
     const headerTitle = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
+    const headerSubTitle = capturing ? recording ? 'Point your remote at a lighthouse and press the button you wish to capture' : 'Press any button on the screen to begin the capturing process.' : ''
     return (
       <View style={[styles.container, { backgroundColor: headerBackgroundColor }, headerStyle]}>
         {!modalVisible && rehydrated &&  <View style={styles.inner}>
@@ -72,6 +74,7 @@ class Header extends Component {
               onChangeText={this.onChangeText}
               onBlur={this.onTitleUpdate}
             />
+            {/* {!!headerSubTitle && <HeaderSubTitle text={headerSubTitle} />} */}
             <HeaderMenuButton right onPressDone={this.onTitleUpdate} />
           </View>
         }

@@ -36,7 +36,6 @@ export const createTabNavigator = (remotes, Screen) => {
   }
 
   const onNavigationStateChange = function(prevState, newState){
-    console.log('STATE CHANGED', prevState, newState)
     if (this.setCurrentRemoteId) this.setCurrentRemoteId(newState.routes[newState.index].routeName)
     if (this.setHeaderModal) this.setHeaderModal(null)
   }

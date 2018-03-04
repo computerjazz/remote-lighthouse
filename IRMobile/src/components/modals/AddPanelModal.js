@@ -67,7 +67,7 @@ class AddPanelModal extends Component {
         onPress={() => this.props.onSubmit(key)}
       >
         <Text
-          style={styles.confirmButton}
+          style={[styles.panelTitle]}
         >
           {title}
         </Text>
@@ -94,16 +94,19 @@ class AddPanelModal extends Component {
           <ScrollView
             style={{flex: 1}}
           >
+            <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10, borderBottomWidth: 0.5, borderBottomColor: '#ccc' }}>
+              <Text style={{ fontSize: 20, color: '#666', fontWeight: '200' }}>Add a button panel</Text>
+            </View>
             { _.map(panelDict, this.renderAddPanelOption) }
           </ScrollView>
 
-          <View style={styles.confirmButtonContainer}>
-            <TextButton
-              text="Cancel"
-              buttonStyle={styles.confirmButton}
-              onPress={onSubmit}
-            />
-          </View>
+          <TextButton
+            text="Cancel"
+            textStyle={styles.confirmButton}
+            buttonStyle={styles.confirmButtonContainer}
+            onPress={onSubmit}
+          />
+
         </View>
       </View>
     )
@@ -147,10 +150,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: '#ccc',
   },
   confirmButton: {
+    fontWeight: '200',
+    color: '#666',
+    fontSize: 16,
+  },
+  panelTitle: {
+    fontWeight: '200',
+    color: '#666',
+    fontSize: 16,
     paddingTop: 15,
   },
 })
