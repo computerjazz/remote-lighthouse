@@ -4,6 +4,10 @@ import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
+import {
+  REMOTE_OPTIONS
+} from '../constants/ui'
+
 import { CustomLayoutLinear } from '../dictionaries/animations'
 import {
   gotoinstructionStep,
@@ -24,6 +28,7 @@ const instructions = [{
     if (!props.editing) props.setEditMode(true)
   },
   arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 150, top: -30 } },
+  shouldAutoIncrement: (thisProps, nextProps) => thisProps.remote && thisProps.remote.title !== nextProps.remote.title
 },{
   name: 'icon-customize',
   text: `Change this remote's icon.`,
@@ -37,6 +42,7 @@ const instructions = [{
     if (!props.editing) props.setEditMode(true)
   },
   arrow: { icon: 'arrow-up-thick', position: 'above', style: { left: 0, top: -30 } },
+  shouldAutoIncrement: (thisProps, nextProps) => nextProps.headerModal === REMOTE_OPTIONS
 },{
   name: 'add-panel',
   text: `Add more buttons to this remote`,
@@ -54,7 +60,7 @@ const instructions = [{
     }
   },
   arrow: { icon: 'arrow-down-thick', position: 'below', style: { right: 85, bottom: -35 } },
-
+  shouldAutoIncrement: (thisProps, nextProps) => nextProps.editing && nextProps.modalVisible === 'addPanel' && !nextProps.headerModal
 },{
   name: 'button-customize',
   text: `Press any button to customize its icon and label.`,
@@ -70,6 +76,7 @@ const instructions = [{
     right: 25,
     position: 'absolute',
   },
+  shouldAutoIncrement: (thisProps, nextProps) => nextProps.editing && nextProps.modalVisible === 'editButton' && !nextProps.headerModal
 },{
   name: 'capture-begin',
   text: `Enter 'capture' mode to assign buttons from a real-life remote`,
@@ -87,7 +94,7 @@ const instructions = [{
     position: 'absolute',
   },
   arrow: { icon: 'arrow-down-thick', position: 'below', style: { right: 10, bottom: -35 } },
-
+  shouldAutoIncrement: (thisProps, nextProps) => !thisProps.capturing && nextProps.capturing
 },{
   name: 'capture-listen',
   text: "Press the button you wish to assign. It'll flash red to let you know it's in listening mode. The lighthouse will flash red too.",
@@ -103,6 +110,7 @@ const instructions = [{
     right: 25,
     position: 'absolute',
   },
+  shouldAutoIncrement: (thisProps, nextProps) => !thisProps.capturingButtonId && !!nextProps.capturingButtonId
 },{
   name: 'capture-point',
   text: `Now point your real-life remote at the lighthouse and press its corresponding button.
@@ -120,9 +128,10 @@ When the capture is compolete, the lighthouse and button will both flash green.`
     right: 25,
     position: 'absolute',
   },
+  shouldAutoIncrement: (thisProps, nextProps) => !!thisProps.capturingButtonId && thisProps.buttons[thisProps.capturingButtonId].value !== nextProps.buttons[thisProps.capturingButtonId].value
 },{
   name: 'done',
-  text: `To leave 'edit' mode and use your remote press 'Done'!`,
+  text: `To leave 'edit' mode press 'Done'!`,
   style: {
     top: 100,
     left: 25,
@@ -130,10 +139,10 @@ When the capture is compolete, the lighthouse and button will both flash green.`
     position: 'absolute',
   },
   arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 0, top: -30 } },
-
+  shouldAutoIncrement: (thisProps, nextProps) => (thisProps.editing && !nextProps.editing && !nextProps.capturing) || (thisProps.capturing && !nextProps.capturing && !nextProps.editing)
 },{
   name: 'menu',
-  text: `That's it! You can go back into 'edit' mode from the header menu.
+  text: `Your remote is ready to use! You can go back into 'edit' mode from the header menu.
 
 You can also add and delete remotes, and easily share remotes with other people!`,
   style: {
@@ -144,6 +153,7 @@ You can also add and delete remotes, and easily share remotes with other people!
   },
   button: 'dots-vertical',
   arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 0, top: -30 } },
+  shouldAutoIncrement: (thisProps, nextProps) => !thisProps.headerMenuVisible && nextProps.headerMenuVisible
 },
 ]
 
@@ -159,28 +169,14 @@ class Instructions extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const thisStepName = instructions[nextProps.instructionStep] && instructions[nextProps.instructionStep].name
-    if (!thisStepName) return
+    const currentInstructions = instructions[nextProps.instructionStep]
+    if (!currentInstructions) return
 
     if (this.props.instructionStep !== nextProps.instructionStep) {
       this.setAction(nextProps)
     }
 
-    // Increment instructions when user performs actions
-    const titleComplete = thisStepName === 'remote-title' && this.props.remote && this.props.remote.title !== nextProps.remote.title
-    const iconComplete = thisStepName === 'icon-customize' && nextProps.headerModal === "REMOTE_OPTIONS"
-    const addPanelComplete = thisStepName === 'add-panel' && nextProps.editing && nextProps.modalVisible === 'addPanel' && !nextProps.headerModal
-    const customizeButtonComplete = thisStepName === 'button-customize' && nextProps.editing && nextProps.modalVisible === 'editButton' && !nextProps.headerModal
-    const enterCaptureModeComplete= thisStepName === 'capture-begin' && !this.props.capturing && nextProps.capturing
-    const listenComplete = thisStepName === 'capture-listen' && !this.props.capturingButtonId && !!nextProps.capturingButtonId
-    const captureComplete = thisStepName === 'capture-point' && !!this.props.capturingButtonId && this.props.buttons[this.props.capturingButtonId].value !== nextProps.buttons[this.props.capturingButtonId].value
-    const donePressed = thisStepName === 'done' && (this.props.editing && !nextProps.editing && !nextProps.capturing) || (this.props.capturing && !nextProps.capturing && !nextProps.editing)
-    const menuPressed = thisStepName === 'menu' && !this.props.headerMenuVisible && nextProps.headerMenuVisible
-
-    if (
-      titleComplete || iconComplete || addPanelComplete || customizeButtonComplete ||
-      enterCaptureModeComplete || listenComplete || captureComplete || donePressed || menuPressed
-    ) {
+    if (currentInstructions.shouldAutoIncrement(this.props, nextProps)) {
       this.gotoStep(nextProps.instructionStep + 1)
     }
   }
