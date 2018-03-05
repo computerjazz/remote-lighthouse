@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { View, Platform, StyleSheet, Text } from 'react-native'
+import { Dimensions, View, Platform, StyleSheet, Text } from 'react-native'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import themes from '../../constants/themes'
-const isSmallScreen = false
+const { height } = Dimensions.get('window')
+const isSmallScreen = height < 600
+
 
 class TabIcon extends Component {
   render() {
