@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import themes from '../../constants/themes'
+const isSmallScreen = false
 
 class TabIcon extends Component {
   render() {
@@ -13,7 +14,7 @@ class TabIcon extends Component {
     const { TAB_LABEL_COLOR_ACTIVE, TAB_LABEL_COLOR_INACTIVE } = themes[theme]
     const color = id === currentRemoteId ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE
     return (
-      <View style={[Platform.OS === 'ios' && { height: 40 }]}>
+      <View style={[Platform.OS === 'ios' && { height: isSmallScreen ? 25 : 40 }]}>
         <Icon name={remote.icon} color={color} size={hasTitle ? 23 : 30} />
       </View>
     )

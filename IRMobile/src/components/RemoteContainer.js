@@ -42,7 +42,7 @@ class RemoteContainer extends Component {
     editing: PropTypes.bool.isRequired,
     findDevicesOnNetwork: PropTypes.func.isRequired,
     pingKnownDevices: PropTypes.func.isRequired,
-    modalVisible: PropTypes.bool.isRequired,
+    modalVisible: PropTypes.string,
     navigation: PropTypes.object.isRequired,
     remotes: PropTypes.object.isRequired,
     setEditMode: PropTypes.func.isRequired,
@@ -52,6 +52,7 @@ class RemoteContainer extends Component {
   static defaultProps = {
     capturingButtonId: null,
     currentRemoteId: null,
+    modalVisible: null,
   }
 
   shouldComponentUpdate(nextProps) {

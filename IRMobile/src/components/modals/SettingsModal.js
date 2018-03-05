@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   ActivityIndicator,
@@ -14,7 +14,7 @@ import {
 import { connect } from 'react-redux'
 
 import TextButton from '../TextButton'
-import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode } from '../../actions'
+import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode, gotoinstructionStep } from '../../actions'
 import { isAndroid } from '../../utils'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
@@ -57,7 +57,6 @@ class SelectRemoteIconModal extends Component {
   }
 
   onDonePress = () => {
-
     this.props.setHeaderModal(null)
     this.props.onSubmit()
   }
@@ -86,9 +85,14 @@ class SelectRemoteIconModal extends Component {
     )
   }
 
+  startTutorial = () => {
+    this.onDonePress()
+    this.props.gotoinstructionStep(0)
+  }
+
   render() {
     const { ipAddresses, scanning, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR, BUTTON_EDIT_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
+    const { MODAL_BACKGROUND_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -96,13 +100,13 @@ class SelectRemoteIconModal extends Component {
           <ScrollView style={styles.scrollView}>
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length > 1 ? 's' : ''} connected:`}</Text>
-              {ipAddresses.map(url => <Text key={url}>{url}</Text>)}
+              <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length > 1 ? 's' : ''} connected:`}</Text>
+              {ipAddresses.map(url => <Text key={url} style={{ fontWeight: '200', fontSize: 13, color: TEXT_COLOR_DARK }}>{url}</Text>)}
             </View>
 
 
             <TouchableOpacity
-              style={[styles.scanButton, { backgroundColor: BUTTON_EDIT_COLOR }]}
+              style={[styles.scanButton, { backgroundColor: TEXT_COLOR_DARK }]}
               onPress={this.props.findDevicesOnNetwork}
             >
               {scanning ?
@@ -110,10 +114,16 @@ class SelectRemoteIconModal extends Component {
                 <Text style={{color: TEXT_COLOR_LIGHT}}>Scan Network</Text>
               }
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={this.startTutorial}
+              style={[styles.tutorialButton, { backgroundColor: TEXT_COLOR_DARK }]}
+            >
+              <Text style={{ color: TEXT_COLOR_LIGHT }}>Tutorial</Text>
+            </TouchableOpacity>
             <View style={{paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <View style={{flexDirection: 'column'}}>
-                <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 14}}>Testing Mode</Text>
-                <Text style={{color: TEXT_COLOR_DARK, fontSize: 12}}>Blink LED on transmit & discovery</Text>
+                <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Testing Mode</Text>
+                <Text style={{color: TEXT_COLOR_DARK, fontSize: 12, fontWeight: '200'}}>Blink LED on transmit & discovery</Text>
               </View>
               <Switch
                 onValueChange={() => {
@@ -123,7 +133,7 @@ class SelectRemoteIconModal extends Component {
                 value={this.state.testingValue}
               />
             </View>
-            <Text style={{color: TEXT_COLOR_DARK, fontWeight: 'bold', fontSize: 14}}>Theme</Text>
+            <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Theme</Text>
             {themeList.map(this.renderThemeOption)}
 
           </ScrollView>
@@ -160,6 +170,7 @@ const mapDispatchToProps = (dispatch) => ({
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   setTheme: theme => dispatch(setTheme(theme)),
   setTestingMode: isTesting => dispatch(setTestingMode(isTesting)),
+  gotoinstructionStep: step => dispatch(gotoinstructionStep(step))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
@@ -207,6 +218,15 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_RADIUS,
   },
   scanButton: {
+    height: 40,
+    padding: 10,
+    margin: 10,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: BUTTON_RADIUS,
+  },
+  tutorialButton: {
     height: 40,
     padding: 10,
     margin: 10,

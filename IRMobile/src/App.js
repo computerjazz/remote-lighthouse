@@ -10,10 +10,11 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import codePush from "react-native-code-push";
 
-import Navigator from './navigation'
+import Instructions from './components/Instructions'
 import LinkHandler from './components/LinkHandler'
 import LoadingScreen from './components/LoadingScreen'
 import MainMenu from './components/menu/MainMenu'
+import Navigator from './navigation'
 import reducers from './reducers'
 
 const codePushOptions = {
@@ -52,6 +53,7 @@ class App extends Component {
             <Navigator />
             <MainMenu />
             <LinkHandler />
+            <Instructions />
           </View>
         </PersistGate>
       </Provider>

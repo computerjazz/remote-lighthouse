@@ -11,14 +11,15 @@ import {
 } from '../constants/actions'
 
 const initialState = {
-  headerMenuVisible: false,
-  editing: false,
   capturing: false,
-  dragging: false,
   capturingButtonId: null,
   currentRemoteId: null,
-  modalVisible: false,
+  dragging: false,
+  editing: false,
+  headerMenuVisible: false,
   headerModal: null,
+  modalVisible: null,
+  instructionStep: 0,
   rehydrated: false,
 }
 
@@ -46,7 +47,7 @@ export default (state = initialState, action) => {
     case SET_HEADER_MODAL:
       return {
         ...state,
-        modalVisible: !!action.payload.modal,
+        modalVisible: action.payload.modal,
         headerModal: action.payload.modal,
       }
 

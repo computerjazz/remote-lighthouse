@@ -60,16 +60,22 @@ class Remote extends Component {
   componentWillMount() {
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
-     onStartShouldSetPanResponder: () => false,
-     onStartShouldSetPanResponderCapture: () => false,
-     onMoveShouldSetPanResponder: () => false ,
+     onStartShouldSetPanResponder: () => {
+       return false;
+     },
+     onStartShouldSetPanResponderCapture: () => {
+       if (this.props.headerMenuVisible) this.dismissMenu()
+       return false
+     },
+     onMoveShouldSetPanResponder: () => {
+       return false
+     } ,
      onMoveShouldSetPanResponderCapture: () => {
        // @TODO: setting recording button id to null
        // here is messing up button logic b/c this onPress
        // is called before button onPress.
 
        // this.dismissRecording()
-       if (this.props.headerMenuVisible) this.dismissMenu()
        return false
      }
    });
@@ -103,23 +109,23 @@ class Remote extends Component {
 
   showAddPanelModal = () => {
     this.setState({ addPanelModalVisible: true })
-    this.props.setModalVisible(true)
+    this.props.setModalVisible('addPanel')
   }
 
   submitAddPanelModal = type => {
     if (type) this.props.createButtonPanel(type)
     this.setState({ addPanelModalVisible: false })
-    this.props.setModalVisible(false)
+    this.props.setModalVisible(null)
   }
 
   onEditPress = buttonId => {
     this.setState({ editButtonModalVisible: true, editingButtonId: buttonId })
-    this.props.setModalVisible(true)
+    this.props.setModalVisible('editButton')
   }
 
   dismissEditButtonModal = () => {
     this.setState({ editButtonModalVisible: false })
-    this.props.setModalVisible(false)
+    this.props.setModalVisible(null)
   }
 
   setCaptureMode = () => {

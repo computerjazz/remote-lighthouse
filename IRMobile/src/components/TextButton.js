@@ -24,7 +24,7 @@ class TextButton extends Component {
         style={[styles.button, buttonStyle]}
         underlayColor={ICON_SELECTED_BACKGROUND_COLOR}
       >
-        <Text style={[{color}, textStyle]}>{text}</Text>
+        <Text style={[{ color }, { fontWeight: '200' }, textStyle]}>{text}</Text>
       </TouchableHighlight>
 
     )

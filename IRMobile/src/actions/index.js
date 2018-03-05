@@ -9,30 +9,40 @@ import { isAndroid } from '../utils'
 import {
   ADD_DEVICE_URL,
   ASSIGN_IR_CODE,
-  CREATE_BUTTON,
-  UPDATE_BUTTON,
   CREATE_BUTTON_PANEL,
-  DELETE_BUTTON_PANEL,
+  CREATE_BUTTON,
   CREATE_REMOTE,
-  UPDATE_REMOTE,
-  DELETE_REMOTE,
+  DELETE_BUTTON_PANEL,
   DELETE_BUTTON,
+  DELETE_REMOTE,
+  GOTO_INSTRUCTIONS_STEP,
   REMOVE_DEVICE_URL,
-  SET_DEVICE_URLS,
-  SET_HEADER_MENU_VISIBLE,
-  SET_EDIT_MODE,
   SET_CAPTURE_MODE,
   SET_CURRENT_REMOTE_ID,
-  SET_RECORDING_BUTTON_ID,
+  SET_DEVICE_URLS,
   SET_DRAGGING,
-  SET_MODAL_VISIBLE,
+  SET_EDIT_MODE,
+  SET_HEADER_MENU_VISIBLE,
   SET_HEADER_MODAL,
+  SET_MODAL_VISIBLE,
+  SET_RECORDING_BUTTON_ID,
   SET_SCANNING,
-  SET_THEME,
   SET_TESTING,
+  SET_THEME,
+  UPDATE_BUTTON,
+  UPDATE_REMOTE,
 } from '../constants/actions'
 
 const zeroconf = new Zeroconf()
+
+export function gotoinstructionStep(step) {
+  return {
+    type: GOTO_INSTRUCTIONS_STEP,
+    payload: {
+      step,
+    }
+  }
+}
 
 export function createRemote() {
   const remoteId = uuid.v1()

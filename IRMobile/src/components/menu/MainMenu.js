@@ -32,7 +32,9 @@ import { GENERAL_SETTINGS, POWER } from '../../constants/ui'
 class MainMenu extends Component {
 
   componentWillReceiveProps(nextProps) {
-    if (this.headerMenuVisible !== nextProps.headerMenuVisible) LayoutAnimation.configureNext(CustomLayoutLinear)
+    if (this.headerMenuVisible !== nextProps.headerMenuVisible) {
+      LayoutAnimation.configureNext(CustomLayoutLinear)
+    }
   }
 
   renderMainMenu = () => {
@@ -41,20 +43,12 @@ class MainMenu extends Component {
     return (
       <Animated.View style={[styles.menu, { backgroundColor: MENU_BACKGROUND_COLOR }]}>
         <MenuItem
-          icon="remote"
-          text="Capture"
-          onPress={() => {
-            this.props.setCaptureMode(true)
-            this.props.setHeaderMenu(false)
-          }}
-        />
-        <MenuItem
           icon="arrange-bring-forward"
-          text="Arrange"
+          text="Edit"
           onPress={() => {
             this.props.setEditMode(true)
             // this.props.setHeaderMenu(false)
-            setTimeout(() => this.props.setHeaderMenu(false), 10)
+            setTimeout(() => this.props.setHeaderMenu(false), 100)
           }}
         />
         <MenuItem
@@ -64,8 +58,6 @@ class MainMenu extends Component {
             this.props.setHeaderMenu(false)
             const nestedRemote = this.props.exportRemote(this.props.currentRemoteId)
             const url = await this.props.getShareRemoteUrl(nestedRemote)
-            console.log('GOT A URL!!!!', url)
-            console.log('SHARING REMOTE: ', JSON.stringify(nestedRemote, null, 2))
             Share.share({
               title: 'A remote has been shared with you!',
               message: url,
