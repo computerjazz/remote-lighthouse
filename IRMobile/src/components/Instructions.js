@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, Platform } from 'react-native'
 
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -19,7 +19,7 @@ const instructions = [{
   name: 'remote-title',
   text: `Hi! You're currently in 'edit' mode. Give your remote a name by tapping into this text field.`,
   style: {
-    top: 100,
+    top: 60,
     left: 25,
     right: 25,
     position: 'absolute'
@@ -27,13 +27,13 @@ const instructions = [{
   action: props => {
     if (!props.editing) props.setEditMode(true)
   },
-  arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 150, top: -30 } },
+  arrow: { icon: 'arrow-up-thick', position: 'above', style: { alignSelf: 'center' } },
   shouldAutoIncrement: (thisProps, nextProps) => thisProps.remote && thisProps.remote.title !== nextProps.remote.title
 },{
   name: 'icon-customize',
   text: `Change this remote's icon.`,
   style: {
-    top: 100,
+    top: 60,
     left: 25,
     right: 25,
     position: 'absolute'
@@ -41,14 +41,14 @@ const instructions = [{
   action: props => {
     if (!props.editing) props.setEditMode(true)
   },
-  arrow: { icon: 'arrow-up-thick', position: 'above', style: { left: 0, top: -30 } },
+  arrow: { icon: 'arrow-up-thick', position: 'above', style: { alignSelf: 'flex-start' } },
   shouldAutoIncrement: (thisProps, nextProps) => nextProps.headerModal === REMOTE_OPTIONS
 },{
   name: 'add-panel',
   text: `Add more buttons to this remote`,
   button: 'plus',
   style: {
-    bottom: 175,
+    bottom: 130,
     left: 25,
     right: 25,
     position: 'absolute',
@@ -59,7 +59,7 @@ const instructions = [{
       props.setEditMode(true)
     }
   },
-  arrow: { icon: 'arrow-down-thick', position: 'below', style: { right: 85, bottom: -35 } },
+  arrow: { icon: 'arrow-down-thick', position: 'below', style: { alignSelf: 'flex-end', marginRight: 85 } },
   shouldAutoIncrement: (thisProps, nextProps) => nextProps.editing && nextProps.modalVisible === 'addPanel' && !nextProps.headerModal
 },{
   name: 'button-customize',
@@ -76,6 +76,7 @@ const instructions = [{
     right: 25,
     position: 'absolute',
   },
+  arrow: { icon: 'arrow-down-thick', position: 'below', style: { opacity: 0 } },
   shouldAutoIncrement: (thisProps, nextProps) => nextProps.editing && nextProps.modalVisible === 'editButton' && !nextProps.headerModal
 },{
   name: 'capture-begin',
@@ -88,12 +89,12 @@ const instructions = [{
     }
   },
   style: {
-    bottom: 175,
+    bottom: 130,
     left: 25,
     right: 25,
     position: 'absolute',
   },
-  arrow: { icon: 'arrow-down-thick', position: 'below', style: { right: 10, bottom: -35 } },
+  arrow: { icon: 'arrow-down-thick', position: 'below', style: { alignSelf: 'flex-end', marginRight: 10 } },
   shouldAutoIncrement: (thisProps, nextProps) => !thisProps.capturing && nextProps.capturing
 },{
   name: 'capture-listen',
@@ -110,6 +111,7 @@ const instructions = [{
     right: 25,
     position: 'absolute',
   },
+  arrow: { icon: 'arrow-down-thick', position: 'below', style: { opacity: 0 } },
   shouldAutoIncrement: (thisProps, nextProps) => !thisProps.capturingButtonId && !!nextProps.capturingButtonId
 },{
   name: 'capture-point',
@@ -128,17 +130,25 @@ When the capture is compolete, the lighthouse and button will both flash green.`
     right: 25,
     position: 'absolute',
   },
+  arrow: { icon: 'arrow-down-thick', position: 'below', style: { opacity: 0 } },
   shouldAutoIncrement: (thisProps, nextProps) => !!thisProps.capturingButtonId && thisProps.buttons[thisProps.capturingButtonId].value !== nextProps.buttons[thisProps.capturingButtonId].value
 },{
   name: 'done',
-  text: `To leave 'edit' mode press 'Done'!`,
+  text: `To leave 'edit' mode press 'Done'`,
   style: {
-    top: 100,
+    opacity: 1, // Note: LayoutAnimation weirdness -- Android is hiding this if opacity is not set
+    top: 60,
     left: 25,
     right: 25,
     position: 'absolute',
   },
-  arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 0, top: -30 } },
+  action: props => {
+    if (!props.capturing && !props.editing) {
+      props.setEditMode(false)
+      props.setCaptureMode(true)
+    }
+  },
+  arrow: { icon: 'arrow-up-thick', position: 'above', style: { alignSelf: 'flex-end' } },
   shouldAutoIncrement: (thisProps, nextProps) => (thisProps.editing && !nextProps.editing && !nextProps.capturing) || (thisProps.capturing && !nextProps.capturing && !nextProps.editing)
 },{
   name: 'menu',
@@ -146,13 +156,17 @@ When the capture is compolete, the lighthouse and button will both flash green.`
 
 You can also add and delete remotes, and easily share remotes with other people!`,
   style: {
-    top: 100,
+    top: 60,
     left: 25,
     right: 25,
     position: 'absolute',
   },
   button: 'dots-vertical',
-  arrow: { icon: 'arrow-up-thick', position: 'above', style: { right: 0, top: -30 } },
+  arrow: { icon: 'arrow-up-thick', position: 'above', style: { alignSelf: 'flex-end' } },
+  action: props => {
+    props.setCaptureMode(false)
+    props.setEditMode(false)
+  },
   shouldAutoIncrement: (thisProps, nextProps) => !thisProps.headerMenuVisible && nextProps.headerMenuVisible
 },
 ]
@@ -182,7 +196,7 @@ class Instructions extends Component {
   }
 
   gotoStep = (step) => {
-    if (step < instructions.length) LayoutAnimation.configureNext(CustomLayoutLinear)
+    if (step < instructions.length&& instructions[step].name!== "capture-listen") LayoutAnimation.configureNext(CustomLayoutLinear)
     this.props.gotoinstructionStep(step)
   }
 
@@ -195,8 +209,8 @@ class Instructions extends Component {
 
   renderButton(name) {
     return (
-      <View style={{ flexDirection: 'row', paddingBottom: 15, justifyContent: 'center' }}>
-        <View style={{width: 30, height: 30, marginRight: -10, transform: [{ rotate: '45deg' }]}}>
+      <View key="button" style={{ flexDirection: 'row', paddingBottom: 15, justifyContent: 'center' }}>
+        <View style={{ transform: [{translateX: 15}, { rotate: '45deg' }]}}>
           <Icon name="gesture-tap" color="#666" size={40} />
         </View>
         <View style={{
@@ -214,9 +228,9 @@ class Instructions extends Component {
     )
   }
 
-  renderArrow(arrow) {
+  renderArrow(arrow, isAbove) {
     return (
-      <View style={[{ position: 'absolute'}, arrow.style]}>
+      <View style={[arrow.style, { transform: [{ translateY: isAbove ? Platform.OS === 'ios' ? 12 : 8 : -8 }]}]}>
         <Icon name={arrow.icon} size={40} color="#fff" />
       </View>
     )
@@ -228,30 +242,32 @@ class Instructions extends Component {
     if (!step || modalVisible || headerMenuVisible) return null
     return (
       <View pointerEvents="box-none" style={styles.container}>
-        <View style={[{ padding: 10, backgroundColor: 'white', borderRadius: 3, }, step.style]}>
-          {step.arrow && step.arrow.position === 'above' && this.renderArrow(step.arrow)}
-          {step.button && this.renderButton(step.button)}
-          <Text style={[styles.text]}>{step.text}</Text>
-          <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => this.props.gotoinstructionStep(-1)}
-            >
-              <Text>End</Text>
-            </TouchableOpacity>
-            {instructionStep < instructions.length - 1 && (
+        <View style={step.style}>
+          {step.arrow && step.arrow.position === "above" && this.renderArrow(step.arrow, true)}
+          <View style={{ padding: 10, backgroundColor: 'white', borderRadius: 3}}>
+            {step.button && this.renderButton(step.button)}
+            <Text style={[styles.text]}>{step.text}</Text>
+            <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <TouchableOpacity
-                onPress={() => this.gotoStep(instructionStep + 1)}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
+                onPress={() => this.props.gotoinstructionStep(-1)}
+              >
+                <Text>End</Text>
+              </TouchableOpacity>
+              {instructionStep < instructions.length - 1 && (
+                <TouchableOpacity
+                  onPress={() => this.gotoStep(instructionStep + 1)}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}
                 >
                   <Text style={{ marginRight: 5 }}>Next</Text>
                   <Icon name="skip-next" size={20} color="#333" />
-                </TouchableOpacity>
-            )}
+                  </TouchableOpacity>
+              )}
+            </View>
           </View>
-          {step.arrow && step.arrow.position === 'below' && this.renderArrow(step.arrow)}
+          {step.arrow && step.arrow.position === "below" && this.renderArrow(step.arrow, false)}
         </View>
       </View>
     )

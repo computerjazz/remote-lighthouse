@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   StyleSheet,
@@ -47,6 +47,10 @@ class HeaderMenuButton extends Component {
 
   renderDoneButton() {
     const { PRIMARY_DARK_ANALOGOUS, HEADER_TITLE_EDITING_COLOR } = themes[this.props.theme]
+    const { instructionStep } = this.props
+    // Prevent users from toggling out of tutorial
+    if (instructionStep !== -1 && instructionStep < 7) return
+
     return (
       <TouchableOpacity
         style={styles.touchable}
@@ -88,10 +92,11 @@ class HeaderMenuButton extends Component {
 
   render() {
     const { editing, capturing, style, modalVisible, right, left } = this.props
+    const shouldRenderDoneButton = (editing || capturing)
     return (
         <View style={[styles.container, right ? styles.right : styles.left, style]}>
           { left && this.renderIcon() }
-          { right && (editing || capturing ? this.renderDoneButton() : this.renderDots()) }
+          { right && (shouldRenderDoneButton ? this.renderDoneButton() : this.renderDots()) }
         </View>
     )
   }
@@ -101,6 +106,7 @@ const mapStateToProps = state => ({
   theme: state.settings.theme,
   editing: state.app.editing,
   capturing: state.app.capturing,
+  instructionStep: state.settings.instructionStep,
   modalVisible: state.app.modalVisible,
   currentRemoteId: state.app.currentRemoteId,
   remote: state.remotes[state.app.currentRemoteId],
