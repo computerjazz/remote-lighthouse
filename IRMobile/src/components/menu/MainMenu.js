@@ -75,19 +75,11 @@ class MainMenu extends Component {
             this.props.setEditMode(true)
           }}
         />
-        <MenuItem
-          icon="settings"
-          text="Settings"
-          onPress={() => {
-            this.props.setHeaderModal(GENERAL_SETTINGS)
-            this.props.setHeaderMenu(false)
-          }}
-        />
         {
           this.props.numberOfRemotes > 1 && (
             <MenuItem
               icon="delete"
-              text="Delete"
+              text="Delete Remote"
               onPress={() => {
                 this.props.setHeaderMenu(false)
                 Alert.alert(
@@ -103,6 +95,15 @@ class MainMenu extends Component {
             />
           )
         }
+        <MenuItem
+          icon="settings"
+          text="Settings"
+          onPress={() => {
+            this.props.setHeaderModal(GENERAL_SETTINGS)
+            this.props.setHeaderMenu(false)
+          }}
+        />
+
       </Animated.View>
     )
   }
