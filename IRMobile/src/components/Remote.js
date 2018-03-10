@@ -30,6 +30,7 @@ import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
 import TabIcon from './nav/TabIcon'
 import TabLabel from './nav/TabLabel'
+import Header from './nav/Header'
 
 class Remote extends Component {
 
@@ -37,6 +38,7 @@ class Remote extends Component {
 
     const title = navigation.state.params && navigation.state.params.title
     return {
+      header: <Header />,
       title,
       tabBarLabel: ({ focused }) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
       tabBarIcon: ({ focused }) => <TabIcon hasTitle={!!title} focused={focused} id={navigation.state.routeName}  />
@@ -58,7 +60,8 @@ class Remote extends Component {
   backgroundAnim = new Animated.Value(0)
 
   componentWillMount() {
-    this.props.navigation.setParams({ title: this.props.remote.title })
+    console.log('REMOTE WILL MOUNT', this.props)
+    // this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => {
        return false;
@@ -213,18 +216,21 @@ class Remote extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  theme: state.settings.theme,
-  remote: state.remotes[ownProps.navigation.state.routeName],
-  currentRemoteId: state.app.currentRemoteId,
-  dragging: state.app.dragging,
-  editing: state.app.editing,
-  capturing: state.app.capturing,
-  editingButtonId: state.app.editingButtonId,
-  editButtonModalVisible: state.app.editButtonModalVisible,
-  headerMenuVisible: state.app.headerMenuVisible,
-  headerModal: state.app.headerModal,
-})
+const mapStateToProps = (state, ownProps) => {
+  console.log('OWNPROPS', ownProps)
+  return {
+    theme: state.settings.theme,
+    remote: state.remotes[ownProps.navigation.state.routeName],
+    currentRemoteId: state.app.currentRemoteId,
+    dragging: state.app.dragging,
+    editing: state.app.editing,
+    capturing: state.app.capturing,
+    editingButtonId: state.app.editingButtonId,
+    editButtonModalVisible: state.app.editButtonModalVisible,
+    headerMenuVisible: state.app.headerMenuVisible,
+    headerModal: state.app.headerModal,
+  }
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),

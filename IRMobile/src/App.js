@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import { View, StatusBar } from 'react-native'
+import { addNavigationHelpers, NavigationActions } from 'react-navigation'
 import { compose, applyMiddleware, createStore } from 'redux'
+
+
 import { Provider } from 'react-redux'
 import { persistStore, persistReducer } from 'redux-persist'
-import { PersistGate } from 'redux-persist/lib/integration/react'
+import { PersistGate } from 'redux-persist/es/integration/react'
 import storage from 'redux-persist/lib/storage'
 
 import thunk from 'redux-thunk'
@@ -40,7 +43,8 @@ const store = createStore(
 const persistor = persistStore(store, {
   //blacklist: ['app', 'network', 'settings'],
 })
- // .purge()
+// persistor.purge()
+
 
 class App extends Component {
 

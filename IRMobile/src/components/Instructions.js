@@ -80,7 +80,7 @@ const instructions = [{
   shouldAutoIncrement: (thisProps, nextProps) => nextProps.editing && nextProps.modalVisible === 'editButton' && !nextProps.headerModal
 },{
   name: 'capture-begin',
-  text: `Enter 'capture' mode to assign buttons from a real-life remote`,
+  text: `Go to 'capture' mode to assign buttons from a real-life remote`,
   button: 'remote',
   action: props => {
     if (!props.editing) {

@@ -16,7 +16,7 @@ import Header from './nav/Header'
 import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
 
-import { createTabNavigator } from '../navigation'
+import { createTabNavigator, getTabNavigator } from '../navigation'
 import {
   createRemote,
   setEditMode,
@@ -55,20 +55,25 @@ class RemoteContainer extends Component {
     modalVisible: null,
   }
 
-  shouldComponentUpdate(nextProps) {
-    // Only update the container when a remote has been added or deleted
-    return nextProps.remotes.list.length !== this.props.remotes.list.length
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   // Only update the container when a remote has been added or deleted
+  //   return nextProps.remotes.list.length !== this.props.remotes.list.length
+  // }
 
   componentWillMount() {
     if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
   }
 
+  shouldComponentUpdate(nextProps) {
+    return this.props.remotes.list.length !== nextProps.remotes.list.length
+  }
+
   componentDidMount() {
+    const { createRemote, remotes, dispatch } = this.props
     this.checkLighthouseStatus()
-    if (!this.props.remotes.list.length) {
+    if (!remotes.list.length) {
       // First time in, create a remote
-      const newRemote = this.props.createRemote()
+      const newRemote = createRemote()
       const { remoteId } = newRemote.payload
       this.props.createButtonPanel(POWER, remoteId)
       this.props.setEditMode(true)
@@ -81,7 +86,7 @@ class RemoteContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { navigation } = this.props
+    const { navigation, remotes, dispatch } = this.props
     const { setParams } = navigation
 
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
@@ -105,16 +110,15 @@ class RemoteContainer extends Component {
   }
 
   render() {
-    const { remotes, theme } = this.props
+    const { remotes, theme, dispatch, navigation } = this.props
     if (!remotes || !remotes.list || !remotes.list.length) return <LoadingScreen />
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
-
+    const Navigator = createTabNavigator(remotes, Remote, dispatch, navigation)
     return (
       <View style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}>
-        {createTabNavigator(remotes, Remote, theme)}
+        <Navigator />
       </View>
     )
-
   }
 }
 
@@ -136,6 +140,7 @@ const mapDispatchToProps = dispatch => ({
   findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
   pingKnownDevices: () => dispatch(pingKnownDevices()),
   setEditMode: editing => dispatch(setEditMode(editing)),
+  dispatch,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteContainer)

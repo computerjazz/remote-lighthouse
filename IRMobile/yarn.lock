@@ -4622,9 +4622,15 @@ react-native@0.54.0:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.4.0.tgz#2e1ec70a5d37af78d4b2cab588caf179b2b16859"
+react-navigation-redux-helpers@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-redux-helpers/-/react-navigation-redux-helpers-1.0.3.tgz#46dd9f83bf4ba74ca43d346575c169137f2eaac9"
+  dependencies:
+    invariant "^2.2.2"
+
+react-navigation@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.5.0.tgz#0dbef16a086d8fcdbcf44147e0c77fa53121648e"
   dependencies:
     clamp "^1.0.1"
     hoist-non-react-statics "^2.2.0"
@@ -4766,8 +4772,8 @@ redux-logger@^3.0.6:
     deep-diff "^0.3.5"
 
 redux-persist@^5.0.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.5.0.tgz#64b5030625cb6f863f76487975acb8bb4fe4f9bb"
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.9.1.tgz#83bd4abd526ef768f63fceee338fa9d8ed6552d6"
 
 redux-thunk@^2.2.0:
   version "2.2.0"

@@ -8,6 +8,7 @@ import {
   SET_CURRENT_REMOTE_ID,
   SET_MODAL_VISIBLE,
   SET_HEADER_MODAL,
+  CREATE_REMOTE,
 } from '../constants/actions'
 
 const initialState = {
@@ -20,8 +21,9 @@ const initialState = {
   headerModal: null,
   modalVisible: null,
   instructionStep: 0,
-  rehydrated: false,
+  rehydrated: true,
 }
+
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -30,6 +32,25 @@ export default (state = initialState, action) => {
       return {
         ...state,
         rehydrated: true,
+      }
+
+      case CREATE_REMOTE:
+        return {
+          ...state,
+          currentRemoteId: action.payload.remoteId
+        }
+
+    case "INIT_NAV":
+      return {
+        ...state,
+        currentRemoteId: action.payload.routes[action.payload.index].routeName
+      }
+
+    case 'Navigation/NAVIGATE':
+      return {
+        ...state,
+        headerModal: null,
+        currentRemoteId: action.routeName,
       }
 
     case SET_HEADER_MENU_VISIBLE:
