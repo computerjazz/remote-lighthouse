@@ -12,6 +12,7 @@ import SortableListView from 'react-native-sortable-listview'
 
 import {
   createButtonPanel,
+  gotoInstructionStep,
   setCaptureMode,
   setDragging,
   setEditMode,
@@ -21,6 +22,7 @@ import {
   updateRemote,
 } from '../actions'
 
+import instructions from '../dictionaries/instructions'
 import themes from '../constants/themes'
 import modals from './modals'
 
@@ -61,25 +63,28 @@ class Remote extends Component {
     this.props.navigation.setParams({ title: this.props.remote.title })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => {
+       if (this.props.headerMenuVisible) this.dismissMenu()
+       if (this.props.instructionStep === instructions.length - 1) {
+         // User is on last step of instructions
+         // any gesture dismisses
+         this.props.gotoInstructionStep(-1)
+
+       }
        return false;
      },
      onStartShouldSetPanResponderCapture: () => {
-       if (this.props.headerMenuVisible) this.dismissMenu()
+
        return false
      },
      onMoveShouldSetPanResponder: () => {
        return false
      } ,
      onMoveShouldSetPanResponderCapture: () => {
-       // @TODO: setting recording button id to null
-       // here is messing up button logic b/c this onPress
-       // is called before button onPress.
-
-       // this.dismissRecording()
        return false
      }
-   });
+   })
  }
+
 
  componentWillReceiveProps(nextProps) {
    const { navigation, remote } = this.props
@@ -94,6 +99,7 @@ class Remote extends Component {
    if (nextProps.currentRemoteId !== this.props.navigation.state.routeName) {
      this.setState({ addPanelModalVisible: false, editButtonModalVisible: false })
    }
+
  }
 
   dismissRecording = () => {
@@ -215,6 +221,7 @@ class Remote extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
   theme: state.settings.theme,
+  instructionStep: state.settings.instructionStep,
   remote: state.remotes[ownProps.navigation.state.routeName],
   currentRemoteId: state.app.currentRemoteId,
   dragging: state.app.dragging,
@@ -228,12 +235,13 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     createButtonPanel: type => dispatch(createButtonPanel(type, ownProps.navigation.state.routeName)),
-    setDragging: dragging => dispatch(setDragging(dragging)),
-    stopRecord: () => dispatch(stopRecord()),
-    setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
-    setEditMode: editMode => dispatch(setEditMode(editMode)),
+    gotoInstructionStep: step => dispatch(gotoInstructionStep(step)),
     setCaptureMode: captureMode => dispatch(setCaptureMode(captureMode)),
+    setDragging: dragging => dispatch(setDragging(dragging)),
+    setEditMode: editMode => dispatch(setEditMode(editMode)),
+    setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
     setModalVisible: visible => dispatch(setModalVisible(visible)),
+    stopRecord: () => dispatch(stopRecord()),
     updateRemote: updatedRemote => dispatch(updateRemote(ownProps.navigation.state.routeName, updatedRemote)),
 })
 

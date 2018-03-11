@@ -40,7 +40,7 @@ const store = createStore(
 const persistor = persistStore(store, {
   //blacklist: ['app', 'network', 'settings'],
 })
- // .purge()
+ // persistor.purge()
 
 class App extends Component {
 

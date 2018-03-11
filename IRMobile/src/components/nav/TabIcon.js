@@ -14,10 +14,9 @@ class TabIcon extends Component {
     const { id, currentRemoteId, hasTitle, remote, theme } = this.props
     if (!remote) return null
     const { TAB_LABEL_COLOR_ACTIVE, TAB_LABEL_COLOR_INACTIVE } = themes[theme]
-    console.log('TABION', this.props)
     const color = id === currentRemoteId ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE
     return (
-      <View style={[Platform.OS === 'ios' && { marginTop: 5, height: iconSize, width: iconSize }]}>
+      <View style={[Platform.OS === 'ios' && { alignItems: 'center', justifyContent: 'center', marginTop: 5, height: iconSize, width: iconSize }]}>
         <Icon name={remote.icon} color={color} size={hasTitle ? 23 : 30} />
       </View>
     )

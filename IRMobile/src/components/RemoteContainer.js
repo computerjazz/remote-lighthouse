@@ -105,13 +105,13 @@ class RemoteContainer extends Component {
   }
 
   render() {
-    const { remotes, theme } = this.props
+    const { remotes, theme, currentRemoteId } = this.props
     if (!remotes || !remotes.list || !remotes.list.length) return <LoadingScreen />
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
-
+    const initialRouteName = remotes.list.includes(currentRemoteId) ? currentRemoteId : remotes.list[remotes.list.length - 1]
     return (
       <View style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}>
-        {createTabNavigator(remotes, Remote, theme)}
+        {createTabNavigator(remotes, Remote, initialRouteName)}
       </View>
     )
 
@@ -127,7 +127,6 @@ const mapStateToProps = state => ({
   capturingButtonId: state.app.capturingButtonId,
   currentRemoteId: state.app.currentRemoteId,
   modalVisible: state.app.modalVisible,
-  rehydrated: state.app.rehydrated,
 })
 
 const mapDispatchToProps = dispatch => ({

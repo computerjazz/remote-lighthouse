@@ -14,7 +14,7 @@ import {
 import { connect } from 'react-redux'
 
 import TextButton from '../TextButton'
-import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode, gotoinstructionStep } from '../../actions'
+import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode, gotoInstructionStep } from '../../actions'
 import { isAndroid } from '../../utils'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
@@ -87,7 +87,7 @@ class SelectRemoteIconModal extends Component {
 
   startTutorial = () => {
     this.onDonePress()
-    this.props.gotoinstructionStep(0)
+    this.props.gotoInstructionStep(0)
   }
 
   render() {
@@ -170,7 +170,7 @@ const mapDispatchToProps = (dispatch) => ({
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   setTheme: theme => dispatch(setTheme(theme)),
   setTestingMode: isTesting => dispatch(setTestingMode(isTesting)),
-  gotoinstructionStep: step => dispatch(gotoinstructionStep(step))
+  gotoInstructionStep: step => dispatch(gotoInstructionStep(step))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)

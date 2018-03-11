@@ -8,6 +8,8 @@ import {
   SET_CURRENT_REMOTE_ID,
   SET_MODAL_VISIBLE,
   SET_HEADER_MODAL,
+  DELETE_REMOTE,
+  CREATE_REMOTE,
 } from '../constants/actions'
 
 const initialState = {
@@ -19,17 +21,21 @@ const initialState = {
   headerMenuVisible: false,
   headerModal: null,
   modalVisible: null,
-  instructionStep: 0,
-  rehydrated: false,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
 
-    case REHYDRATE:
+    case CREATE_REMOTE:
       return {
         ...state,
-        rehydrated: true,
+        currentRemoteId: action.payload.remoteId,
+      }
+
+    case DELETE_REMOTE:
+      return {
+        ...state,
+        currentRemoteId: null,
       }
 
     case SET_HEADER_MENU_VISIBLE:

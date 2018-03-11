@@ -35,7 +35,7 @@ import {
 
 const zeroconf = new Zeroconf()
 
-export function gotoinstructionStep(step) {
+export function gotoInstructionStep(step) {
   return {
     type: GOTO_INSTRUCTIONS_STEP,
     payload: {

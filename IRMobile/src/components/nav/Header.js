@@ -49,8 +49,7 @@ class Header extends Component {
   }
 
   render() {
-    const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible, rehydrated } = this.props
-
+    const { remote, headerStyle, titleStyle, editing, capturing, recording, modalVisible } = this.props
     const {
       HEADER_TITLE_COLOR,
       HEADER_TITLE_EDITING_COLOR ,
@@ -63,10 +62,9 @@ class Header extends Component {
     const headerTitleColor = editing || capturing ? HEADER_TITLE_EDITING_COLOR : HEADER_TITLE_COLOR
     const remoteTitle = remote && remote.title || ' '
     const headerTitle = capturing ? recording ? 'Listening...' : 'Ready to capture' : remoteTitle
-    const headerSubTitle = capturing ? recording ? 'Point your remote at a lighthouse and press the button you wish to capture' : 'Press any button on the screen to begin the capturing process.' : ''
     return (
       <View style={[styles.container, { backgroundColor: headerBackgroundColor }, headerStyle]}>
-        {!modalVisible && rehydrated &&  <View style={styles.inner}>
+        {!modalVisible &&  <View style={styles.inner}>
             <HeaderMenuButton left />
             <HeaderTitle
               style={[{ color: headerTitleColor }, titleStyle]}
@@ -74,7 +72,6 @@ class Header extends Component {
               onChangeText={this.onChangeText}
               onBlur={this.onTitleUpdate}
             />
-            {/* {!!headerSubTitle && <HeaderSubTitle text={headerSubTitle} />} */}
             <HeaderMenuButton right onPressDone={this.onTitleUpdate} />
           </View>
         }
@@ -92,7 +89,6 @@ const mapStateToProps = state => ({
   capturing: state.app.capturing,
   recording: state.app.capturingButtonId !== null,
   modalVisible: state.app.modalVisible,
-  rehydrated: state.app.rehydrated,
 })
 
 const mapDispatchToProps = dispatch => ({
