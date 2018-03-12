@@ -37,13 +37,12 @@ export const createTabNavigator = (remotes, Screen, initialRouteName) => {
   }
 
   const onNavigationStateChange = function(prevState, newState){
-    console.log('PRPS', this)
     const routeHasChanged = prevState.index !== newState.index
     if (routeHasChanged) {
       this.setCurrentRemoteId && this.setCurrentRemoteId(newState.routes[newState.index].routeName)
       this.setHeaderModal && this.setHeaderModal(null)
-      this.setEditMode && this.setEditMode(false)
-      this.setCaptureMode && this.setCaptureMode(false)
+      // this.setEditMode && this.setEditMode(false)
+      // this.setCaptureMode && this.setCaptureMode(false)
     }
     if (!this.currentRemoteId) this.setCurrentRemoteId(newState.routes[newState.index].routeName)
   }

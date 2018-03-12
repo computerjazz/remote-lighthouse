@@ -10,7 +10,6 @@ import { connect } from 'react-redux'
 import { updateRemote } from '../../actions'
 
 import HeaderTitle from './HeaderTitle'
-import HeaderSubTitle from './HeaderSubTitle'
 import HeaderMenuButton from './HeaderMenuButton'
 
 import themes from '../../constants/themes'
@@ -28,10 +27,12 @@ class Header extends Component {
     title: '',
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.remote && nextProps.remote && this.props.remote.title !== nextProps.remote.title) {
-      this.setState({ title: nextProps.remote.title })
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const state = { ...prevState }
+    if (nextProps.remote && prevState.title !== nextProps.remote.title) {
+      state.title =  nextProps.remote.title
     }
+    return state
   }
 
   onTitleUpdate = () => {

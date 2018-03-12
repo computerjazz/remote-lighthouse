@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   BackHandler,
@@ -37,10 +37,11 @@ class SelectRemoteIconModal extends Component {
     setHeaderModal: PropTypes.func.isRequired,
   }
 
-  componentWillMount() {
-    const { icon, title } = this.props.remote
-    this.setState({ selectedIcon: icon,  newTitle: title})
+  constructor(props) {
+    super(props)
+    const { icon, title } = props.remote
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
+    this.state = { selectedIcon: icon,  newTitle: title}
   }
 
   captureAndroidBackPress = () => {

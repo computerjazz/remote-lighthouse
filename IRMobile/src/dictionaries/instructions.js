@@ -58,7 +58,7 @@ const instructions = [{
     }
   },
   style: {
-    top: 200,
+    top: 300,
     left: 25,
     right: 25,
     position: 'absolute',
@@ -93,7 +93,7 @@ const instructions = [{
     }
   },
   style: {
-    top: 200,
+    top: 300,
     left: 25,
     right: 25,
     position: 'absolute',
@@ -112,7 +112,7 @@ When the capture is compolete, the lighthouse and button will both flash green.`
     }
   },
   style: {
-    top: 200,
+    top: 300,
     left: 25,
     right: 25,
     position: 'absolute',

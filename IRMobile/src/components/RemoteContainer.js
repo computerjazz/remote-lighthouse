@@ -60,11 +60,8 @@ class RemoteContainer extends Component {
     return nextProps.remotes.list.length !== this.props.remotes.list.length
   }
 
-  componentWillMount() {
-    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
-  }
-
   componentDidMount() {
+    if (isAndroid) UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
     this.checkLighthouseStatus()
     if (!this.props.remotes.list.length) {
       // First time in, create a remote
@@ -80,7 +77,7 @@ class RemoteContainer extends Component {
     if (!deviceUrls.length) this.props.findDevicesOnNetwork()
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { navigation } = this.props
     const { setParams } = navigation
 

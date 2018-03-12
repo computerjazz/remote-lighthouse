@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StatusBar } from 'react-native'
+import { View, StatusBar, YellowBox } from 'react-native'
 import { compose, applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { persistStore, persistReducer } from 'redux-persist'
@@ -43,6 +43,13 @@ const persistor = persistStore(store, {
  // persistor.purge()
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    const unsafe = ['componentWillMount', 'componentWillUpdate', 'componentWillReceiveProps']
+    YellowBox.ignoreWarnings(unsafe.map(method => `Warning: ${method} is deprecated`));
+  }
+
 
   render() {
     return (

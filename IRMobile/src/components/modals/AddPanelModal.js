@@ -30,7 +30,7 @@ class AddPanelModal extends Component {
     theme: PropTypes.string.isRequired,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
   }
 

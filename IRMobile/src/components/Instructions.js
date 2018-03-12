@@ -16,31 +16,37 @@ import {
 
 
 class Instructions extends Component {
-  componentWillMount() {
-    const { instructionStep } = this.props
+
+  constructor(props) {
+    super(props)
+    const { instructionStep } = props
     if (instructionStep > -1) {
       this.setAction(this.props)
     }
     // End instructions if the step increments to the end
-    if (instructionStep >= instructions.length) this.props.gotoInstructionStep(-1)
-    this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-   })
-
+    if (instructionStep >= instructions.length) props.gotoInstructionStep(-1)
+    this.state = {}
   }
 
-  componentWillReceiveProps(nextProps) {
-    const currentInstructions = instructions[nextProps.instructionStep]
-    if (!currentInstructions) return
-
-    if (this.props.instructionStep !== nextProps.instructionStep) {
-      this.setAction(nextProps)
-    }
-
-    if (currentInstructions.shouldAutoIncrement(this.props, nextProps)) {
-      this.gotoStep(nextProps.instructionStep + 1)
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return {
+      ...prevState,
+      ...nextProps,
     }
   }
+
+componentDidUpdate(prevProps, prevState) {
+  const currentInstructions = instructions[this.props.instructionStep]
+  if (!currentInstructions) return
+
+  if (prevState.instructionStep !== this.state.instructionStep) {
+    this.setAction(this.state)
+  }
+
+  if (currentInstructions.shouldAutoIncrement(prevState, this.props)) {
+    this.gotoStep(this.state.instructionStep + 1)
+  }
+}
 
   gotoStep = (step) => {
     if (step < instructions.length && instructions[step].name!== "capture-listen") LayoutAnimation.configureNext(CustomLayoutLinear)
@@ -84,7 +90,7 @@ class Instructions extends Component {
   }
 
   render() {
-    const { instructionStep, headerMenuVisible, modalVisible } = this.props
+    const { instructionStep, headerMenuVisible, modalVisible } = this.state
     const step = instructions[instructionStep]
     if (!step || modalVisible || headerMenuVisible) return null
     return (

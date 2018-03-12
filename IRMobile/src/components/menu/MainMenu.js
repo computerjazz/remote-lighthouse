@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import {
   Alert,
   Animated,
-  View,
   LayoutAnimation,
   Share,
   StyleSheet
@@ -31,7 +30,26 @@ import { GENERAL_SETTINGS, POWER } from '../../constants/ui'
 
 class MainMenu extends Component {
 
-  componentWillReceiveProps(nextProps) {
+  static propTypes = {
+    setEditMode: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
+    setHeaderMenu: PropTypes.func.isRequired,
+    exportRemote: PropTypes.func.isRequired,
+    getShareRemoteUrl: PropTypes.func.isRequired,
+    currentRemoteId: PropTypes.string,
+    createRemote: PropTypes.func.isRequired,
+    createButtonPanel: PropTypes.func.isRequired,
+    numberOfRemotes: PropTypes.number.isRequired,
+    deleteRemote: PropTypes.func.isRequired,
+    setHeaderModal: PropTypes.func.isRequired,
+    headerMenuVisible: PropTypes.bool.isRequired,
+  }
+
+  static defaultProps = {
+    currentRemoteId: null,
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.headerMenuVisible !== nextProps.headerMenuVisible) {
       LayoutAnimation.configureNext(CustomLayoutLinear)
     }

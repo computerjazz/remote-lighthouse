@@ -35,21 +35,30 @@ import TabLabel from './nav/TabLabel'
 
 class Remote extends Component {
 
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = (props) => {
+    const { navigation } = props
 
     const title = navigation.state.params && navigation.state.params.title
+    const swipeEnabled = navigation.state.params && navigation.state.params.swipeEnabled
     return {
       title,
       tabBarLabel: ({ focused }) => <TabLabel focused={focused} title={title} id={navigation.state.routeName} />,
-      tabBarIcon: ({ focused }) => <TabIcon hasTitle={!!title} focused={focused} id={navigation.state.routeName}  />
+      tabBarIcon: ({ focused }) => <TabIcon hasTitle={!!title} focused={focused} id={navigation.state.routeName}  />,
+      swipeEnabled,
+
     }
   }
 
   static propTypes = {
     editing: PropTypes.bool.isRequired,
-    stopRecord: PropTypes.func.isRequired,
+    gotoInstructionStep: PropTypes.func.isRequired,
+    headerMenuVisible: PropTypes.bool.isRequired,
+    instructionStep: PropTypes.number.isRequired,
     navigation: PropTypes.object.isRequired,
     remote: PropTypes.object.isRequired,
+    setDragging: PropTypes.func.isRequired,
+    stopRecord: PropTypes.func.isRequired,
+    dragging: PropTypes.bool.isRequired,
   }
 
   state = {
@@ -59,8 +68,9 @@ class Remote extends Component {
 
   backgroundAnim = new Animated.Value(0)
 
-  componentWillMount() {
-    this.props.navigation.setParams({ title: this.props.remote.title })
+  constructor(props) {
+    super(props)
+    props.navigation.setParams({ title: props.remote.title, swipeEnabled: !props.dragging })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => {
        if (this.props.headerMenuVisible) this.dismissMenu()
@@ -68,25 +78,17 @@ class Remote extends Component {
          // User is on last step of instructions
          // any gesture dismisses
          this.props.gotoInstructionStep(-1)
-
        }
        return false;
      },
-     onStartShouldSetPanResponderCapture: () => {
-
-       return false
-     },
-     onMoveShouldSetPanResponder: () => {
-       return false
-     } ,
-     onMoveShouldSetPanResponderCapture: () => {
-       return false
-     }
+     onStartShouldSetPanResponderCapture: () => false,
+     onMoveShouldSetPanResponder: () => false,
+     onMoveShouldSetPanResponderCapture: () => false,
    })
- }
+  }
 
 
- componentWillReceiveProps(nextProps) {
+ UNSAFE_componentWillReceiveProps(nextProps) {
    const { navigation, remote } = this.props
    if (!nextProps.remote) return
    const titleHasChanged = remote.title !== nextProps.remote.title
@@ -99,7 +101,12 @@ class Remote extends Component {
    if (nextProps.currentRemoteId !== this.props.navigation.state.routeName) {
      this.setState({ addPanelModalVisible: false, editButtonModalVisible: false })
    }
+ }
 
+ componentDidUpdate(prevProps) {
+   if (prevProps.dragging !== this.props.dragging) {
+     this.props.navigation.setParams({ swipeEnabled: !this.props.dragging })
+   }
  }
 
   dismissRecording = () => {
@@ -180,7 +187,7 @@ class Remote extends Component {
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View
           {...this._panResponder.panHandlers}
           style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}
@@ -195,6 +202,9 @@ class Remote extends Component {
             renderRow={this.renderButtonPanel}
             onRowMoved={this.onRowMoved}
             sortRowStyle={styles.sortRow}
+            onRowActive={() => this.props.setDragging(true)}
+            onMoveEnd={() => this.props.setDragging(false)}
+            onMoveCancel={() => this.props.setDragging(false)}
           />
 
           { editing && <CircleButton icon="remote" onPress={this.setCaptureMode} />}

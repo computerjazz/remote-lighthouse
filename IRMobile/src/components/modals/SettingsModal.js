@@ -34,17 +34,16 @@ class SelectRemoteIconModal extends Component {
     theme: PropTypes.string.isRequired,
   }
 
-  state = {
-    selectedTheme: '',
-    testingValue: this.props.testing,
-  }
-
-  componentWillMount() {
+  constructor(props) {
+    super(props)
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
-    this.setState({ selectedTheme: this.props.theme })
+    this.state = {
+      selectedTheme: this.props.theme, 
+      testingValue: this.props.testing,
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.testing !== this.props.testing) {
       this.setState({ testingValue: nextProps.testing })
     }
