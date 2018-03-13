@@ -38,7 +38,7 @@ class SelectRemoteIconModal extends Component {
     super(props)
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
     this.state = {
-      selectedTheme: this.props.theme, 
+      selectedTheme: this.props.theme,
       testingValue: this.props.testing,
     }
   }
@@ -96,7 +96,11 @@ class SelectRemoteIconModal extends Component {
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
 
-          <ScrollView style={styles.scrollView}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.scrollView}
+            contentContainerStyle={{ padding: 20 }}
+          >
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
               <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length > 1 ? 's' : ''} connected:`}</Text>
@@ -105,20 +109,15 @@ class SelectRemoteIconModal extends Component {
 
 
             <TouchableOpacity
-              style={[styles.scanButton, { backgroundColor: TEXT_COLOR_DARK }]}
+              style={[styles.scanButton]}
               onPress={this.props.findDevicesOnNetwork}
             >
               {scanning ?
-                <ActivityIndicator small color={TEXT_COLOR_LIGHT} /> :
-                <Text style={{color: TEXT_COLOR_LIGHT}}>Scan Network</Text>
+                <ActivityIndicator small color={TEXT_COLOR_DARK} /> :
+                <Text style={{color: TEXT_COLOR_DARK}}>Scan Network</Text>
               }
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.startTutorial}
-              style={[styles.tutorialButton, { backgroundColor: TEXT_COLOR_DARK }]}
-            >
-              <Text style={{ color: TEXT_COLOR_LIGHT }}>Tutorial</Text>
-            </TouchableOpacity>
+
             <View style={{paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <View style={{flexDirection: 'column'}}>
                 <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Testing Mode</Text>
@@ -134,7 +133,12 @@ class SelectRemoteIconModal extends Component {
             </View>
             <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Theme</Text>
             {themeList.map(this.renderThemeOption)}
-
+            <TouchableOpacity
+              onPress={this.startTutorial}
+              style={[styles.tutorialButton]}
+            >
+              <Text style={{ color: TEXT_COLOR_DARK }}>Redo Tutorial</Text>
+            </TouchableOpacity>
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>
@@ -224,19 +228,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: BUTTON_RADIUS,
+    borderWidth: 1,
+    borderColor: '#333'
   },
   tutorialButton: {
     height: 40,
     padding: 10,
-    margin: 10,
+    marginHorizontal: 10,
+    marginTop: 40,
+    marginBottom: 10,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: BUTTON_RADIUS,
+    borderWidth: 1,
+    borderColor: '#333'
   },
   scrollView: {
     flex: 6,
-    padding: 10,
   },
   option: {
     padding: 10,
