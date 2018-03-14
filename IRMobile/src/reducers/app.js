@@ -1,5 +1,6 @@
 import { REHYDRATE } from 'redux-persist'
 import {
+  APP_FOREGROUND,
   SET_HEADER_MENU_VISIBLE,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
@@ -21,10 +22,17 @@ const initialState = {
   headerMenuVisible: false,
   headerModal: null,
   modalVisible: null,
+  isForeground: true,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
+
+    case APP_FOREGROUND:
+      return {
+        ...state,
+        isForeground: action.payload.isForeground,
+      }
 
     case CREATE_REMOTE:
       return {

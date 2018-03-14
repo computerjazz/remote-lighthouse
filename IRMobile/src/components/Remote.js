@@ -73,18 +73,25 @@ class Remote extends Component {
     props.navigation.setParams({ title: props.remote.title, swipeEnabled: !props.dragging })
     this._panResponder = PanResponder.create({
      onStartShouldSetPanResponder: () => {
-       if (this.props.headerMenuVisible) this.dismissMenu()
-       if (this.props.instructionStep === instructions.length - 1) {
-         // User is on last step of instructions
-         // any gesture dismisses
-         this.props.gotoInstructionStep(-1)
-       }
+       this.dismissAll()
        return false;
      },
-     onStartShouldSetPanResponderCapture: () => false,
+     onStartShouldSetPanResponderCapture: () => {
+       this.dismissAll()
+       return false
+     },
      onMoveShouldSetPanResponder: () => false,
      onMoveShouldSetPanResponderCapture: () => false,
    })
+  }
+
+  dismissAll = () => {
+    if (this.props.headerMenuVisible) this.dismissMenu()
+    if (this.props.instructionStep === instructions.length - 1) {
+      // User is on last step of instructions
+      // any gesture dismisses
+      this.props.gotoInstructionStep(-1)
+    }
   }
 
 
@@ -148,13 +155,6 @@ class Remote extends Component {
   setEditMode = () => {
     this.props.setCaptureMode(false)
     this.props.setEditMode(true)
-  }
-
-  dismissAll = () => {
-    this.dismissMenu()
-    this.dismissRecording()
-    this.dismissEditButtonModal()
-    this.dismissAddPanelModal()
   }
 
   renderButtonPanel = id => {

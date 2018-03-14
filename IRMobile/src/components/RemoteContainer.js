@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
+  AppState,
   View,
   UIManager,
   LayoutAnimation,
@@ -22,7 +23,8 @@ import {
   setEditMode,
   createButtonPanel,
   findDevicesOnNetwork,
-  pingKnownDevices
+  pingKnownDevices,
+  setIsForeground,
 } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
@@ -34,6 +36,8 @@ class RemoteContainer extends Component {
     }
 
   static propTypes = {
+    isForeground: PropTypes.bool.isRequired,
+    setIsForeground: PropTypes.func.isRequired,
     capturing: PropTypes.bool.isRequired,
     capturingButtonId: PropTypes.string,
     createButtonPanel: PropTypes.func.isRequired,
@@ -70,6 +74,10 @@ class RemoteContainer extends Component {
       this.props.createButtonPanel(POWER, remoteId)
       this.props.setEditMode(true)
     }
+    AppState.addEventListener('change', appState => {
+      this.props.setIsForeground(appState === "active")
+    })
+
   }
 
   async checkLighthouseStatus() {
@@ -80,6 +88,10 @@ class RemoteContainer extends Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { navigation } = this.props
     const { setParams } = navigation
+
+    if (nextProps.isForeground && this.props.isForeground !== nextProps.isForeground) {
+      this.checkLighthouseStatus()
+    }
 
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
       setParams({ theme: nextProps.theme })
@@ -117,6 +129,7 @@ class RemoteContainer extends Component {
 
 const mapStateToProps = state => ({
   dragging: state.app.dragging,
+  isForeground: state.app.isForeground,
   theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,
@@ -132,6 +145,7 @@ const mapDispatchToProps = dispatch => ({
   findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
   pingKnownDevices: () => dispatch(pingKnownDevices()),
   setEditMode: editing => dispatch(setEditMode(editing)),
+  setIsForeground: isForeground => dispatch(setIsForeground(isForeground)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteContainer)

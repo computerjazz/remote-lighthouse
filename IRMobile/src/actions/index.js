@@ -8,6 +8,7 @@ import { isAndroid } from '../utils'
 
 import {
   ADD_DEVICE_URL,
+  APP_FOREGROUND,
   ASSIGN_IR_CODE,
   CREATE_BUTTON_PANEL,
   CREATE_BUTTON,
@@ -34,6 +35,15 @@ import {
 } from '../constants/actions'
 
 const zeroconf = new Zeroconf()
+
+export function setIsForeground(isForeground) {
+  return {
+    type: APP_FOREGROUND,
+    payload: {
+      isForeground,
+    }
+  }
+}
 
 export function gotoInstructionStep(step) {
   return {
