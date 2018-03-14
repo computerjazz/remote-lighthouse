@@ -1,4 +1,4 @@
-import React, { Component } from 'react' 
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Text,
@@ -11,12 +11,12 @@ import themes from '../../constants/themes'
 
 class TabLabel extends Component {
   render() {
-    const { title = ' ', theme, focused, remote } = this.props
+    const { title, theme, focused, remote } = this.props
     const {
       TAB_LABEL_COLOR_ACTIVE,
       TAB_LABEL_COLOR_INACTIVE,
     } = themes[theme]
-
+    if (!title) return null
     return (
       <View style={[styles.container]}>
         <Text style={[styles.text, { color: focused ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE }]}>{remote.title}</Text>
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 0,
     padding: 3,
+    marginBottom: 3,
   },
   text: {
     fontSize: 10,
