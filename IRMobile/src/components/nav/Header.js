@@ -4,14 +4,12 @@ import {
   View,
   StyleSheet,
 } from 'react-native'
-
 import { connect } from 'react-redux'
 
 import { updateRemote } from '../../actions'
-
+import { iPhoneXOffset } from '../../utils'
 import HeaderTitle from './HeaderTitle'
 import HeaderMenuButton from './HeaderMenuButton'
-
 import themes from '../../constants/themes'
 
 import { STATUS_BAR_HEIGHT } from '../../constants/dimensions'
@@ -100,8 +98,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Header)
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: STATUS_BAR_HEIGHT,
-    height: 75,
+    paddingTop: STATUS_BAR_HEIGHT + iPhoneXOffset,
+    height: 75 + iPhoneXOffset,
   },
   inner: {
     flexDirection: 'row',

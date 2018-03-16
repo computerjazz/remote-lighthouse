@@ -1,19 +1,17 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, PanResponder, Platform } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, Platform } from 'react-native'
 
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import instructions from '../dictionaries/instructions'
-
+import { iPhoneXOffset } from '../utils'
 import { CustomLayoutLinear } from '../dictionaries/animations'
 import {
   gotoInstructionStep,
   setEditMode,
   setCaptureMode,
 } from '../actions'
-
-
 
 class Instructions extends Component {
 
@@ -151,10 +149,10 @@ export default connect(state => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
+    top: iPhoneXOffset,
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: iPhoneXOffset,
     opacity: 0.9,
   },
   text: {

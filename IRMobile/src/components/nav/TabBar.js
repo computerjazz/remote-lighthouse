@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-
 import { connect } from 'react-redux'
 import { TabBarBottom } from 'react-navigation'
 import themes from '../../constants/themes'
+import { isIPhoneX } from '../../utils'
 
 class TabBar extends Component {
 
@@ -21,7 +21,8 @@ class TabBar extends Component {
     return (
       <TabBarBottom
         {...this.props}
-        activeBackgroundColor={TAB_BACKGROUND_COLOR_ACTIVE}
+        style={{ backgroundColor: TAB_BACKGROUND_COLOR_INACTIVE }}
+        activeBackgroundColor={isIPhoneX ? TAB_BACKGROUND_COLOR_INACTIVE : TAB_BACKGROUND_COLOR_ACTIVE}
         inactiveBackgroundColor={TAB_BACKGROUND_COLOR_INACTIVE}
         activeTintColor={TAB_LABEL_COLOR_ACTIVE}
         inactiveTintColor={TAB_LABEL_COLOR_INACTIVE}

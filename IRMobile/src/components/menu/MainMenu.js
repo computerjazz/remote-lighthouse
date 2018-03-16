@@ -22,6 +22,7 @@ import {
 } from '../../actions'
 import MenuItem from './MenuItem'
 
+import { iPhoneXOffset } from '../../utils'
 import { CustomLayoutLinear } from '../../dictionaries/animations'
 
 import themes from '../../constants/themes'
@@ -121,7 +122,6 @@ class MainMenu extends Component {
             this.props.setHeaderMenu(false)
           }}
         />
-
       </Animated.View>
     )
   }
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: BUTTON_RADIUS,
     position: 'absolute',
-    top: 25,
+    top: 25 + iPhoneXOffset,
     right: 10,
   }
 })

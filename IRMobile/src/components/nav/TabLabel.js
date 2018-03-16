@@ -10,6 +10,13 @@ import { connect } from 'react-redux'
 import themes from '../../constants/themes'
 
 class TabLabel extends Component {
+
+  static propTypes = {
+    title: PropTypes.string,
+    theme: PropTypes.string,
+    focused: PropTypes.bool,
+    remote: PropTypes.object,
+  }
   render() {
     const { title, theme, focused, remote } = this.props
     const {
