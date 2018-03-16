@@ -32,7 +32,6 @@ import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
 import TabIcon from './nav/TabIcon'
 import TabLabel from './nav/TabLabel'
-import OverlayMessage from './OverlayMessage'
 
 class Remote extends Component {
 
@@ -225,8 +224,6 @@ class Remote extends Component {
           /> }
 
         { !!headerModal && <GeneralModal />}
-        <OverlayMessage />
-
       </View>
     )
   }

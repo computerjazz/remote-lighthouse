@@ -109,11 +109,11 @@ class RemoteContainer extends Component {
       this.checkLighthouseStatus()
     }
 
-    if (!this.props.isConnected && nextProps.isConnected) {
+    if (this.props.isConnected !== nextProps.isConnected) {
       this.checkLighthouseStatus()
     }
 
-    if (this.props.connectionType !== 'wifi' && nextProps.connectionType === 'wifi') {
+    if (this.props.connectionType !== nextProps.connectionType) {
       this.checkLighthouseStatus()
     }
 

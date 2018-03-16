@@ -39,13 +39,6 @@ class SelectRemoteIconModal extends Component {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
     this.state = {
       selectedTheme: this.props.theme,
-      testingValue: this.props.testing,
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.testing !== this.props.testing) {
-      this.setState({ testingValue: nextProps.testing })
     }
   }
 
@@ -91,7 +84,7 @@ class SelectRemoteIconModal extends Component {
 
   render() {
     const { ipAddresses, scanning, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK } = themes[theme]
+    const { MODAL_BACKGROUND_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK, BUTTON_ICON_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -125,10 +118,10 @@ class SelectRemoteIconModal extends Component {
               </View>
               <Switch
                 onValueChange={() => {
-                  this.setState({ testingValue: !this.props.testing })
                   this.props.setTestingMode(!this.props.testing)
                 }}
-                value={this.state.testingValue}
+                onTintColor={BUTTON_ICON_COLOR}
+                value={this.props.testing}
               />
             </View>
             <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Theme</Text>

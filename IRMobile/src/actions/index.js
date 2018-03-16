@@ -379,11 +379,11 @@ export function removeDeviceUrl(url) {
 
 export function pingKnownDevices() {
   return async (dispatch, getState) => {
-    const { ipAddresses } = getState().network
+    const { ipAddresses, testing } = getState().network
     try {
       const responses = await Promise.all(ipAddresses.map(ipAddress => new Promise(res => {
         setTimeout(() => res({ ok: false, status: 400 }), 2000)
-        fetch(`http://${ipAddress}/marco`).then(res).catch(res)
+        fetch(`http://${ipAddress}/marco?blink=${testing ? 1 : 0}`).then(res).catch(res)
       })))
       const results = responses.map((result, i) => {
         if (result.ok && result.status === 200) {
@@ -471,22 +471,11 @@ export function stopRecord() {
   }
 }
 
-export function setTestingMode(isTesting) {
-  return async (dispatch, getState) => {
-    const { ipAddresses } = getState().network
-    try {
-      const response = await Promise.race(ipAddresses.map(ipAddress => fetch(`http://${ipAddress}/${isTesting ? 'test' : 'testStop'}`)))
-      if (response.ok) {
-        const { testing } = await response.json()
-        dispatch({
-          type: SET_TESTING,
-          payload: {
-            testing
-          }
-        })
-      }
-    } catch (err) {
-      console.log('## setTestingMode err', err)
+export function setTestingMode(testing) {
+  return {
+    type: SET_TESTING,
+    payload: {
+      testing
     }
   }
 }
@@ -543,11 +532,11 @@ export function checkForCapturedCode(buttonId, onStatusChanged = () => {}) {
 
 export function transmitIRCode(buttonId) {
   return async (dispatch, getState) => {
-    const { ipAddresses } = getState().network
+    const { ipAddresses, testing } = getState().network
     const { type, value, length } = getState().buttons[buttonId]
     try {
       const responses = await Promise.all(ipAddresses.map(ipAddress => {
-        const endpoint = `http://${ipAddress}/send?length=${length}&value=${value}&type=${type}`
+        const endpoint = `http://${ipAddress}/send?length=${length}&value=${value}&type=${type}&blink=${testing ? 1 : 0}`
         return fetch(endpoint)
       }))
 
