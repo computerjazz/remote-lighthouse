@@ -6,6 +6,7 @@ import {
   UIManager,
   LayoutAnimation,
   StyleSheet,
+  NetInfo,
 } from 'react-native'
 
 import { connect } from 'react-redux'
@@ -25,6 +26,8 @@ import {
   findDevicesOnNetwork,
   pingKnownDevices,
   setIsForeground,
+  setIsConnected,
+  setConnectionType,
 } from '../actions'
 import { isAndroid } from '../utils'
 import { CustomLayoutLinear, CustomLayoutSpring } from '../dictionaries/animations'
@@ -37,7 +40,11 @@ class RemoteContainer extends Component {
 
   static propTypes = {
     isForeground: PropTypes.bool.isRequired,
+    isConnected: PropTypes.bool.isRequired,
+    connectionType: PropTypes.string.isRequired,
     setIsForeground: PropTypes.func.isRequired,
+    setIsConnected: PropTypes.func.isRequired,
+    setConnectionType: PropTypes.func.isRequired,
     capturing: PropTypes.bool.isRequired,
     capturingButtonId: PropTypes.string,
     createButtonPanel: PropTypes.func.isRequired,
@@ -78,6 +85,15 @@ class RemoteContainer extends Component {
       this.props.setIsForeground(appState === "active")
     })
 
+    NetInfo.addEventListener('connectionChange', ({type}) => this.props.setConnectionType(type))
+    NetInfo.getConnectionInfo().done(({type}) => this.props.setConnectionType(type))
+
+
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      this.props.setIsConnected(isConnected, { calledFromComponentDidMount: true })
+    })
+    NetInfo.isConnected.addEventListener('connectionChange', this.props.setIsConnected)
+
   }
 
   async checkLighthouseStatus() {
@@ -89,7 +105,15 @@ class RemoteContainer extends Component {
     const { navigation } = this.props
     const { setParams } = navigation
 
-    if (nextProps.isForeground && this.props.isForeground !== nextProps.isForeground) {
+    if (!this.props.isForeground && nextProps.isForeground) {
+      this.checkLighthouseStatus()
+    }
+
+    if (!this.props.isConnected && nextProps.isConnected) {
+      this.checkLighthouseStatus()
+    }
+
+    if (this.props.connectionType !== 'wifi' && nextProps.connectionType === 'wifi') {
       this.checkLighthouseStatus()
     }
 
@@ -130,6 +154,8 @@ class RemoteContainer extends Component {
 const mapStateToProps = state => ({
   dragging: state.app.dragging,
   isForeground: state.app.isForeground,
+  isConnected: state.app.isConnected,
+  connectionType: state.app.connectionType,
   theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,
@@ -146,6 +172,8 @@ const mapDispatchToProps = dispatch => ({
   pingKnownDevices: () => dispatch(pingKnownDevices()),
   setEditMode: editing => dispatch(setEditMode(editing)),
   setIsForeground: isForeground => dispatch(setIsForeground(isForeground)),
+  setIsConnected: isConnected => dispatch(setIsConnected(isConnected)),
+  setConnectionType: connectionType => dispatch(setConnectionType(connectionType))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteContainer)

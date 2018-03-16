@@ -17,7 +17,7 @@ class OverlayMessage extends Component {
     if (numLighthouses > 0) return null
     return (
       <View pointerEvents="none" style={{ ...StyleSheet.absoluteFillObject }}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
+        <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <View />
           <View style={styles.alertContainer}>
             <Icon name="alert-box" size={30} color="#fff" />
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   alertContainer: {
     paddingVertical: 10,
     paddingHorizontal: 20,
+    margin: 10,
     borderRadius: 3,
     backgroundColor: LIGHT_ORANGE,
     alignItems: 'center',

@@ -11,7 +11,6 @@ import logger from 'redux-logger'
 import codePush from "react-native-code-push";
 
 import Instructions from './components/Instructions'
-import OverlayMessage from './components/OverlayMessage'
 import LinkHandler from './components/LinkHandler'
 import LoadingScreen from './components/LoadingScreen'
 import MainMenu from './components/menu/MainMenu'
@@ -62,7 +61,6 @@ class App extends Component {
             <MainMenu />
             <LinkHandler />
             <Instructions />
-            <OverlayMessage />
           </View>
         </PersistGate>
       </Provider>

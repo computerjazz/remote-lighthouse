@@ -9,6 +9,8 @@ import { isAndroid } from '../utils'
 import {
   ADD_DEVICE_URL,
   APP_FOREGROUND,
+  SET_IS_CONNECTED,
+  SET_CONNECTION_TYPE,
   ASSIGN_IR_CODE,
   CREATE_BUTTON_PANEL,
   CREATE_BUTTON,
@@ -41,6 +43,24 @@ export function setIsForeground(isForeground) {
     type: APP_FOREGROUND,
     payload: {
       isForeground,
+    }
+  }
+}
+
+export function setIsConnected(isConnected) {
+  return {
+    type: SET_IS_CONNECTED,
+    payload: {
+      isConnected,
+    }
+  }
+}
+
+export function setConnectionType(connectionType) {
+  return {
+    type: SET_CONNECTION_TYPE,
+    payload: {
+      connectionType,
     }
   }
 }

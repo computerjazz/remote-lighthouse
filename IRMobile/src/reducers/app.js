@@ -1,7 +1,9 @@
 import { REHYDRATE } from 'redux-persist'
 import {
   APP_FOREGROUND,
+  SET_CONNECTION_TYPE,
   SET_HEADER_MENU_VISIBLE,
+  SET_IS_CONNECTED,
   SET_EDIT_MODE,
   SET_CAPTURE_MODE,
   SET_RECORDING_BUTTON_ID,
@@ -23,6 +25,8 @@ const initialState = {
   headerModal: null,
   modalVisible: null,
   isForeground: true,
+  isConnected: true,
+  connectionType: null,
 }
 
 export default (state = initialState, action) => {
@@ -32,6 +36,18 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isForeground: action.payload.isForeground,
+      }
+
+    case SET_IS_CONNECTED:
+      return {
+        ...state,
+        isConnected: action.payload.isConnected,
+      }
+
+    case SET_CONNECTION_TYPE:
+      return {
+        ...state,
+        connectionType: action.payload.connectionType,
       }
 
     case CREATE_REMOTE:
