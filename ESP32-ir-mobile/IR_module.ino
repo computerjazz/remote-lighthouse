@@ -75,8 +75,8 @@ boolean storeCode(decode_results *results) {
     return true;
 }
 
-void transmitCode(String codeType, unsigned long codeValue, int codeLen) {
-  Serial.println("Transmitting: " + codeType + " " + String(codeValue, HEX) + " " + codeLen);
+void transmitCode(String codeType, unsigned long codeValue, int codeLen, int shouldBlink) {
+//  Serial.println("Transmitting: " + codeType + " " + String(codeValue, HEX) + " " + codeLen);
   if (codeType == "NEC") {
     irsend.sendNEC(codeValue, codeLen);
   } else if (codeType == "SONY") {
@@ -101,7 +101,7 @@ void transmitCode(String codeType, unsigned long codeValue, int codeLen) {
   irrecv.enableIRIn(); // Re-enable receiver
 
   // TODO: Write non-blocking blink method
-  if (testing) {
+  if (shouldBlink == 1) {
       blockingBlink(true, false, true, 50, 50, 2);
    }
 

@@ -156,27 +156,31 @@ void clearState() {
   server.send(200, "application/json", "{\"message\": \"state cleared.\"}");
 }
 
-// esxpects query string of `?type=PEM&value=1234ABC&length=32`
+// esxpects query string of `?type=PEM&value=1234ABC&length=32&blink=1`
 void sendCode() {
+  int shouldBlink = 0;
   String message = "";
   for (int i = 0; i < server.args(); i++) {
     message += server.argName(i) + ":" + server.arg(i) + ",";
+    if (server.argName(i) == "blink" && server.arg(i) == "1") {
+      shouldBlink = 1; 
+    }
   }
 
-  Serial.println("Sending " + message);
+//  Serial.println("Sending " + message);
 
   String irCodeType = getValueOfQueryParam("type:", message);
-  Serial.println("Code type:" + irCodeType);
+//  Serial.println("Code type:" + irCodeType);
 
   String irCodeValStr  = getValueOfQueryParam("value:", message);
-  Serial.println("code value:" + irCodeValStr);
+//  Serial.println("code value:" + irCodeValStr);
   unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
 
   String irCodeLengthStr = getValueOfQueryParam("length:", message);
-  Serial.println("code length: " + irCodeLengthStr);
+//  Serial.println("code length: " + irCodeLengthStr);
   int irCodeLength = irCodeLengthStr.toInt();
 
-  transmitCode(irCodeType, irCodeValue, irCodeLength);
+  transmitCode(irCodeType, irCodeValue, irCodeLength, shouldBlink);
 
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
@@ -200,8 +204,16 @@ void testStop() {
 }
 
 void sayPolo() {
+  int shouldBlink = 0;
+  for (int i = 0; i < server.args(); i++) {
+    if (server.argName(i) == "blink" && server.arg(i) == "1") {
+        shouldBlink = 1; 
+     }
+  }
+  
   server.send(200, "application/json", "{\"message\":\"polo\"}");
-  if (testing) {
+
+  if (shouldBlink == 1) {
     blockingBlink(true, false, false, 100, 0, 1);
     blockingBlink(true, true, false, 100, 0, 1);
     blockingBlink(false, true, false, 100, 0, 1);
