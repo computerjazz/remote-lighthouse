@@ -46,7 +46,7 @@ void setup() {
 
   // Start in wifi portal mode if button is pressed
   if (digitalRead(PORTAL_MODE_PIN) == HIGH) {
-    Serial.println("Starting in portal mode");
+//    Serial.println("Starting in portal mode");
     wifiManager.startConfigPortal("RemoteLighthouse");
     
   } else {
@@ -60,16 +60,16 @@ void setup() {
   }
   
 
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
+//  Serial.print("IP address: ");
+//  Serial.println(WiFi.localIP());
+//  Serial.print("SSID: ");
+//  Serial.println(WiFi.SSID());
 
-  Serial.println("Setting up mDNS");
+//  Serial.println("Setting up mDNS");
   String mac = String(WiFi.macAddress());
   String mDnsString = String("remotelighthouse-" + mac.substring(mac.length() / 2));
   mDnsString.replace(":", "");
-  Serial.println(mDnsString);
+//  Serial.println(mDnsString);
   char mDnsChar[mDnsString.length()];
   mDnsString.toCharArray(mDnsChar, mDnsString.length());
   if (!MDNS.begin(mDnsChar)) {
@@ -83,9 +83,9 @@ void setup() {
   MDNS.addService("_http", "_tcp", 80);
   MDNS.addServiceTxt("_http", "_tcp", "app", "remotelighthouse");
   
-  Serial.println("mDNS responder started");
+//  Serial.println("mDNS responder started");
 
-  Serial.println("setting up server");
+//  Serial.println("setting up server");
   server.on("/rec", startRecord);
   server.on("/stop", stopRecord);
   server.on("/check", checkIRCode);
@@ -96,7 +96,7 @@ void setup() {
   server.on("/marco", sayPolo);
 
   server.begin();
-  Serial.println("Server listening");
+//  Serial.println("Server listening");
   irrecv.enableIRIn(); // Start the receiver
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);

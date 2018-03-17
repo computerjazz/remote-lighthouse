@@ -34,7 +34,7 @@ int codeLen; // The length of the code
 int toggle = 0; // The RC5/6 toggle state
 
 boolean storeCode(decode_results *results) {
-  Serial.println("storing code!");
+//  Serial.println("storing code!");
   codeType = results->decode_type;
   int count = results->rawlen;
    // TODO: add LED green blink feedback on successful storage of supported code
