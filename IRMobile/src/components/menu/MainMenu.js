@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Alert,
-  Animated,
   LayoutAnimation,
   Share,
-  StyleSheet
+  StyleSheet,
+  View,
 } from 'react-native'
 import { connect } from 'react-redux'
 
@@ -22,7 +22,7 @@ import {
 } from '../../actions'
 import MenuItem from './MenuItem'
 
-import { iPhoneXOffset } from '../../utils'
+import { iPhoneXOffset, HEIGHT, WIDTH } from '../../utils'
 import { CustomLayoutLinear } from '../../dictionaries/animations'
 
 import themes from '../../constants/themes'
@@ -58,16 +58,18 @@ class MainMenu extends Component {
 
   renderMainMenu = () => {
     const { MENU_BACKGROUND_COLOR } = themes[this.props.theme]
+    const { headerMenuVisible } = this.props
+
+    const style = headerMenuVisible ? {} : { right: -WIDTH / 2 }
 
     return (
-      <Animated.View style={[styles.menu, { backgroundColor: MENU_BACKGROUND_COLOR }]}>
+      <View style={[styles.menu, style, { backgroundColor: MENU_BACKGROUND_COLOR }]}>
         <MenuItem
           icon="arrange-bring-forward"
           text="Edit"
           onPress={() => {
             this.props.setEditMode(true)
-            // this.props.setHeaderMenu(false)
-            setTimeout(() => this.props.setHeaderMenu(false), 100)
+            this.props.setHeaderMenu(false)
           }}
         />
         <MenuItem
@@ -122,12 +124,12 @@ class MainMenu extends Component {
             this.props.setHeaderMenu(false)
           }}
         />
-      </Animated.View>
+      </View>
     )
   }
 
   render() {
-    return this.props.headerMenuVisible ? this.renderMainMenu() : null
+    return this.renderMainMenu()
   }
 }
 
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: BUTTON_RADIUS,
     position: 'absolute',
-    top: 25 + iPhoneXOffset,
+    top: 80 + iPhoneXOffset,
     right: 10,
   }
 })

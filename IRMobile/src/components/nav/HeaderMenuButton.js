@@ -17,12 +17,15 @@ import { REMOTE_OPTIONS } from '../../constants/ui'
 class HeaderMenuButton extends Component {
 
   static propTypes = {
-    editing: PropTypes.bool.isRequired,
     capturing: PropTypes.bool.isRequired,
-    stopRecord: PropTypes.func.isRequired,
-    setEditMode: PropTypes.func.isRequired,
+    editing: PropTypes.bool.isRequired,
+    headerMenuVisible: PropTypes.bool.isRequired,
+    instructionStep: PropTypes.number.isRequired,
     setCaptureMode: PropTypes.func.isRequired,
+    setEditMode: PropTypes.func.isRequired,
     setHeaderMenu: PropTypes.func.isRequired,
+    stopRecord: PropTypes.func.isRequired,
+    theme: PropTypes.string.isRequired,
   }
 
   state = {
@@ -30,11 +33,12 @@ class HeaderMenuButton extends Component {
   }
 
   renderDots() {
-    const { HEADER_ICON_COLOR } = themes[this.props.theme]
+    const { theme, setHeaderMenu, headerMenuVisible } = this.props
+    const { HEADER_ICON_COLOR } = themes[theme]
     return (
       <TouchableOpacity
         style={styles.touchable}
-        onPress={() => this.props.setHeaderMenu(true)}
+        onPress={() => setHeaderMenu(!headerMenuVisible)}
       >
         <Icon
           name="dots-vertical"
@@ -46,7 +50,7 @@ class HeaderMenuButton extends Component {
   }
 
   renderDoneButton() {
-    const { PRIMARY_DARK_ANALOGOUS, HEADER_TITLE_EDITING_COLOR } = themes[this.props.theme]
+    const { HEADER_TITLE_EDITING_COLOR } = themes[this.props.theme]
     const { instructionStep } = this.props
     // Prevent users from toggling out of tutorial
     if (instructionStep !== -1 && instructionStep < 7) return
@@ -109,6 +113,7 @@ const mapStateToProps = state => ({
   instructionStep: state.settings.instructionStep,
   modalVisible: state.app.modalVisible,
   currentRemoteId: state.app.currentRemoteId,
+  headerMenuVisible: state.app.headerMenuVisible,
   remote: state.remotes[state.app.currentRemoteId],
 })
 
