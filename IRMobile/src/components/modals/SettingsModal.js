@@ -96,7 +96,7 @@ class SelectRemoteIconModal extends Component {
           >
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length > 1 ? 's' : ''} connected:`}</Text>
+              <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length === 1 ? '' : 's'} connected:`}</Text>
               {ipAddresses.map(url => <Text key={url} style={{ fontWeight: '200', fontSize: 13, color: TEXT_COLOR_DARK }}>{url}</Text>)}
             </View>
 
