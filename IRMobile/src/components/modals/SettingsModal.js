@@ -117,6 +117,7 @@ class SelectRemoteIconModal extends Component {
                 <Text style={{color: TEXT_COLOR_DARK, fontSize: 12, fontWeight: '200'}}>Blink LED on transmit & discovery</Text>
               </View>
               <Switch
+                thumbTintColor={isAndroid ? "#fff" : undefined}
                 onValueChange={() => {
                   this.props.setTestingMode(!this.props.testing)
                 }}

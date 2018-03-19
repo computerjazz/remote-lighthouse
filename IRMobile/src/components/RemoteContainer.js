@@ -66,6 +66,10 @@ class RemoteContainer extends Component {
     modalVisible: null,
   }
 
+  state = {
+    inProgress: false
+  }
+
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
     return nextProps.remotes.list.length !== this.props.remotes.list.length
@@ -97,24 +101,23 @@ class RemoteContainer extends Component {
   }
 
   async checkLighthouseStatus() {
+    this.setState({ inProgress: true })
     const deviceUrls = await this.props.pingKnownDevices()
     if (!deviceUrls.length) this.props.findDevicesOnNetwork()
+    this.setState({ inProgress: false })
+
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { navigation } = this.props
     const { setParams } = navigation
 
-    if (!this.props.isForeground && nextProps.isForeground) {
-      this.checkLighthouseStatus()
-    }
+    const returningFromBackground = !this.props.isForeground && nextProps.isForeground
+    const connectionStatusChanged = this.props.isConnected !== nextProps.isConnected
+    const connectionTypeChanged = this.props.connectionType !== nextProps.connectionType
 
-    if (this.props.isConnected !== nextProps.isConnected) {
-      this.checkLighthouseStatus()
-    }
-
-    if (this.props.connectionType !== nextProps.connectionType) {
-      this.checkLighthouseStatus()
+    if (returningFromBackground || connectionStatusChanged || connectionTypeChanged) {
+      if (!this.state.inProgress) this.checkLighthouseStatus()
     }
 
     if(!navigation.state.params || !navigation.state.params.theme || this.props.theme !== nextProps.theme) {
