@@ -157,8 +157,8 @@ class RemoteContainer extends Component {
 const mapStateToProps = state => ({
   dragging: state.app.dragging,
   isForeground: state.app.isForeground,
-  isConnected: state.app.isConnected,
-  connectionType: state.app.connectionType,
+  isConnected: state.network.isConnected,
+  connectionType: state.network.connectionType,
   theme: state.settings.theme,
   remotes: state.remotes,
   editing: state.app.editing,

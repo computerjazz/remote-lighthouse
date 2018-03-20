@@ -1,4 +1,12 @@
-import { ADD_DEVICE_URL, REMOVE_DEVICE_URL, SET_DEVICE_URLS, SET_SCANNING, SET_TESTING } from '../constants/actions'
+import {
+  ADD_DEVICE_URL,
+  REMOVE_DEVICE_URL,
+  SET_DEVICE_URLS,
+  SET_SCANNING,
+  SET_TESTING,
+  SET_IS_CONNECTED,
+  SET_CONNECTION_TYPE,
+} from '../constants/actions'
 
 const initialState = {
   ipAddresses: [],
@@ -8,6 +16,17 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SET_IS_CONNECTED:
+      return {
+        ...state,
+        isConnected: action.payload.isConnected,
+      }
+
+    case SET_CONNECTION_TYPE:
+      return {
+        ...state,
+        connectionType: action.payload.connectionType,
+      }
     case ADD_DEVICE_URL:
       return {...state, ipAddresses: [...state.ipAddresses, action.payload.url]}
     case SET_DEVICE_URLS:
