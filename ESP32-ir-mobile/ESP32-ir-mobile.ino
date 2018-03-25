@@ -7,6 +7,7 @@
 #include <ESP.h>
 #include <ESPmDNS.h>
 
+String VERSION = "1.0";
 
 WebServer server(80);
 
@@ -94,6 +95,8 @@ void setup() {
   server.on("/test", test);
   server.on("/testStop", testStop);
   server.on("/marco", sayPolo);
+  server.on("/version", getVersion);
+
 
   server.begin();
 //  Serial.println("Server listening");
@@ -202,6 +205,10 @@ void testStop() {
   String message = testing ? "true" : "false";
   server.send(200, "application/json", "{\"testing\":" + message + "}");
 }
+
+void getVersion() {
+  server.send(200, "application/json", "{\"version\":" + VERSION + "}");
+ }
 
 void sayPolo() {
   int shouldBlink = 0;
