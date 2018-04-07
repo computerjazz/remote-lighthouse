@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import {
   Animated,
   StyleSheet,
-  TouchableOpacity,
   TouchableHighlight,
   Text,
   View,
 }  from 'react-native'
 import { connect } from 'react-redux'
+import tinycolor from 'tinycolor2'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleEditButton from './CircleEditButton'
@@ -26,14 +26,25 @@ class RemoteButton extends Component {
     id: PropTypes.string,
     capturingButtonId: PropTypes.string,
     status: PropTypes.bool,
+    iconSize: PropTypes.number,
+    color: PropTypes.string,
+    theme: PropTypes.stirng,
+    editing: PropTypes.bool,
+    onStatusChangeEnd: PropTypes.func,
   }
-
-  pulseAnim = new Animated.Value(0)
-  statusAnim = new Animated.Value(0)
 
   state = {
     irCaptureStatus: null,
   }
+
+  pulseAnim = new Animated.Value(0)
+  statusAnim = new Animated.Value(0)
+  pressAnim = new Animated.Value(0)
+
+  pressTranslate = this.pressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 2],
+  })
 
   componentDidUpdate(prevProps) {
     const isRecording = this.props.capturingButtonId === this.props.id
@@ -108,12 +119,34 @@ class RemoteButton extends Component {
     return (
       <View style={[styles.wrapper]}>
         <Animated.View
-          style={[styles.animatedContainer, !isBlank && [{ backgroundColor: BUTTON_BACKGROUND_COLOR }, isRecording && pulseStyle, hasStatus && statusStyle, style]]}
+          style={[
+            styles.animatedContainer,
+            { transform: [ { translateY: this.pressTranslate }]},
+            !isBlank && [
+              { backgroundColor: BUTTON_BACKGROUND_COLOR },
+              isRecording && pulseStyle,
+              hasStatus && statusStyle,
+              style]
+            ]}
         >
           <TouchableHighlight
             underlayColor={BUTTON_ICON_COLOR}
             activeOpacity={0.85}
-            onPress={editing ? () => onEditPress(id) :  () => onPress(id)}
+            onPressIn={() => {
+              Animated.timing(this.pressAnim, {
+                toValue: 1,
+                duration: 100,
+              }).start()
+            }}
+            onPressOut={() => {
+              Animated.timing(this.pressAnim, {
+                toValue: 0,
+                duration: 100,
+              }).start()
+            }}
+            onPress={() => {
+              editing ? onEditPress(id) : onPress(id)
+            }}
             style={[styles.touchable, iconName === BLANK_SPACE && { opacity: 0 }]}
           >
             {/* React native bug  in TouchableHighlight -- child component must have a backgroundColor*/}
@@ -124,6 +157,16 @@ class RemoteButton extends Component {
 
           </TouchableHighlight>
         </Animated.View>
+        <View style={[
+          styles.animatedContainer,
+          {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            zIndex: -999,
+            top: 3,
+            backgroundColor: tinycolor(BUTTON_BACKGROUND_COLOR).darken(15).toString()
+          }]} />
         { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
       </View>
