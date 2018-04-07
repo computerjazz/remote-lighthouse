@@ -159,6 +159,7 @@ class RemoteButton extends Component {
         </Animated.View>
         <View style={[
           styles.animatedContainer,
+          style,
           {
             position: 'absolute',
             left: 0,

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { iPhoneXOffset } from '../utils'
+import themes from '../constants/themes'
+
 
 import { LIGHT_ORANGE } from '../constants/colors'
 import { GENERAL_SETTINGS } from '../constants/ui'
@@ -18,13 +20,18 @@ class OverlayMessage extends Component {
   }
 
   render() {
-    const { numLighthouses, modalVisible } = this.props
+    const { numLighthouses, modalVisible, theme } = this.props
     if (numLighthouses > 0 || modalVisible) return null
+    const { STATUS_BAD_COLOR } = themes[this.props.theme]
+
     return (
       <View pointerEvents="box-none" style={{ ...StyleSheet.absoluteFillObject }}>
         <View pointerEvents="box-none" style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <View pointerEvents="none" />
-          <TouchableOpacity onPress={() => this.props.setHeaderModal(GENERAL_SETTINGS)} style={styles.alertContainer}>
+          <TouchableOpacity
+            onPress={() => this.props.setHeaderModal(GENERAL_SETTINGS)}
+            style={[styles.alertContainer, { backgroundColor: STATUS_BAD_COLOR }]}
+            >
             <Icon name="alert-box" size={25} color="#fff" />
             <Text style={styles.title}>No lighthouse connected</Text>
             <Text style={styles.subTitle}>Re-scan in settings</Text>
@@ -36,6 +43,7 @@ class OverlayMessage extends Component {
 }
 
 const mapStateToProps = state => ({
+  theme: state.settings.theme,
   modalVisible: state.app.modalVisible,
   numLighthouses: state.network.ipAddresses ? state.network.ipAddresses.length : 0
 })
@@ -52,7 +60,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginBottom: 60 + (iPhoneXOffset * 1.5),
     borderRadius: 3,
-    backgroundColor: LIGHT_ORANGE,
     alignItems: 'center',
     justifyContent: 'center',
   },
