@@ -157,17 +157,20 @@ class RemoteButton extends Component {
 
           </TouchableHighlight>
         </Animated.View>
-        <View style={[
-          styles.animatedContainer,
-          style,
-          {
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            zIndex: -999,
-            top: 3,
-            backgroundColor: tinycolor(BUTTON_BACKGROUND_COLOR).darken(15).toString()
-          }]} />
+        {!isBlank && (
+          <View style={[
+            styles.animatedContainer,
+            style,
+            {
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              zIndex: -999,
+              top: 3,
+              backgroundColor: tinycolor(BUTTON_BACKGROUND_COLOR).darken(15).toString()
+            }]}
+          />
+        )}
         { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
       </View>
