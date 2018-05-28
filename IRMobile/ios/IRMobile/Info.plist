@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Remote</string>
+	<string>Remote Lighthouse</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -34,9 +34,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>CodePushDeploymentKey</key>
-	<string>Cr6N5wURpWky14lMcVpIwff1yRjOfc5fc98b-7620-40bb-852a-4c126fc95f78</string>
+	<string>$(CODEPUSH_KEY)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
