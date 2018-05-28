@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import themes from '../../constants/themes'
 const { height } = Dimensions.get('window')
-const iconSize = height < 600 ? 30 : 40
 
 
 class TabIcon extends Component {
@@ -15,9 +14,21 @@ class TabIcon extends Component {
     if (!remote) return null
     const { TAB_LABEL_COLOR_ACTIVE, TAB_LABEL_COLOR_INACTIVE } = themes[theme]
     const color = id === currentRemoteId ? TAB_LABEL_COLOR_ACTIVE : TAB_LABEL_COLOR_INACTIVE
+    const iconSize = hasTitle ? 23 : 35
+    const iconContainerSize = height < 600 ? 35 : 40
+
     return (
-      <View style={[{ flex: 1 }, Platform.OS === 'ios' && { alignItems: 'center', justifyContent: 'center', marginTop: 5, height: iconSize, width: iconSize }]}>
-        <Icon name={remote.icon} color={color} size={hasTitle ? 23 : 35} />
+      <View style={[
+        { flex: 1 },
+        Platform.OS === 'ios' && {
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 5,
+          height: iconContainerSize,
+          width: iconContainerSize
+        }]}
+      >
+        <Icon name={remote.icon} color={color} size={iconSize} />
       </View>
     )
   }

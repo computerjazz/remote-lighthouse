@@ -104,7 +104,7 @@ const instructions = [{
   name: 'capture-point',
   text: `Now point your real-life remote at the lighthouse and press its corresponding button.
 
-When the capture is compolete, the lighthouse and button will both flash green.`,
+When the capture is complete, the lighthouse and button will both flash green.`,
   action: props => {
     if (!props.capturing) {
       props.setEditMode(false)

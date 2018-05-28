@@ -4490,8 +4490,8 @@ react-devtools-core@3.1.0:
     ws "^2.0.3"
 
 react-native-branch@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.0.0.tgz#da3108ebc0b93fc80b8a0c5fc85c0abece03ff8d"
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.3.0.tgz#02a71f167e0e8f3b73bbcd823af20d32b86d2c59"
 
 react-native-code-push@^5.1.3-beta:
   version "5.1.3-beta"

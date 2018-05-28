@@ -159,7 +159,7 @@ export function exportRemote(remoteId) {
 export function getShareRemoteUrl(nestedRemote) {
   return async () => {
     let branchUniversalObject = await branch.createBranchUniversalObject(
-        'content/12345', // canonical identifier
+        `RemoteLighthouse-link-${Math.floor(Math.random() * 100000)}`, // canonical identifier
         {
           contentDescription: 'New shared remote!',
           metadata: {
@@ -173,8 +173,8 @@ export function getShareRemoteUrl(nestedRemote) {
     }
 
     let controlParams = {
+      '$fallback_url': 'http://www.remotelighthouse.com',
       '$desktop_url': 'http://www.remotelighthouse.com',
-      '$ios_url': 'irmobile://',
       '$android_url': 'irmobile://',
     }
     let { url } = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
