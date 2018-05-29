@@ -1,11 +1,17 @@
 import React from 'react'
 import Link from 'gatsby-link'
+import { connect } from 'react-redux'
 
 import { compose, withState } from 'recompose'
 
-const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover }) => (
+const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMobile }) => (
   <div
     style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 99999,
       background: 'transparent',
     }}
   >
@@ -33,8 +39,7 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover }) => 
           </Link>
         </h1>
       </div>
-
-
+        {!isMobile && (
           <Link
             onMouseOver={() => setHiwHover(true)}
             onMouseOut={() => setHiwHover(false)}
@@ -53,7 +58,9 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover }) => 
           >
             How it works
           </Link>
+        )}
 
+        {!isMobile && (
           <Link
             onMouseOver={() => setBuyHover(true)}
             onMouseOut={() => setBuyHover(false)}
@@ -76,11 +83,15 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover }) => 
           >
             Buy
           </Link>
+        )}
+
+
     </div>
   </div>
 )
 
 export default compose(
+  connect(state => ({ isMobile: state.app.isMobile })),
   withState('buyHover', 'setBuyHover', false),
   withState('hiwHover', 'setHiwHover', false)
 )(Header)
