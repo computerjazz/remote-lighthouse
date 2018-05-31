@@ -106,12 +106,12 @@ def enableProguardInReleaseBuilds = false
 def pass = getPassword("danielmerrill","android_keystore")
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId 'com.danielmerrill.remotelighthouse'
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         ndk {
@@ -163,7 +163,7 @@ dependencies {
     compile project(':react-native-network-info')
     compile project(':react-native-branch')
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile "com.android.support:appcompat-v7:27.1.1"
     compile 'com.facebook.react:react-native:+'
     // From node_modules
     compile project(':react-native-vector-icons')

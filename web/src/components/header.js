@@ -24,7 +24,20 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMob
       }}
     >
 
-      <div style={{ flex: 1 }}>
+      {isMobile ? (<div style={{ flex: 1 }}>
+        <h1 style={{ margin: 0 }}>
+          <Link
+            to="/"
+            style={{
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: 40,
+            }}
+          >
+            Remote Lighthouse
+          </Link>
+        </h1>
+      </div>) : (<div style={{ flex: 1 }}>
         <h1 style={{ margin: 0 }}>
           <Link
             to="/"
@@ -38,7 +51,7 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMob
             Lighthouse
           </Link>
         </h1>
-      </div>
+      </div>)}
         {!isMobile && (
           <Link
             onMouseOver={() => setHiwHover(true)}

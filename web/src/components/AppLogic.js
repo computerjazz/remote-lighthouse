@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-const BREAKPOINT = 650
+const BREAKPOINT = 700
 
 class AppLogic extends Component {
 
