@@ -32,6 +32,12 @@ const SecondPage = () => (
       <li>WiFi controlled</li>
       <li>Approximate 20 ft range</li>
     </ul>
+    <div style={{
+      marginTop: 150
+    }}>
+      <h3>Privacy Policy</h3>
+      <p>Remote Lighthouse does not store or transmit user data.</p>
+    </div>
   </div>
   </div>
 </div>
