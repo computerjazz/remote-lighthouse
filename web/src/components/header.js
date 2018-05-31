@@ -77,7 +77,7 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMob
           <Link
             onMouseOver={() => setBuyHover(true)}
             onMouseOut={() => setBuyHover(false)}
-            to="/buy"
+            to="/"
             style={{
               color: 'white',
               textDecoration: 'none',
@@ -85,7 +85,6 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMob
               padding: '5px 50px',
               alignItems: 'center',
               justifyContent: 'center',
-              flex: 0,
               border: '2px solid white',
               borderRadius: 10,
               marginRight: 50,
@@ -94,7 +93,7 @@ const Header = ({ siteTitle, buyHover, setBuyHover, hiwHover, setHiwHover, isMob
             }}
 
           >
-            Buy
+            Coming soon
           </Link>
         )}
 

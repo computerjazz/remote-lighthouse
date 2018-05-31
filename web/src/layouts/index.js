@@ -5,6 +5,7 @@ import { Provider, connect } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 
 import Header from '../components/header'
+import Footer from '../components/footer'
 import AppLogic from '../components/AppLogic'
 import './index.css'
 
@@ -65,6 +66,7 @@ class Layout extends Component {
         >
           {children()}
         </div>
+        <Footer />
       </div>
     </Provider>
     )

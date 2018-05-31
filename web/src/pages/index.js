@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Link from 'gatsby-link'
 import { connect } from 'react-redux'
 
-import hero from '../img/hero-3.jpg'
+import hero from '../img/hero.jpg'
 import phones from '../img/phones.png'
 
 class IndexPage extends Component {
