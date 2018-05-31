@@ -7,5 +7,5 @@
 
 [build]
   base    = "web/"
-  publish = "public"
+  publish = "web/public"
   command = "gatsby build"
