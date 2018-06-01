@@ -15,7 +15,7 @@ const initialState = {
 }
 
 const appReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case 'SET_IS_MOBILE':
       return {
         ...state,
@@ -41,34 +41,33 @@ const store = createStore(reducer)
 const BREAKPOINT = 650
 
 class Layout extends Component {
-
   render() {
     const { children, data } = this.props
     return (
       <Provider store={store}>
-      <div>
-        <AppLogic />
-        <Helmet
-          title={data.site.siteMetadata.title}
-          meta={[
-            { name: 'description', content: 'Sample' },
-            { name: 'keywords', content: 'sample, something' },
-          ]}
-        />
-        <Header siteTitle={data.site.siteMetadata.title} />
-        <div
-          style={{
-            margin: '0 auto',
-            maxWidth: 960,
-            padding: '0px 1.0875rem 1.45rem',
-            paddingTop: 0,
-          }}
-        >
-          {children()}
+        <div>
+          <AppLogic />
+          <Helmet
+            title={data.site.siteMetadata.title}
+            meta={[
+              { name: 'description', content: 'Sample' },
+              { name: 'keywords', content: 'sample, something' },
+            ]}
+          />
+          <Header siteTitle={data.site.siteMetadata.title} />
+          <div
+            style={{
+              margin: '0 auto',
+              maxWidth: 960,
+              padding: '0px 1.0875rem 1.45rem',
+              paddingTop: 0,
+            }}
+          >
+            {children()}
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </Provider>
+      </Provider>
     )
   }
 }
