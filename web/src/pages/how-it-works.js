@@ -56,11 +56,11 @@ const SecondPage = () => (
         )}
         {renderItem(
           'Use',
-          "Once your buttons have been assigned (or someone's shared a remote with you), it's ready to use. Anyone on your WiFi can use the Lighthouse. There are no user accounts or pairing."
+          "Once your buttons have been assigned (or someone's shared a remote with you), it's ready to use. Anyone on your WiFi can use the Lighthouse. There are no user accounts or pairing required."
         )}
         {renderItem(
           'Share',
-          'Any remote you create can be shared with a simple text link. Set up the tv remote and then text it to mom.'
+          'Any remote you create can be shared with a simple text link. Set up the TV remote and then text it to mom.'
         )}
       </div>
 
