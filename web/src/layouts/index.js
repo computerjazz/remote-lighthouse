@@ -50,8 +50,8 @@ class Layout extends Component {
           <Helmet
             title={data.site.siteMetadata.title}
             meta={[
-              { name: 'description', content: 'Sample' },
-              { name: 'keywords', content: 'sample, something' },
+              { name: 'description', content: 'The universal remote controlled by your phone' },
+              { name: 'keywords', content: 'home, automation, smarthome' },
             ]}
           />
           <Header siteTitle={data.site.siteMetadata.title} />
