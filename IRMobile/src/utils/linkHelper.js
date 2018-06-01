@@ -8,12 +8,9 @@ let previousTimestamp = 0
 
 export default dispatch => {
   branch.subscribe(bundle => {
-    console.log('GOT A LINK!', bundle)
     if (bundle && bundle.params && !bundle.error) {
       const timestamp = bundle.params['+click_timestamp']
-      console.log('TIMESTAMP', timestamp)
       if (timestamp === previousTimestamp) {
-        console.log('duplicate, skipping')
         return
       }
       previousTimestamp = timestamp
