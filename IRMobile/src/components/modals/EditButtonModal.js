@@ -41,7 +41,7 @@ class EditButtonModal extends Component {
     super(props)
     const { icon, title } = props.button
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
-    this.stsate = { selectedIcon: icon,  newTitle: title}
+    this.state = { selectedIcon: icon,  newTitle: title}
   }
 
   captureAndroidBackPress = () => {

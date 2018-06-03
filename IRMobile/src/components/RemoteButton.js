@@ -28,7 +28,7 @@ class RemoteButton extends Component {
     status: PropTypes.bool,
     iconSize: PropTypes.number,
     color: PropTypes.string,
-    theme: PropTypes.stirng,
+    theme: PropTypes.string,
     editing: PropTypes.bool,
     onStatusChangeEnd: PropTypes.func,
   }

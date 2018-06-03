@@ -15,7 +15,7 @@ import { setHeaderModal } from '../actions'
 class OverlayMessage extends Component {
 
   static propTypes = {
-    modalVisible: PropTypes.string.isRequired,
+    modalVisible: PropTypes.string,
     numLighthouses: PropTypes.number.isRequired,
   }
 
@@ -40,6 +40,10 @@ class OverlayMessage extends Component {
       </View>
     )
   }
+}
+
+OverlayMessage.defaultProps = {
+  modalVisible: null,
 }
 
 const mapStateToProps = state => ({

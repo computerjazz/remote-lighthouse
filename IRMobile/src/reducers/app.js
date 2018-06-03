@@ -30,6 +30,16 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
 
+    case REHYDRATE: {
+      return {
+        ...action.payload.app,
+        editing: false,
+        capturing: false,
+        headerModal: null,
+        modalVisible: null,
+      }
+    }
+
     case APP_FOREGROUND:
       return {
         ...state,
