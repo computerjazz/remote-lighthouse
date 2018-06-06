@@ -38,7 +38,7 @@ const Header = ({
               style={{
                 color: 'white',
                 textDecoration: 'none',
-                fontSize: 40,
+                fontSize: 30,
               }}
             >
               Remote Lighthouse

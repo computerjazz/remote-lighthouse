@@ -23,6 +23,7 @@ class IndexPage extends Component {
           style={{
             position: 'absolute',
             top: isMobile ? -width * 0.1 : -width * 0.18,
+            width,
             left: 0,
             zIndex: -999,
           }}

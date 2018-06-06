@@ -7,6 +7,7 @@ class Footer extends Component {
     return (
       <div
         style={{
+          flex: 1,
           backgroundColor: '#333',
           color: '#aaa',
           display: 'flex',

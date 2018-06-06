@@ -44,11 +44,11 @@ const SecondPage = () => (
       <div>
         {renderItem(
           'Setup',
-          'When the Lighthouse boots up it will create its own WiFi network. Connect to the Lighthouse and enter your own WiFi credentials'
+          'When the Lighthouse boots up for the first time it creates a WiFi network. Connect to the Lighthouse and enter your own WiFi credentials.'
         )}
         {renderItem(
           'Create',
-          'Lay out your remote in Edit mode. Add or move buttons and assign titles and icons.'
+          'Design the layout of your remote in Edit mode. Add or move buttons and assign titles and icons. Add a blank remote or delete an existing remote from the main menu.'
         )}
         {renderItem(
           'Capture',
@@ -56,11 +56,11 @@ const SecondPage = () => (
         )}
         {renderItem(
           'Use',
-          "Once your buttons have been assigned (or someone's shared a remote with you), it's ready to use. Anyone on your WiFi can use the Lighthouse. There are no user accounts or pairing required."
+          "Once your button has been assigned, it's ready to use! Anyone on your WiFi can use the Lighthouse. No user accounts or pairing required."
         )}
         {renderItem(
           'Share',
-          'Any remote you create can be shared with a simple text link. Set up the TV remote and then text it to mom.'
+          'Any remote you create can be shared with a simple link. Set up the TV remote and then text it to mom!'
         )}
       </div>
 
