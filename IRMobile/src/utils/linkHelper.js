@@ -1,5 +1,5 @@
 import branch from 'react-native-branch'
-import { importRemote, setEditMode } from '../actions'
+import { importRemote, setEditMode, gotoInstructionStep } from '../actions'
 
 // Set ttl to 0 to prevent duplicates
 branch.initSessionTtl = 0
@@ -21,8 +21,13 @@ export default dispatch => {
           const __unescaped = bundle.params.remote.replace(/\\/g, "");
           bundle.params.remote = JSON.parse(__unescaped);
         }
-        dispatch(setEditMode(false))
-        dispatch(importRemote(bundle.params.remote))
+        try {
+          dispatch(gotoInstructionStep(-1))
+          dispatch(setEditMode(false))
+          dispatch(importRemote(bundle.params.remote))
+        } catch(err) {
+          console.log('## branch error', err)
+        }
       }
     }
   })

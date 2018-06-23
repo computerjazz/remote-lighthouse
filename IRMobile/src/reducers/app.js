@@ -31,8 +31,10 @@ export default (state = initialState, action) => {
   switch (action.type) {
 
     case REHYDRATE: {
+      const app = (action.payload && action.payload.app) ? action.payload.app : {}
       return {
-        ...action.payload.app,
+        ...state,
+        ...app,
         editing: false,
         capturing: false,
         headerModal: null,

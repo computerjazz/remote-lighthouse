@@ -159,7 +159,6 @@ export function exportRemote(remoteId) {
 export function getShareRemoteUrl(nestedRemote) {
   return async () => {
     const remote = isAndroid ? JSON.stringify(nestedRemote) : nestedRemote
-    console.log('SERIALIZED', remote)
     let branchUniversalObject = await branch.createBranchUniversalObject(
         `RemoteLighthouse-link-${Math.floor(Math.random() * 100000)}`, // canonical identifier
         {
