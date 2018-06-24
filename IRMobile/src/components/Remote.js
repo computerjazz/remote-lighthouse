@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Animated,
+  LayoutAnimation,
   PanResponder,
   StyleSheet,
   View,
 } from 'react-native'
 
 import { connect } from 'react-redux'
-import SortableListView from 'react-native-sortable-listview'
+import SortableFlatList from 'react-native-draggable-flatlist'
 
 import {
   createButtonPanel,
@@ -108,6 +109,10 @@ class Remote extends Component {
    if (nextProps.currentRemoteId !== this.props.navigation.state.routeName) {
      this.setState({ addPanelModalVisible: false, editButtonModalVisible: false })
    }
+
+   if (this.props.dragging !== nextProps.dragging) {
+     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+   }
  }
 
  componentDidUpdate(prevProps) {
@@ -157,26 +162,31 @@ class Remote extends Component {
     this.props.setEditMode(true)
   }
 
-  renderButtonPanel = id => {
+  renderButtonPanel = ({ item, index, isActive, move, moveEnd }) => {
     const { navigation } = this.props
     return (
       <ButtonPanel
-        id={id}
+        key={`list-item-${item}`} 
+        id={item}
         remoteId={navigation.state.routeName}
         onEditPress={this.onEditPress}
         setParams={navigation.setParams}
+        isActive={isActive}
+        move={move}
+        moveEnd={moveEnd}
       />
     )
   }
 
-  onRowMoved = ({ from, to, row }) => {
-    const panels = this.props.remote.panels.filter(panelId => panelId !== row.data)
-    panels.splice(to, 0, row.data)
-
-    this.props.updateRemote({
-      ...this.props.remote,
-      panels,
-    })
+  onMoveEnd = ({ data, from, to, row }) => {
+    if (to !== from) {
+      this.props.updateRemote({
+        ...this.props.remote,
+        panels: data,
+      })
+    }
+    // Prevent LayoutAnimation from animating list
+    setTimeout(() => this.props.setDragging(false), 500)
   }
 
   render() {
@@ -185,39 +195,33 @@ class Remote extends Component {
     const GeneralModal = modals[headerModal]
     if (!remote) return null
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
-
     return (
       <View style={{ flex: 1 }}>
         <View
           {...this._panResponder.panHandlers}
           style={[styles.container, { backgroundColor: REMOTE_BACKGROUND_COLOR }]}
         >
-          <SortableListView
-            style={styles.buttonPanelList}
-            data={this.props.remote.panels.reduce((acc, cur) => {
-              acc[cur] = cur
-              return acc
-            }, {})}
-            order={this.props.remote.panels}
-            renderRow={this.renderButtonPanel}
-            onRowMoved={this.onRowMoved}
-            sortRowStyle={styles.sortRow}
-            onRowActive={() => this.props.setDragging(true)}
-            onMoveEnd={() => this.props.setDragging(false)}
-            onMoveCancel={() => this.props.setDragging(false)}
+          <SortableFlatList
+            scrollPercent={5}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            keyExtractor={(item, index) => item} 
+            data={this.props.remote.panels}
+            renderItem={this.renderButtonPanel}
+            onMoveEnd={this.onMoveEnd}
+            onMoveBegin={() => this.props.setDragging(true)}
           />
 
-          { editing && <CircleButton icon="remote" onPress={this.setCaptureMode} />}
+          { editing && !dragging && <CircleButton icon="remote" onPress={this.setCaptureMode} />}
+          { editing && !dragging && <CircleButton icon="plus" style={{ right: 100 }} onPress={this.showAddPanelModal} />}
           { capturing && <CircleButton icon="arrange-bring-forward" onPress={this.setEditMode} />}
-          { editing && <CircleButton icon="plus" style={{ right: 100 }} onPress={this.showAddPanelModal} />}
 
         </View>
-        { addPanelModalVisible &&
+        { addPanelModalVisible && 
           <AddPanelModal
             onSubmit={this.submitAddPanelModal}
           /> }
 
-        { editButtonModalVisible &&
+        { editButtonModalVisible && 
           <EditButtonModal
             buttonId={editingButtonId}
             onSubmit={this.dismissEditButtonModal}
@@ -260,19 +264,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Remote)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  buttonPanelList: {
-    // flex: 1,
-  },
-  sortRow: {
-      opacity: 1.0,
-      elevation: 5,
-      shadowColor: 'black',
-      shadowOpacity: 0.4,
-      shadowOffset: {
-        width: 3,
-        height: 3,
-      },
-      shadowRadius: 3,
-    }
+  }
 })

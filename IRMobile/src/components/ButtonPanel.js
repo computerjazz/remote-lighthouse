@@ -96,14 +96,15 @@ class ButtonPanel extends Component {
   }
 
   render() {
-    const { buttons, type, editing, theme } = this.props
+    const { buttons, type, editing, id, theme, move, moveEnd, isActive } = this.props
     const { PRIMARY_LIGHT, BUTTON_DELETE_COLOR } = themes[theme]
+ 
     return (
-      <View style={styles.container}>
+      <View key={id} style={[styles.container, isActive && styles.active ]}>
         {editing &&
           <TouchableOpacity
             onPress={() => this.props.deleteButtonPanel(this.props.id, this.props.remoteId)}
-            style={{marginLeft: 10}}
+            style={{ marginLeft: 10 }}
           >
             <Icon
               name="minus-box"
@@ -117,7 +118,8 @@ class ButtonPanel extends Component {
         {editing &&
           <TouchableOpacity
             style={{ marginRight: 10 }}
-            {...this.props.sortHandlers}
+            onLongPress={move}
+            onPressOut={moveEnd}
           >
             <Icon
               name="drag-vertical"
@@ -171,4 +173,15 @@ const styles = StyleSheet.create({
   smallButton: {
     height: 50,
   },
+  active: {
+    opacity: 1.0,
+    elevation: 5,
+    shadowColor: 'black',
+    shadowOpacity: 0.4,
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowRadius: 3,
+  }
 })
