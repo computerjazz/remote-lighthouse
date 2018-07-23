@@ -13,6 +13,8 @@ import {
 
 import { connect } from 'react-redux'
 
+import packageJson from '../../../package.json';
+
 import TextButton from '../TextButton'
 import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode, gotoInstructionStep } from '../../actions'
 import { isAndroid } from '../../utils'
@@ -133,6 +135,7 @@ class SelectRemoteIconModal extends Component {
             >
               <Text style={{ color: TEXT_COLOR_DARK }}>Redo Tutorial</Text>
             </TouchableOpacity>
+            <Text style={{ alignSelf: 'center', marginTop: 20 }}>{`v${packageJson.version}`}</Text>
           </ScrollView>
 
           <View style={styles.confirmButtonContainer}>
