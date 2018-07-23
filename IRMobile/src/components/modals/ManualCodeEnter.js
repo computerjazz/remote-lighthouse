@@ -51,7 +51,14 @@ class ManualCodeEnterModal extends Component {
   }
 
 
-
+  onChangeText = (text, stateKey) => {
+    const regEx = /\D+/g
+    let nums = text.replace(regEx, '')
+    if (isNaN(Number(nums))) nums = ''
+    else if (Number(nums) > 255) nums = '255'
+    else if (Number(nums) < 0) nums = '0'
+    this.setState({ [stateKey]: nums })
+  }
 
   onOkPress = () => {
     const { button } = this.props
@@ -80,30 +87,30 @@ class ManualCodeEnterModal extends Component {
             <Text>Device</Text>
             <TextInput
               style={styles.textInput}
-              onChangeText={text => this.setState({ device: text })}
+              onChangeText={text => this.onChangeText(text, 'device')}
               value={device}
               autoCorrect={false}
-              underlineColorAndroid={PRIMARY_DARK}
+              underlineColorAndroid="transparent"
               placeholder="Device"
               keyboardType="numeric"
             />
-            <Text>SubDevice</Text>
+            <Text>Sub Device</Text>
             <TextInput
               style={styles.textInput}
-              onChangeText={text => this.setState({ subDevice: text })}
+              onChangeText={text => this.onChangeText(text, 'subDevice')}
               value={subDevice}
               autoCorrect={false}
-              underlineColorAndroid={PRIMARY_DARK}
+              underlineColorAndroid="transparent"
               placeholder="SubDevice"
               keyboardType="numeric"
             />
             <Text>Function</Text>
             <TextInput
               style={styles.textInput}
-              onChangeText={text => this.setState({ devFunction: text })}
+              onChangeText={text => this.onChangeText(text, 'devFunction')}
               value={devFunction}
               autoCorrect={false}
-              underlineColorAndroid={PRIMARY_DARK}
+              underlineColorAndroid="transparent"
               placeholder="Function"
               keyboardType="numeric"
             />
