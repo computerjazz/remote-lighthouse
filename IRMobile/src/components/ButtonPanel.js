@@ -117,7 +117,7 @@ class ButtonPanel extends Component {
 
         {editing &&
           <TouchableOpacity
-            style={{ marginRight: 10 }}
+            style={styles.moveHandle}
             onLongPress={move}
             onPressOut={moveEnd}
           >
@@ -183,5 +183,11 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 3,
+  },
+  moveHandle: {
+    paddingRight: 10,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
