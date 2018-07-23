@@ -7,7 +7,7 @@
 #include <ESP.h>
 #include <ESPmDNS.h>
 
-String VERSION = "1.0";
+String VERSION = "1.1";
 
 WebServer server(80);
 

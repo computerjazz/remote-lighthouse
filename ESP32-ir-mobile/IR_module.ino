@@ -81,6 +81,10 @@ void transmitCode(String codeType, unsigned long codeValue, int codeLen, int sho
     irsend.sendNEC(codeValue, codeLen);
   } else if (codeType == "SONY") {
     irsend.sendSony(codeValue, codeLen);
+    delay(40);
+    irsend.sendSony(codeValue, codeLen);
+    delay(40);
+    irsend.sendSony(codeValue, codeLen);
   } else if (codeType == "PANASONIC") {
     irsend.sendPanasonic(codeValue, codeLen);
   } else if (codeType == "JVC") {
