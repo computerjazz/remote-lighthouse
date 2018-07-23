@@ -33,6 +33,7 @@ import AddPanelModal from './modals/AddPanelModal'
 import EditButtonModal from './modals/EditButtonModal'
 import TabIcon from './nav/TabIcon'
 import TabLabel from './nav/TabLabel'
+import ManualCodeEnterModal from './modals/ManualCodeEnter';
 
 class Remote extends Component {
 
@@ -193,6 +194,7 @@ class Remote extends Component {
     const { capturing, editing, dragging, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId, listViewKey } = this.state
     const GeneralModal = modals[headerModal]
+    const EditModal = capturing ? ManualCodeEnterModal : EditButtonModal
     if (!remote) return null
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
     return (
@@ -216,13 +218,14 @@ class Remote extends Component {
           { capturing && <CircleButton icon="arrange-bring-forward" onPress={this.setEditMode} />}
 
         </View>
+
         { addPanelModalVisible && 
           <AddPanelModal
             onSubmit={this.submitAddPanelModal}
           /> }
 
         { editButtonModalVisible && 
-          <EditButtonModal
+          <EditModal
             buttonId={editingButtonId}
             onSubmit={this.dismissEditButtonModal}
           /> }

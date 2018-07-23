@@ -31,6 +31,7 @@ class RemoteButton extends Component {
     theme: PropTypes.string,
     editing: PropTypes.bool,
     onStatusChangeEnd: PropTypes.func,
+    capturing: PropTypes.bool,
   }
 
   state = {
@@ -84,7 +85,7 @@ class RemoteButton extends Component {
 
 
   render() {
-    const { iconSize = 30, id, style, title, editing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, theme, color = LIGHT_GREY } = this.props
+    const { iconSize = 30, id, style, title, editing, capturing, iconName, onPress = () => {}, onEditPress, capturingButtonId, status, theme, color = LIGHT_GREY } = this.props
     const isRecording = capturingButtonId === id
     const hasStatus = status !== null
 
@@ -147,6 +148,9 @@ class RemoteButton extends Component {
             onPress={() => {
               editing ? onEditPress(id) : onPress(id)
             }}
+            onLongPress={() => {
+              if (capturing) onEditPress(id)
+            }}
             style={[styles.touchable, iconName === BLANK_SPACE && { opacity: 0 }]}
           >
             {/* React native bug  in TouchableHighlight -- child component must have a backgroundColor*/}
@@ -183,6 +187,7 @@ const mapStateToProps = (state, ownProps) => ({
   iconName: state.buttons[ownProps.id].icon,
   title: state.buttons[ownProps.id].title,
   editing: state.app.editing,
+  capturing: state.app.capturing,
   capturingButtonId: state.app.capturingButtonId,
 })
 
