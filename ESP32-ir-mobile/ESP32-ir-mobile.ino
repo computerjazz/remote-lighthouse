@@ -7,7 +7,7 @@
 #include <ESP.h>
 #include <ESPmDNS.h>
 
-String VERSION = "1.1";
+String VERSION = "1.2";
 
 WebServer server(80);
 
@@ -27,6 +27,7 @@ boolean redBlinkState = HIGH;
 int redBlinkRate = 750;
 unsigned long milliCounter = 0;
 String lastIRCodeReceived = "";
+const char RAW_DELIMITER = '-';
 
 
 IRrecv irrecv(RECV_PIN);
@@ -173,8 +174,8 @@ void sendCode() {
 //  Serial.println("Sending " + message);
 
   String irCodeType = getValueOfQueryParam("type:", message);
-//  Serial.println("Code type:" + irCodeType);
-
+  
+  bool isRaw = irCodeType == "UNKNOWN";
   String irCodeValStr  = getValueOfQueryParam("value:", message);
 //  Serial.println("code value:" + irCodeValStr);
   unsigned long irCodeValue = strtoul(irCodeValStr.c_str(), NULL, 16);
@@ -182,9 +183,12 @@ void sendCode() {
   String irCodeLengthStr = getValueOfQueryParam("length:", message);
 //  Serial.println("code length: " + irCodeLengthStr);
   int irCodeLength = irCodeLengthStr.toInt();
-
-  transmitCode(irCodeType, irCodeValue, irCodeLength, shouldBlink);
-
+  if (isRaw) {
+    transmitRawCode(irCodeValStr, irCodeLength);
+  } else {
+    transmitCode(irCodeType, irCodeValue, irCodeLength, shouldBlink);
+  }
+ 
   server.send(200, "text/plain", "sending IR code " + message + "...");
 }
 
