@@ -7,7 +7,9 @@
 #include <ESP.h>
 #include <ESPmDNS.h>
 
-String VERSION = "1.2";
+
+String VERSION = "1.0.4";
+bool IR_DEBUG = true;
 
 WebServer server(80);
 
@@ -54,7 +56,7 @@ void setup() {
   } else {
     wifiManager.autoConnect("RemoteLighthouse");
   }
-
+   
   if (enteredConfig) {    
     // fixes bug where starting in config mode will connect to wifi
     // but not actually be functional until hard reset
@@ -62,9 +64,9 @@ void setup() {
   }
   
 
-//  Serial.print("IP address: ");
-//  Serial.println(WiFi.localIP());
-//  Serial.print("SSID: ");
+  // Serial.print("IP address: ");
+  // Serial.println(WiFi.localIP());
+  // Serial.print("SSID: ");
 //  Serial.println(WiFi.SSID());
 
 //  Serial.println("Setting up mDNS");
@@ -167,11 +169,11 @@ void sendCode() {
   for (int i = 0; i < server.args(); i++) {
     message += server.argName(i) + ":" + server.arg(i) + ",";
     if (server.argName(i) == "blink" && server.arg(i) == "1") {
-      shouldBlink = 1; 
+       blockingBlink(true, false, true, 50, 50, 2);
     }
   }
 
-//  Serial.println("Sending " + message);
+  // Serial.println("Sending " + message);
 
   String irCodeType = getValueOfQueryParam("type:", message);
   
@@ -186,7 +188,7 @@ void sendCode() {
   if (isRaw) {
     transmitRawCode(irCodeValStr, irCodeLength);
   } else {
-    transmitCode(irCodeType, irCodeValue, irCodeLength, shouldBlink);
+    transmitCode(irCodeType, irCodeValue, irCodeLength);
   }
  
   server.send(200, "text/plain", "sending IR code " + message + "...");
