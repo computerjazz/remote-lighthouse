@@ -36,6 +36,8 @@ IRrecv irrecv(RECV_PIN);
 IRsend irsend;
 decode_results results;
 
+int dayMillis = 1000 * 60 * 60 * 24;
+
 boolean enteredConfig = false;
 
 void setup() {
@@ -56,7 +58,7 @@ void setup() {
   } else {
     wifiManager.autoConnect("RemoteLighthouse");
   }
-   
+
   if (enteredConfig) {    
     // fixes bug where starting in config mode will connect to wifi
     // but not actually be functional until hard reset
@@ -135,6 +137,11 @@ void loop() {
   server.handleClient();
   processIR();
   blinkCheck();
+
+  // Restart every day
+  if (millis() > dayMillis) {
+    ESP.restart();
+    }
 }
 
 void configModeCallback (WiFiManager *myWiFiManager) {
@@ -176,7 +183,7 @@ void sendCode() {
   // Serial.println("Sending " + message);
 
   String irCodeType = getValueOfQueryParam("type:", message);
-  
+
   bool isRaw = irCodeType == "UNKNOWN";
   String irCodeValStr  = getValueOfQueryParam("value:", message);
 //  Serial.println("code value:" + irCodeValStr);
