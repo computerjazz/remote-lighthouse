@@ -37,6 +37,12 @@ Where `ESP_IP_ADDRESS` is the address of the ESP on your network, for example `1
 ### Wiring
 ![esp32 pinout](https://i.imgur.com/OJ5QfC6.jpg)
 
+## Flash bin to ESP-32
+- ```./esptool.py --port /dev/tty.SLAB_USBtoUART write_flash --flash_mode qio --flash_size 4MB --flash_freq 80m 0x10000 /Users/danielmerrill/Dev/ir-mobile/ESP32-ir-mobile/ESP32-ir-mobile.ino.esp32.bin``` 
+- Run from the folder where you downloaded esptool above^^
+replace the serial port after --port with whatever the esp32 is listed as, and the path for the .bin and you should be good to go
+- Once flashed you can verify it's working by restarting the esp32 with the serial monitor open in Arduino IDE
+
 ### Other references used:
 - Reading IR codes: https://github.com/z3t0/Arduino-IRremote/blob/master/examples/IRrecord/IRrecord.ino
 - Setting up server on ESP8266/ESP32: https://tttapa.github.io/ESP8266/Chap10%20-%20Simple%20Web%20Server.html
