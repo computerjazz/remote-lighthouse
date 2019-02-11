@@ -141,8 +141,8 @@ class SelectRemoteIconModal extends Component {
             style={styles.deleteRemoteButton}
             onPress={() => {
               Alert.alert(
-                'Delete Remote',
-                'Are you sure?',
+                `Delete Remote`,
+                `Are you sure you want to delete ${title ? title : "this remote"}?`,
                 [
                   { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
                   { text: 'Delete', onPress: () => this.props.deleteRemote(id), style: 'destructive' },
@@ -151,16 +151,16 @@ class SelectRemoteIconModal extends Component {
             }}
           />
         )}
-        <Text 
-            numberOfLines={1}
-          style={{ 
-            color: TEXT_COLOR_DARK, 
-            fontWeight: '200', 
+        <Text
+          numberOfLines={1}
+          style={{
+            color: TEXT_COLOR_DARK,
+            fontWeight: '200',
             fontSize: 12,
             marginTop: 5,
           }}
           ellipsizeMode="tail"
-          >{title}</Text>
+        >{title}</Text>
       </View>
 
     )
@@ -173,10 +173,10 @@ class SelectRemoteIconModal extends Component {
 
   renderCategory = (title, color) => (
     <View>
-    <Text style={{ color, fontWeight: '200', fontSize: 16, marginTop: 20, }}>{title}</Text>
-    <View style={{ width: '100%', borderBottomColor: color, borderBottomWidth: StyleSheet.hairlineWidth, marginBottom: 10, }} />
+      <Text style={{ color, fontWeight: '200', fontSize: 16, marginTop: 20, }}>{title}</Text>
+      <View style={{ width: '100%', borderBottomColor: color, borderBottomWidth: StyleSheet.hairlineWidth, marginBottom: 10, }} />
     </View>
-    )
+  )
 
   render() {
     const { ipAddresses, scanning, theme } = this.props
@@ -215,13 +215,13 @@ class SelectRemoteIconModal extends Component {
               marginVertical: 10,
               flexDirection: 'row',
             }}>
-            <DraggableFlatlist
-              horizontal
-              data={this.props.remotes}
-              renderItem={this.renderRemoteItem}
-              keyExtractor={(item) => `${item.id}-${this.state.counter}`}
-              stickyHeaderIndices={[0]}
-              ListHeaderComponent={() => <View style={{ width: 50, alignItems: 'center', padding: 10, marginRight: 10 }}>
+              <DraggableFlatlist
+                horizontal
+                data={this.props.remotes}
+                renderItem={this.renderRemoteItem}
+                keyExtractor={(item) => `${item.id}-${this.state.counter}`}
+                stickyHeaderIndices={[0]}
+                ListHeaderComponent={() => <View style={{ width: 50, alignItems: 'center', padding: 10, marginRight: 10 }}>
                   <TouchableOpacity
                     onPress={() => {
                       const newRemote = this.props.createRemote()
@@ -259,19 +259,19 @@ class SelectRemoteIconModal extends Component {
                     ellipsizeMode="tail"
                   >{`New`}</Text>
                 </View>}
-              onMoveEnd={({ data, to, from, row }) => {
-                this.setState(state => ({ counter: state.counter + 1 }))
-                if (to !== from) {
-                  this.props.setRemoteOrder(data.map(({ id }) => id))
-                }
-              }}
-            />
-       
+                onMoveEnd={({ data, to, from, row }) => {
+                  this.setState(state => ({ counter: state.counter + 1 }))
+                  if (to !== from) {
+                    this.props.setRemoteOrder(data.map(({ id }) => id))
+                  }
+                }}
+              />
+
             </View>
 
 
 
-          {this.renderCategory("Theme", TEXT_COLOR_DARK)}
+            {this.renderCategory("Theme", TEXT_COLOR_DARK)}
 
             {themeList.map(this.renderThemeOption)}
 
@@ -339,7 +339,7 @@ const mapDispatchToProps = (dispatch) => ({
   createRemote: () => dispatch(createRemote()),
   setEditMode: editing => dispatch(setEditMode(editing)),
   createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
-  
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
