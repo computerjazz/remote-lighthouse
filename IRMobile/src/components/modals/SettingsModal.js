@@ -171,16 +171,22 @@ class SelectRemoteIconModal extends Component {
     this.setState(state => ({ deletable: false, counter: state.counter + 1 }))
   }
 
-  renderCategory = (title, color) => (
-    <View>
-      <Text style={{ color, fontWeight: '200', fontSize: 16, marginTop: 20, }}>{title}</Text>
-      <View style={{ width: '100%', borderBottomColor: color, borderBottomWidth: StyleSheet.hairlineWidth, marginBottom: 10, }} />
-    </View>
-  )
+  renderCategory = (title, subtitle) => {
+    const { theme } = this.props
+    const { TEXT_COLOR_DARK } = themes[theme]
+    return (
+      <View>
+        <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16, marginTop: 20, }}>{title}</Text>
+        { !!subtitle && <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 12, marginTop: 3, }}>{subtitle}</Text>}
+        <View style={{ width: '100%', borderBottomColor: TEXT_COLOR_DARK, borderBottomWidth: StyleSheet.hairlineWidth, marginBottom: 10, }} />
+      </View>
+    )
+  }
+    
 
   render() {
     const { ipAddresses, scanning, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR, CIRCLE_PLUS_BUTTON_COLOR, TEXT_COLOR_DARK, TEXT_COLOR_LIGHT, BUTTON_ICON_COLOR, CIRCLE_PLUS_ICON_COLOR } = themes[theme]
+    const { MODAL_BACKGROUND_COLOR, CIRCLE_PLUS_BUTTON_COLOR, TEXT_COLOR_DARK, BUTTON_ICON_COLOR, CIRCLE_PLUS_ICON_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper} onStartShouldSetResponder={this.onBackgroundTap}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -190,7 +196,7 @@ class SelectRemoteIconModal extends Component {
             style={styles.scrollView}
             contentContainerStyle={{ padding: 20 }}
           >
-            {this.renderCategory("Status", TEXT_COLOR_DARK)}
+            {this.renderCategory("Lighthouse Status")}
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
 
@@ -209,7 +215,7 @@ class SelectRemoteIconModal extends Component {
               }
             </TouchableOpacity>
 
-            {this.renderCategory("Order", TEXT_COLOR_DARK)}
+            {this.renderCategory("Remotes", "Longpress and drag to reorder")}
 
             <View style={{
               marginVertical: 10,
@@ -271,11 +277,11 @@ class SelectRemoteIconModal extends Component {
 
 
 
-            {this.renderCategory("Theme", TEXT_COLOR_DARK)}
+            {this.renderCategory("Theme")}
 
             {themeList.map(this.renderThemeOption)}
 
-            {this.renderCategory("Options", TEXT_COLOR_DARK)}
+            {this.renderCategory("Options")}
 
             <View style={{ paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <View style={{ flexDirection: 'column' }}>
