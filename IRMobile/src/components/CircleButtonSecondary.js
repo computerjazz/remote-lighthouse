@@ -10,22 +10,39 @@ import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import themes from '../constants/themes'
 
-class CircleEditButton extends Component {
+class CircleButtonSecondary extends Component {
 
   static propTypes = {
     onPress: PropTypes.func,
     style: ViewPropTypes.style,
     theme: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(["edit", "delete"])
   }
 
   render() {
-    const { onPress, style, theme } = this.props
-    const { BUTTON_EDIT_ICON_COLOR, BUTTON_EDIT_COLOR }  = themes[theme]
+    const { onPress, style, theme, type } = this.props
+    const { 
+      BUTTON_EDIT_ICON_COLOR, 
+      BUTTON_EDIT_COLOR, 
+      BUTTON_DELETE_COLOR,
+    }  = themes[theme]
+    const config = {
+      edit: {
+        iconColor: BUTTON_EDIT_ICON_COLOR,
+        backgroundColor: BUTTON_EDIT_COLOR,
+        icon: "pencil",
+      },
+      delete: {
+        iconColor: BUTTON_EDIT_ICON_COLOR,
+        backgroundColor: BUTTON_DELETE_COLOR,
+        icon: "minus",
+      }
+    }
     return (
-      <TouchableOpacity style={[styles.container, { backgroundColor: BUTTON_EDIT_COLOR }, style]} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: config[type].backgroundColor }, style]} onPress={onPress}>
         <Icon
-          color={BUTTON_EDIT_ICON_COLOR}
-          name="pencil"
+          name={config[type].icon}
+          color={config[type].iconColor}
           size={20}
         />
       </TouchableOpacity>
@@ -33,16 +50,17 @@ class CircleEditButton extends Component {
   }
 }
 
-CircleEditButton.defaultProps = {
+CircleButtonSecondary.defaultProps = {
   onPress: () => {},
   style: {},
+  type: "edit",
 }
 
 const mapStateToProps = state => ({
   theme: state.settings.theme,
 })
 
-export default connect(mapStateToProps)(CircleEditButton)
+export default connect(mapStateToProps)(CircleButtonSecondary)
 
 const styles = StyleSheet.create({
   container: {

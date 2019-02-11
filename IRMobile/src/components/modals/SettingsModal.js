@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
+  Alert,
   ActivityIndicator,
   BackHandler,
   ScrollView,
@@ -9,18 +10,32 @@ import {
   Text,
   TouchableOpacity,
   View,
+  LayoutAnimation,
 } from 'react-native'
-
 import { connect } from 'react-redux'
-
 import packageJson from '../../../package.json';
 
+import DraggableFlatlist from 'react-native-draggable-flatlist'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import CircleButtonSecondary from '../CircleButtonSecondary'
 import TextButton from '../TextButton'
-import { findDevicesOnNetwork, updateRemote, setHeaderModal, setTheme, setTestingMode, gotoInstructionStep } from '../../actions'
+import {
+  findDevicesOnNetwork,
+  setHeaderModal,
+  setTheme,
+  setTestingMode,
+  gotoInstructionStep,
+  setRemoteOrder,
+  deleteRemote,
+  createRemote,
+  createButtonPanel,
+  setEditMode,
+} from '../../actions'
 import { isAndroid } from '../../utils'
 
 import { BUTTON_RADIUS } from '../../constants/dimensions'
-import themes, { list as themeList} from '../../constants/themes'
+import { BLANK_SPACE, POWER } from '../../constants/ui'
+import themes, { list as themeList } from '../../constants/themes'
 
 class SelectRemoteIconModal extends Component {
 
@@ -41,6 +56,8 @@ class SelectRemoteIconModal extends Component {
     if (isAndroid) BackHandler.addEventListener('hardwareBackPress', this.captureAndroidBackPress)
     this.state = {
       selectedTheme: this.props.theme,
+      deletable: false,
+      counter: 0,
     }
   }
 
@@ -56,8 +73,8 @@ class SelectRemoteIconModal extends Component {
   }
 
   renderThemeDemoButton = (themeName, index) => (
-    <View key={index} style={[styles.themeDemoButton, {backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR}]}>
-      <View style={[styles.themeDemoButtonInner, {backgroundColor: themes[themeName].BUTTON_ICON_COLOR}]} />
+    <View key={index} style={[styles.themeDemoButton, { backgroundColor: themes[themeName].BUTTON_BACKGROUND_COLOR }]}>
+      <View style={[styles.themeDemoButtonInner, { backgroundColor: themes[themeName].BUTTON_ICON_COLOR }]} />
     </View>
   )
 
@@ -70,10 +87,10 @@ class SelectRemoteIconModal extends Component {
           this.setState({ selectedTheme: themeName })
           this.props.setTheme(themeName)
         }}
-        style={[styles.option, { backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent'}]}
+        style={[styles.option, { backgroundColor: this.state.selectedTheme === themeName ? OPTION_SELECTED_BACKGROUND_COLOR : 'transparent' }]}
       >
-        <View style={[styles.themeDemoButtonRow,{backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR}]}>
-          {[0,0,0].map((item, i) => this.renderThemeDemoButton(themeName, i))}
+        <View style={[styles.themeDemoButtonRow, { backgroundColor: themes[themeName].REMOTE_BACKGROUND_COLOR }]}>
+          {[0, 0, 0].map((item, i) => this.renderThemeDemoButton(themeName, i))}
         </View>
       </TouchableOpacity>
     )
@@ -84,11 +101,84 @@ class SelectRemoteIconModal extends Component {
     this.props.gotoInstructionStep(0)
   }
 
+  renderRemoteItem = ({ move, item }) => {
+    const { icon, title, id } = item
+    const { theme } = this.props
+
+    const {
+      HEADER_TITLE_COLOR,
+      HEADER_TITLE_EDITING_COLOR,
+      HEADER_BACKGROUND_COLOR,
+      BUTTON_ICON_COLOR,
+      TEXT_COLOR_DARK,
+      REMOTE_BACKGROUND_COLOR,
+    } = themes[theme]
+
+    return (
+      <View style={{ padding: 10, alignItems: 'center', width: 70 }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: HEADER_BACKGROUND_COLOR,
+            height: 50,
+            width: 50,
+            borderRadius: BUTTON_RADIUS,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => {
+            this.setState(state => ({ deletable: false, counter: state.counter + 1 }))
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+          }}
+          onLongPress={() => {
+            this.setState({ deletable: true })
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+            move()
+          }}
+        >
+          {!!icon && <Icon name={icon === BLANK_SPACE ? 'checkbox-blank-outline' : icon} size={30} color={HEADER_TITLE_COLOR} />}
+
+        </TouchableOpacity>
+        {this.state.deletable && (
+          <CircleButtonSecondary
+            type="delete"
+            style={styles.deleteRemoteButton}
+            onPress={() => {
+              Alert.alert(
+                'Delete Remote',
+                'Are you sure?',
+                [
+                  { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                  { text: 'Delete', onPress: () => this.props.deleteRemote(id), style: 'destructive' },
+                ],
+              )
+            }}
+          />
+        )}
+        <Text 
+            numberOfLines={1}
+          style={{ 
+            color: TEXT_COLOR_DARK, 
+            fontWeight: '200', 
+            fontSize: 12,
+            marginTop: 5,
+          }}
+          ellipsizeMode="tail"
+          >{title}</Text>
+      </View>
+
+    )
+  }
+
+  onBackgroundTap = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    this.setState(state => ({ deletable: false, counter: state.counter + 1 }))
+  }
+
   render() {
     const { ipAddresses, scanning, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR, TEXT_COLOR_LIGHT, TEXT_COLOR_DARK, BUTTON_ICON_COLOR } = themes[theme]
+    const { MODAL_BACKGROUND_COLOR, CIRCLE_PLUS_BUTTON_COLOR, TEXT_COLOR_DARK, BUTTON_ICON_COLOR, CIRCLE_PLUS_ICON_COLOR } = themes[theme]
     return (
-      <View style={styles.wrapper}>
+      <View style={styles.wrapper} onStartShouldSetResponder={this.onBackgroundTap}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
 
           <ScrollView
@@ -97,8 +187,8 @@ class SelectRemoteIconModal extends Component {
             contentContainerStyle={{ padding: 20 }}
           >
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length === 1 ? '' : 's'} connected:`}</Text>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length === 1 ? '' : 's'} connected:`}</Text>
               {ipAddresses.map(url => <Text key={url} style={{ fontWeight: '200', fontSize: 13, color: TEXT_COLOR_DARK }}>{url}</Text>)}
             </View>
 
@@ -109,14 +199,78 @@ class SelectRemoteIconModal extends Component {
             >
               {scanning ?
                 <ActivityIndicator small color={TEXT_COLOR_DARK} /> :
-                <Text style={{color: TEXT_COLOR_DARK}}>Scan Network</Text>
+                <Text style={{ color: TEXT_COLOR_DARK }}>Scan Network</Text>
               }
             </TouchableOpacity>
 
-            <View style={{paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <View style={{flexDirection: 'column'}}>
-                <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Testing Mode</Text>
-                <Text style={{color: TEXT_COLOR_DARK, fontSize: 12, fontWeight: '200'}}>Blink LED on transmit & discovery</Text>
+            <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Order</Text>
+
+            <View style={{
+              marginVertical: 10,
+              flexDirection: 'row',
+            }}>
+            <DraggableFlatlist
+              horizontal
+              data={this.props.remotes}
+              renderItem={this.renderRemoteItem}
+              keyExtractor={(item) => `${item.id}-${this.state.counter}`}
+              stickyHeaderIndices={[0]}
+              ListHeaderComponent={() => <View style={{ width: 50, alignItems: 'center', padding: 10, marginRight: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const newRemote = this.props.createRemote()
+                      const { remoteId } = newRemote.payload
+                      this.props.createButtonPanel(POWER, remoteId)
+                      this.props.setEditMode(true)
+                    }}
+                    style={{
+                      backgroundColor: CIRCLE_PLUS_BUTTON_COLOR,
+                      width: 50,
+                      height: 50,
+                      borderRadius: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 100,
+                      elevation: 5,
+                      shadowColor: 'black',
+                      shadowOpacity: 0.2,
+                      shadowOffset: {
+                        width: 2,
+                        height: 2,
+                      },
+                      shadowRadius: 3,
+                    }}
+                  >
+                    <Icon name={"plus"} size={35} color={CIRCLE_PLUS_ICON_COLOR} />
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: TEXT_COLOR_DARK,
+                      fontWeight: '200',
+                      fontSize: 12,
+                      marginTop: 5,
+                    }}
+                    ellipsizeMode="tail"
+                  >{`New`}</Text>
+                </View>}
+              onMoveEnd={({ data, to, from, row }) => {
+                this.setState(state => ({ counter: state.counter + 1 }))
+                if (to !== from) {
+                  this.props.setRemoteOrder(data.map(({ id }) => id))
+                }
+              }}
+            />
+       
+            </View>
+
+
+
+            <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Theme</Text>
+            {themeList.map(this.renderThemeOption)}
+            <View style={{ paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Testing Mode</Text>
+                <Text style={{ color: TEXT_COLOR_DARK, fontSize: 12, fontWeight: '200' }}>Blink LED on transmit & discovery</Text>
               </View>
               <Switch
                 thumbTintColor={isAndroid ? "#fff" : undefined}
@@ -127,8 +281,6 @@ class SelectRemoteIconModal extends Component {
                 value={this.props.testing}
               />
             </View>
-            <Text style={{color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16}}>Theme</Text>
-            {themeList.map(this.renderThemeOption)}
             <TouchableOpacity
               onPress={this.startTutorial}
               style={[styles.tutorialButton]}
@@ -152,25 +304,32 @@ class SelectRemoteIconModal extends Component {
 }
 
 SelectRemoteIconModal.defaultProps = {
-  onSubmit: () => {},
+  onSubmit: () => { },
 }
 
 const mapStateToProps = state => ({
   ipAddresses: state.network.ipAddresses,
   scanning: state.network.scanning,
   theme: state.settings.theme,
-  currentRemoteId: state.app.currentRemoteId,
-  remote: state.remotes[state.app.currentRemoteId],
   testing: state.network.testing,
+  remotes: state.remotes.list.map(id => ({
+    ...state.remotes[id],
+    id,
+  })),
 })
 
 const mapDispatchToProps = (dispatch) => ({
+  setRemoteOrder: order => dispatch(setRemoteOrder(order)),
   findDevicesOnNetwork: () => dispatch(findDevicesOnNetwork()),
-  updateRemote: (remoteId, updatedRemote) => dispatch(updateRemote(remoteId, updatedRemote)),
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
   setTheme: theme => dispatch(setTheme(theme)),
   setTestingMode: isTesting => dispatch(setTestingMode(isTesting)),
-  gotoInstructionStep: step => dispatch(gotoInstructionStep(step))
+  gotoInstructionStep: step => dispatch(gotoInstructionStep(step)),
+  deleteRemote: remoteId => dispatch(deleteRemote(remoteId)),
+  createRemote: () => dispatch(createRemote()),
+  setEditMode: editing => dispatch(setEditMode(editing)),
+  createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
+  
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectRemoteIconModal)
@@ -182,7 +341,8 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     ...StyleSheet.absoluteFillObject,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 40,
   },
   categoryTitle: {
     marginTop: 10,
@@ -276,5 +436,13 @@ const styles = StyleSheet.create({
   themeDemoButtonInner: {
     padding: 10,
     borderRadius: 30
+  },
+  deleteRemoteButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
   }
 })

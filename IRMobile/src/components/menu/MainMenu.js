@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
-  Alert,
   LayoutAnimation,
   Share,
   StyleSheet,
@@ -10,12 +9,10 @@ import {
 import { connect } from 'react-redux'
 
 import {
-  createButtonPanel,
   setHeaderMenu,
   setHeaderModal,
   setCaptureMode,
   setEditMode,
-  createRemote,
   deleteRemote,
   exportRemote,
   getShareRemoteUrl,
@@ -27,7 +24,7 @@ import { CustomLayoutLinear } from '../../dictionaries/animations'
 
 import themes from '../../constants/themes'
 import { BUTTON_RADIUS } from '../../constants/dimensions'
-import { GENERAL_SETTINGS, POWER } from '../../constants/ui'
+import { GENERAL_SETTINGS } from '../../constants/ui'
 
 class MainMenu extends Component {
 
@@ -38,8 +35,6 @@ class MainMenu extends Component {
     exportRemote: PropTypes.func.isRequired,
     getShareRemoteUrl: PropTypes.func.isRequired,
     currentRemoteId: PropTypes.string,
-    createRemote: PropTypes.func.isRequired,
-    createButtonPanel: PropTypes.func.isRequired,
     numberOfRemotes: PropTypes.number.isRequired,
     deleteRemote: PropTypes.func.isRequired,
     setHeaderModal: PropTypes.func.isRequired,
@@ -66,9 +61,18 @@ class MainMenu extends Component {
       <View style={[styles.menu, style, { backgroundColor: MENU_BACKGROUND_COLOR }]}>
         <MenuItem
           icon="arrange-bring-forward"
-          text="Edit"
+          text="Layout"
           onPress={() => {
             this.props.setEditMode(true)
+            this.props.setHeaderMenu(false)
+          }}
+        />
+        <MenuItem
+          icon="remote"
+          text="Capture"
+          onPress={() => {
+            this.props.setEditMode(true)
+            this.props.setCaptureMode(true)
             this.props.setHeaderMenu(false)
           }}
         />
@@ -85,37 +89,6 @@ class MainMenu extends Component {
             })
           }}
         />
-        <MenuItem
-          icon="plus"
-          text="Add Remote"
-          onPress={() => {
-            this.props.setHeaderMenu(false)
-            const newRemote = this.props.createRemote()
-            const { remoteId } = newRemote.payload
-            this.props.createButtonPanel(POWER, remoteId)
-            this.props.setEditMode(true)
-          }}
-        />
-        {
-          this.props.numberOfRemotes > 1 && (
-            <MenuItem
-              icon="delete"
-              text="Delete Remote"
-              onPress={() => {
-                this.props.setHeaderMenu(false)
-                Alert.alert(
-                  'Delete Remote',
-                  'Are you sure?',
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                    {text: 'Delete', onPress: () => this.props.deleteRemote(this.props.currentRemoteId), style: 'destructive'},
-                  ],
-                )
-
-              }}
-            />
-          )
-        }
         <MenuItem
           icon="settings"
           text="Settings"
@@ -141,12 +114,10 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  createButtonPanel: (type, remoteId) => dispatch(createButtonPanel(type, remoteId)),
   setEditMode: editing => dispatch(setEditMode(editing)),
   setCaptureMode: capturing => dispatch(setCaptureMode(capturing)),
   setHeaderMenu: visible => dispatch(setHeaderMenu(visible)),
   setHeaderModal: modal => dispatch(setHeaderModal(modal)),
-  createRemote: () => dispatch(createRemote()),
   deleteRemote: remoteId => dispatch(deleteRemote(remoteId)),
   exportRemote: remoteId => dispatch(exportRemote(remoteId)),
   getShareRemoteUrl: nestedRemote => dispatch(getShareRemoteUrl(nestedRemote)),

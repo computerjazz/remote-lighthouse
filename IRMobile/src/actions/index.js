@@ -32,6 +32,7 @@ import {
   SET_SCANNING,
   SET_TESTING,
   SET_THEME,
+  SET_REMOTE_ORDER,
   UPDATE_BUTTON,
   UPDATE_REMOTE,
 } from '../constants/actions'
@@ -99,6 +100,15 @@ export function deleteRemote(remoteId) {
     type: DELETE_REMOTE,
     payload: {
       remoteId,
+    }
+  }
+}
+
+export function setRemoteOrder(list) {
+  return {
+    type: SET_REMOTE_ORDER,
+    payload: {
+      list,
     }
   }
 }

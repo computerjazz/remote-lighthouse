@@ -11,10 +11,12 @@ import logger from 'redux-logger'
 import codePush from "react-native-code-push";
 
 import Instructions from './components/Instructions'
+import NoRemotes from './components/NoRemotes'
 import OverlayMessage from './components/OverlayMessage'
 import LinkHandler from './components/LinkHandler'
 import LoadingScreen from './components/LoadingScreen'
 import MainMenu from './components/menu/MainMenu'
+import Modal from "./components/modals/Modal"
 import Navigator from './navigation'
 import reducers from './reducers'
 
@@ -41,7 +43,7 @@ const store = createStore(
 const persistor = persistStore(store, {
   //blacklist: ['app', 'network', 'settings'],
 })
- // persistor.purge()
+// persistor.purge()
 
 class App extends Component {
 
@@ -63,6 +65,8 @@ class App extends Component {
             <LinkHandler />
             <Instructions />
             <OverlayMessage />
+            <NoRemotes />
+            <Modal />
           </View>
         </PersistGate>
       </Provider>

@@ -84,11 +84,14 @@ class HeaderMenuButton extends Component {
         onPress={() => this.props.setHeaderModal(REMOTE_OPTIONS)}
         style={[styles.icon, (editing || capturing) && { backgroundColor: HEADER_ICON_EDITING_BACKGROUND }]}
       >
-        <Icon
-          name={remote ? remote.icon : 'pencil'}
-          color={(editing || capturing) ? HEADER_ICON_EDITING : HEADER_ICON_COLOR}
-          size={25}
-        />
+      {remote && (
+          <Icon
+            name={remote.icon || "pencil"}
+            color={(editing || capturing) ? HEADER_ICON_EDITING : HEADER_ICON_COLOR}
+            size={25}
+          />
+      )}
+
       </TouchableOpacity>
     )
   }

@@ -25,7 +25,6 @@ import {
 
 import instructions from '../dictionaries/instructions'
 import themes from '../constants/themes'
-import modals from './modals'
 
 import ButtonPanel from './ButtonPanel'
 import CircleButton from './CircleButton'
@@ -193,7 +192,6 @@ class Remote extends Component {
   render() {
     const { capturing, editing, dragging, remote, headerModal, theme } = this.props
     const { addPanelModalVisible, editButtonModalVisible, editingButtonId, listViewKey } = this.state
-    const GeneralModal = modals[headerModal]
     const EditModal = capturing ? ManualCodeEnterModal : EditButtonModal
     if (!remote) return null
     const { REMOTE_BACKGROUND_COLOR } = themes[theme]
@@ -229,8 +227,6 @@ class Remote extends Component {
             buttonId={editingButtonId}
             onSubmit={this.dismissEditButtonModal}
           /> }
-
-        { !!headerModal && <GeneralModal />}
       </View>
     )
   }
@@ -247,7 +243,6 @@ const mapStateToProps = (state, ownProps) => ({
   editingButtonId: state.app.editingButtonId,
   editButtonModalVisible: state.app.editButtonModalVisible,
   headerMenuVisible: state.app.headerMenuVisible,
-  headerModal: state.app.headerModal,
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

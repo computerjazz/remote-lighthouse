@@ -17,6 +17,7 @@ import Remote from './Remote'
 import Header from './nav/Header'
 import LoadingScreen from './LoadingScreen'
 import themes from '../constants/themes'
+import modals from './modals'
 
 import { createTabNavigator } from '../navigation'
 import {
@@ -72,7 +73,10 @@ class RemoteContainer extends Component {
 
   shouldComponentUpdate(nextProps) {
     // Only update the container when a remote has been added or deleted
-    return nextProps.remotes.list.length !== this.props.remotes.list.length
+    // or the order has changed
+    const numRemotesHasChanged = nextProps.remotes.list.length !== this.props.remotes.list.length
+    const remoteOrderHasChanged = nextProps.remotes.list.some((id, i) => id !== this.props.remotes.list[i])
+    return numRemotesHasChanged || remoteOrderHasChanged
   }
 
   componentDidMount() {

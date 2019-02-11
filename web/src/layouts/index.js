@@ -45,7 +45,7 @@ class Layout extends Component {
     const { children, data } = this.props
     return (
       <Provider store={store}>
-        <div>
+        <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
           <AppLogic />
           <Helmet
             title={data.site.siteMetadata.title}

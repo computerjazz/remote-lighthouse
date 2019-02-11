@@ -4,6 +4,7 @@ import {
   DELETE_REMOTE,
   CREATE_BUTTON_PANEL,
   DELETE_BUTTON_PANEL,
+  SET_REMOTE_ORDER,
 } from '../constants/actions'
 
 const initialState = {
@@ -64,6 +65,11 @@ export default (state = initialState, action) => {
           panels: state[action.payload.remoteId].panels.filter(id => id !== action.payload.panelId)
         }
       }
+    case SET_REMOTE_ORDER:
+      return {
+      ...state,
+      list: action.payload.list,
+    }
     default:
       return state
   }

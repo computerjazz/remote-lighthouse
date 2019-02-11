@@ -3,8 +3,7 @@ import { StackNavigator, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
 
 import TabBar from '../components/nav/TabBar'
-import { setCurrentRemoteId, setModalVisible, setHeaderModal, setEditMode, setCaptureMode } from '../actions'
-import themes from '../constants/themes'
+import { setCurrentRemoteId, setHeaderModal, setEditMode, setCaptureMode } from '../actions'
 
 import RemoteContainer from '../components/RemoteContainer'
 

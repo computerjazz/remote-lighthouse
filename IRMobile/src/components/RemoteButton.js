@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import CircleEditButton from './CircleEditButton'
+import CircleButtonSecondary from './CircleButtonSecondary'
 
 import themes from '../constants/themes'
 
@@ -175,7 +175,7 @@ class RemoteButton extends Component {
             }]}
           />
         )}
-        { editing && <CircleEditButton onPress={() => onEditPress(id)} style={styles.editButton} /> }
+        { editing && <CircleButtonSecondary type="edit" onPress={() => onEditPress(id)} style={styles.editButton} /> }
 
       </View>
       )
