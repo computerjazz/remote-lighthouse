@@ -71,7 +71,7 @@ class MainMenu extends Component {
           icon="remote"
           text="Capture"
           onPress={() => {
-            this.props.setEditMode(true)
+            this.props.setEditMode(false)
             this.props.setCaptureMode(true)
             this.props.setHeaderMenu(false)
           }}

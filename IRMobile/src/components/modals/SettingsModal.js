@@ -107,11 +107,8 @@ class SelectRemoteIconModal extends Component {
 
     const {
       HEADER_TITLE_COLOR,
-      HEADER_TITLE_EDITING_COLOR,
       HEADER_BACKGROUND_COLOR,
-      BUTTON_ICON_COLOR,
       TEXT_COLOR_DARK,
-      REMOTE_BACKGROUND_COLOR,
     } = themes[theme]
 
     return (
@@ -174,9 +171,16 @@ class SelectRemoteIconModal extends Component {
     this.setState(state => ({ deletable: false, counter: state.counter + 1 }))
   }
 
+  renderCategory = (title, color) => (
+    <View>
+    <Text style={{ color, fontWeight: '200', fontSize: 16, marginTop: 20, }}>{title}</Text>
+    <View style={{ width: '100%', borderBottomColor: color, borderBottomWidth: StyleSheet.hairlineWidth, marginBottom: 10, }} />
+    </View>
+    )
+
   render() {
     const { ipAddresses, scanning, theme } = this.props
-    const { MODAL_BACKGROUND_COLOR, CIRCLE_PLUS_BUTTON_COLOR, TEXT_COLOR_DARK, BUTTON_ICON_COLOR, CIRCLE_PLUS_ICON_COLOR } = themes[theme]
+    const { MODAL_BACKGROUND_COLOR, CIRCLE_PLUS_BUTTON_COLOR, TEXT_COLOR_DARK, TEXT_COLOR_LIGHT, BUTTON_ICON_COLOR, CIRCLE_PLUS_ICON_COLOR } = themes[theme]
     return (
       <View style={styles.wrapper} onStartShouldSetResponder={this.onBackgroundTap}>
         <View style={[styles.container, { backgroundColor: MODAL_BACKGROUND_COLOR }]}>
@@ -186,8 +190,10 @@ class SelectRemoteIconModal extends Component {
             style={styles.scrollView}
             contentContainerStyle={{ padding: 20 }}
           >
+            {this.renderCategory("Status", TEXT_COLOR_DARK)}
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
+
               <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 15, }}>{`${ipAddresses.length} lighthouse${ipAddresses.length === 1 ? '' : 's'} connected:`}</Text>
               {ipAddresses.map(url => <Text key={url} style={{ fontWeight: '200', fontSize: 13, color: TEXT_COLOR_DARK }}>{url}</Text>)}
             </View>
@@ -203,7 +209,7 @@ class SelectRemoteIconModal extends Component {
               }
             </TouchableOpacity>
 
-            <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Order</Text>
+            {this.renderCategory("Order", TEXT_COLOR_DARK)}
 
             <View style={{
               marginVertical: 10,
@@ -265,8 +271,12 @@ class SelectRemoteIconModal extends Component {
 
 
 
-            <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Theme</Text>
+          {this.renderCategory("Theme", TEXT_COLOR_DARK)}
+
             {themeList.map(this.renderThemeOption)}
+
+            {this.renderCategory("Options", TEXT_COLOR_DARK)}
+
             <View style={{ paddingVertical: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={{ color: TEXT_COLOR_DARK, fontWeight: '200', fontSize: 16 }}>Testing Mode</Text>
