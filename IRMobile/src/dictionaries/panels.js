@@ -34,7 +34,7 @@ export default {
     title: 'Media Playback',
     icons: [
       ['record', 'play', 'pause', 'stop'],
-      ['skip-backward', 'fast-forward', 'rewind', 'skip-forward'],
+      ['skip-backward', 'rewind', 'fast-forward', 'skip-forward'],
     ]
   },
   [CHANNEL_VOLUME]: {

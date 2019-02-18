@@ -196,7 +196,7 @@ class SelectRemoteIconModal extends Component {
             style={styles.scrollView}
             contentContainerStyle={{ padding: 20 }}
           >
-            {this.renderCategory("Lighthouse Status")}
+            {this.renderCategory("Status", "Lighthouses connected to your WiFi")}
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
 
@@ -215,7 +215,7 @@ class SelectRemoteIconModal extends Component {
               }
             </TouchableOpacity>
 
-            {this.renderCategory("Remotes", "Longpress and drag to reorder")}
+            {this.renderCategory("Remotes", "Longpress to reorder or remove")}
 
             <View style={{
               marginVertical: 10,
