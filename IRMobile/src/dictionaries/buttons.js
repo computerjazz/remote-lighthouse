@@ -147,7 +147,6 @@ export default {
       'emoticon-neutral',
       'emoticon-sad',
       'cake-variant',
-      'martini',
       'cat',
       'star',
       'wrench',

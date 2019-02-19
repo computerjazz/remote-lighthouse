@@ -28,6 +28,10 @@ class HeaderMenuButton extends Component {
     theme: PropTypes.string.isRequired,
   }
 
+  static defaultProps = {
+    onPressDone: () => null,
+  }
+
   state = {
     editing: false,
   }

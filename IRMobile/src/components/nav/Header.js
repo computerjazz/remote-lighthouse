@@ -21,30 +21,14 @@ class Header extends Component {
     theme: PropTypes.string,
   }
 
-  state = {
-    title: '',
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const state = { ...prevState }
-    if (nextProps.remote && prevState.title !== nextProps.remote.title) {
-      state.title =  nextProps.remote.title
-    }
-    return state
-  }
-
-  onTitleUpdate = () => {
-    if (this.props.remote && this.props.remote.title !== this.state.title) {
+  updateTitle = (text) => {
+    if (this.props.remote && this.props.remote.title !== text) {
       const newRemote = {
         ...this.props.remote,
-        title: this.state.title,
+        title: text,
       }
       this.props.updateRemote(this.props.currentRemoteId, newRemote)
     }
-  }
-
-  onChangeText = text => {
-    this.setState({ title: text }, this.onTitleUpdate)
   }
 
   render() {
@@ -68,10 +52,9 @@ class Header extends Component {
             <HeaderTitle
               style={[{ color: headerTitleColor }, titleStyle]}
               title={headerTitle}
-              onChangeText={this.onChangeText}
-              onBlur={this.onTitleUpdate}
+              onChangeText={this.updateTitle}
             />
-            <HeaderMenuButton right onPressDone={this.onTitleUpdate} />
+            <HeaderMenuButton right />
           </View>
         }
 
