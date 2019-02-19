@@ -43,7 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
           new RNNetworkInfoPackage(),
           new RNBranchPackage(),
           new VectorIconsPackage(),
-          new CodePush("_snNXg5Yo8CHY0NGGoDQD6z7yEjAfc5fc98b-7620-40bb-852a-4c126fc95f78", MainApplication.this, BuildConfig.DEBUG)
+          new CodePush("NtqDE2uPzvcPJEvIdu449m7EU05Ufc5fc98b-7620-40bb-852a-4c126fc95f78", MainApplication.this, BuildConfig.DEBUG)
 
       );
     }

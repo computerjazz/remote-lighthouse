@@ -112,8 +112,8 @@ android {
         applicationId 'com.danielmerrill.remotelighthouse'
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 2
-        versionName "1.3"
+        versionCode 3
+        versionName "1.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

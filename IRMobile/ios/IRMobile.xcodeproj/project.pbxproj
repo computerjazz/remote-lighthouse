@@ -1504,7 +1504,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODEPUSH_KEY = "";
+				CODEPUSH_KEY = "Cr6N5wURpWky14lMcVpIwff1yRjOfc5fc98b-7620-40bb-852a-4c126fc95f78";
 				CODE_SIGN_ENTITLEMENTS = IRMobile/IRMobile.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
