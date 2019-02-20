@@ -19,5 +19,5 @@ export const WHITE_TRANSLUCENT = 'rgba(255, 255, 255, 0.9)'
 export const SILVER = '#bdc3c7'
 export const CLOUDS = '#ecf0f1'
 export const PETER_RIVER = '#3498db'
-export const GREEN = "#10b220"
+export const GREEN = "#2dc45a"
 export const GREEN_ANALOGOUS = tinycolor(GREEN).complement().toString()
