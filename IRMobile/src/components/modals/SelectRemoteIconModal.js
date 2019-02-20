@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     ...StyleSheet.absoluteFillObject,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 40,
   },
   categoryTitle: {
     marginTop: 10,

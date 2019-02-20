@@ -112,7 +112,7 @@ android {
         applicationId 'com.danielmerrill.remotelighthouse'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
+        versionCode 4
         versionName "1.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
