@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.3.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -23,4 +23,43 @@ allprojects {
         }
         google()
     }
+        configurations.all {
+        resolutionStrategy.force "com.android.support:support-v4:$supportLibVersion"
+        resolutionStrategy {
+            eachDependency { details ->
+                // Force all of the primary support libraries to use the same version.
+                if (details.requested.group == 'com.android.support'
+                        && details.requested.name != 'multidex'
+                        && details.requested.name != 'multidex-instrumentation') {
+                    details.useVersion supportLibVersion
+                }
+
+            }
+        }
+    }
 }
+
+// This addresses build issues (seemingly only affecting the release buildType) where dependencies
+//   (react-native dependencies) were targeting old versions
+subprojects { subproject ->
+    afterEvaluate {
+        if(subproject.plugins.hasPlugin('android')
+                || subproject.plugins.hasPlugin('android-library')) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+    }
+}
+
+ext {
+    // sdk and tools
+    minSdkVersion = 23
+    compileSdkVersion = 27
+    targetSdkVersion = 26
+    buildToolsVersion = '28.0.2'
+    supportLibVersion = "27.1.1"
+    googlePlayServicesVersion = '16.0.1'
+}
+
