@@ -4,6 +4,9 @@
 
 Replace every remote control in your house with a single app. ir-mobile will listen to the infrared codes your remote controls emit and map them to buttons in the app.
 
+![hero](https://github.com/user-attachments/assets/cc7d7984-0a72-4eb7-a459-dd41338b58a2)
+
+
 ### Hardware
 - ESP32 WiFi/Bluetooth Module
 - IR Transmitter LEDs
